@@ -6026,5 +6026,14 @@
     "contributorName": "Maj. Major Major Major",
     "isEnabled": true,
     "isEnabledAll": false
+  },
+  {
+    "appName": "FlClash",
+    "packageName": "com.follow.clash",
+    "iconBitmap": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABcUlEQVR4nO2a4W7DIAyEzxbv/8qeIm1RK6UbGbF9YO5nJXC+wxDjFNja2qoswWQyM7v6XURkaQPsA/ioEQ2LgP9XisXg745pKLjqtAZYIDiVAZYATnMGWCJ8agZkg6fVAeYMfrcOUBSGD8uAiHSnLIWNGPwcj6LgbmeATQR/SKqCn3OiKPg5N8gLGU/4Q1Jx1d/iYIFiZigeSOCjwWlug5nw6f2AT+BPd35/fQYkbIG74D1jp9kCcgFwgPea+/Q51JAMjmRpBPjT8E8aJ17BR/b5yPzuGSAdgUf3eaRkZPArkPeKe2WAwFHs8G5vAcZUX6YjJMyFkE0GT/NtMPOypJUOvKkyQIKuyA1kiu4NNJBo+o6QDABkdoTk6QnvHIaZ4OczwEF/mcAA/iPxmvjKBCbwrW8JksSSIRIdMKPzW+Y/QtN+Gco0SiuvPm0GRBqmKC4FqaLeBIri0qhArGWwRgbrNWHZQqgHjjVTtra2sKS+ANatzG4WmQnLAAAAAElFTkSuQmCC",
+    "iconColor": "#6666fb",
+    "contributorName": "2cc",
+    "isEnabled": true,
+    "isEnabledAll": false
   }
 ]
