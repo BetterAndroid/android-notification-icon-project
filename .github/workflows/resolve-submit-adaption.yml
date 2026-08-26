@@ -1,0 +1,216 @@
+name: Resolve Submitted Notification Icon Adaption
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  resolve-command:
+    if: >-
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '@github-actions') &&
+      github.event.comment.user.login != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    outputs:
+      head_ref: ${{ steps.command.outputs.head_ref }}
+      issue_number: ${{ steps.command.outputs.issue_number }}
+      pr_number: ${{ steps.command.outputs.pr_number }}
+      requested: ${{ steps.command.outputs.requested }}
+      submitter: ${{ steps.command.outputs.submitter }}
+    env:
+      ACTOR: ${{ github.event.comment.user.login }}
+      COMMENT_BODY: ${{ github.event.comment.body }}
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PR_NUMBER: ${{ github.event.issue.number }}
+    steps:
+      - name: Resolve Administrator Command
+        id: command
+        run: |
+          ignore_command() {
+            echo 'requested=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          }
+          shopt -s nocasematch
+          if [[ ! "$COMMENT_BODY" =~ (^|[[:space:]])@github-actions(\[bot\])?[[:space:]]+(fix|resolve)($|[^[:alnum:]_]) ]]; then
+            ignore_command
+          fi
+          shopt -u nocasematch
+          permission=$(gh api "repos/$GITHUB_REPOSITORY/collaborators/$ACTOR/permission" --jq '.permission' 2>/dev/null || true)
+          if [[ "$permission" != 'admin' ]]; then
+            ignore_command
+          fi
+          pr_path="$RUNNER_TEMP/submit-adaption-pr.json"
+          issue_path="$RUNNER_TEMP/submit-adaption-issue.json"
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" > "$pr_path"
+          pr_state=$(jq -r '.state' "$pr_path")
+          head_repository=$(jq -r '.head.repo.full_name // ""' "$pr_path")
+          head_ref=$(jq -r '.head.ref // ""' "$pr_path")
+          base_ref=$(jq -r '.base.ref // ""' "$pr_path")
+          pr_body=$(jq -r '.body // ""' "$pr_path")
+          if [[ "$pr_state" != 'open' || "$head_repository" != "$GITHUB_REPOSITORY" ||
+            "$base_ref" != "$DEFAULT_BRANCH" || ! "$head_ref" =~ ^anip/submit-([0-9]+)$ ]]; then
+            ignore_command
+          fi
+          issue_number="${BASH_REMATCH[1]}"
+          if [[ "$pr_body" != *"#$issue_number"* ]]; then
+            ignore_command
+          fi
+          gh api "repos/$GITHUB_REPOSITORY/issues/$issue_number" > "$issue_path"
+          if ! jq -e '
+            .state == "open" and
+            .pull_request == null and
+            (.body | type == "string") and
+            ([.labels[].name] | index("submit-adaption") != null) and
+            ([.labels[].name] | index("submit-adaption-pre") != null) and
+            ([.labels[].name] | index("submit-adaption-done") == null)
+          ' "$issue_path" >/dev/null; then
+            ignore_command
+          fi
+          submitter=$(jq -r '.user.login // ""' "$issue_path")
+          if [[ -z "$submitter" ]]; then
+            ignore_command
+          fi
+          echo "head_ref=$head_ref" >> "$GITHUB_OUTPUT"
+          echo "issue_number=$issue_number" >> "$GITHUB_OUTPUT"
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo 'requested=true' >> "$GITHUB_OUTPUT"
+          echo "submitter=$submitter" >> "$GITHUB_OUTPUT"
+
+  refresh-submission:
+    needs: resolve-command
+    if: needs.resolve-command.outputs.requested == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: submit-adaption-issue-${{ needs.resolve-command.outputs.issue_number }}
+      cancel-in-progress: false
+    env:
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HEAD_REF: ${{ needs.resolve-command.outputs.head_ref }}
+      ISSUE_NUMBER: ${{ needs.resolve-command.outputs.issue_number }}
+      PR_NUMBER: ${{ needs.resolve-command.outputs.pr_number }}
+      SUBMITTER: ${{ needs.resolve-command.outputs.submitter }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate Current Submission and Prepare Files
+        id: submission
+        run: |
+          pr_path="$RUNNER_TEMP/submit-adaption-pr.json"
+          issue_path="$RUNNER_TEMP/submit-adaption-issue.json"
+          event_path="$RUNNER_TEMP/submit-adaption-event.json"
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" > "$pr_path"
+          gh api "repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER" > "$issue_path"
+          if ! jq -e --arg repository "$GITHUB_REPOSITORY" --arg head_ref "$HEAD_REF" --arg base_ref "$DEFAULT_BRANCH" '
+            .state == "open" and
+            .head.repo.full_name == $repository and
+            .head.ref == $head_ref and
+            .base.ref == $base_ref
+          ' "$pr_path" >/dev/null; then
+            echo 'Pull request is no longer an open automated submission.' >&2
+            exit 1
+          fi
+          if ! jq -e '
+            .state == "open" and
+            .pull_request == null and
+            (.body | type == "string") and
+            ([.labels[].name] | index("submit-adaption") != null) and
+            ([.labels[].name] | index("submit-adaption-pre") != null) and
+            ([.labels[].name] | index("submit-adaption-done") == null)
+          ' "$issue_path" >/dev/null; then
+            echo 'Submission issue is no longer active.' >&2
+            exit 1
+          fi
+          pr_body=$(jq -r '.body // ""' "$pr_path")
+          if [[ "$pr_body" != *"#$ISSUE_NUMBER"* ]]; then
+            echo 'Pull request no longer references the submission issue.' >&2
+            exit 1
+          fi
+          jq -n --slurpfile issue "$issue_path" '{ issue: $issue[0] }' > "$event_path"
+          node .github/scripts/submit-adaption.mjs --apply "$event_path"
+
+      - name: Mark Invalid Submission
+        if: steps.submission.outputs.valid == 'false'
+        env:
+          VALIDATION_ERRORS: ${{ steps.submission.outputs.errors }}
+        run: |
+          gh issue edit "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --add-label submit-adaption-violation
+          {
+            echo 'The automated submission check failed:'
+            echo
+            echo "$VALIDATION_ERRORS"
+            echo
+            echo 'Checking failed, please correct the issue form values, then ask an administrator to remove `submit-adaption-violation` to run the check again.'
+          } > "$RUNNER_TEMP/submit-adaption-error.md"
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/submit-adaption-error.md"
+
+      - name: Force Refresh Signed Submission Commit
+        if: steps.submission.outputs.valid == 'true'
+        env:
+          BRANCH: ${{ steps.submission.outputs.branch }}
+          PACKAGE_NAME: ${{ steps.submission.outputs.package_name }}
+        run: |
+          if [[ "$BRANCH" != "$HEAD_REF" ]]; then
+            echo 'Generated branch does not match the pull request branch.' >&2
+            exit 1
+          fi
+          base_oid=$(git rev-parse HEAD)
+          latest_base_oid=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$DEFAULT_BRANCH" --jq '.object.sha')
+          if [[ "$base_oid" != "$latest_base_oid" ]]; then
+            echo 'The default branch changed while preparing the submission; run the resolve command again.' >&2
+            exit 1
+          fi
+          pr_state=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json state --jq '.state')
+          if [[ "$pr_state" != 'OPEN' ]]; then
+            echo 'Pull request is no longer open.' >&2
+            exit 1
+          fi
+          if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$BRANCH" >/dev/null 2>&1; then
+            echo 'Pull request branch no longer exists.' >&2
+            exit 1
+          fi
+          additions_file="$RUNNER_TEMP/submit-adaption-additions.jsonl"
+          content_file="$RUNNER_TEMP/submit-adaption-content.base64"
+          : > "$additions_file"
+          while IFS= read -r -d '' path; do
+            base64 -w 0 "$path" > "$content_file"
+            jq -cn --arg path "$path" --rawfile contents "$content_file" \
+              '{ path: $path, contents: $contents }' >> "$additions_file"
+          done < <(git ls-files --modified --others --exclude-standard -z -- icons)
+          if [[ ! -s "$additions_file" ]]; then
+            echo 'No icon resource changes were prepared.' >&2
+            exit 1
+          fi
+          query='mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid } } }'
+          jq -n \
+            --arg query "$query" \
+            --arg repository "$GITHUB_REPOSITORY" \
+            --arg branch "$BRANCH" \
+            --arg expectedHeadOid "$base_oid" \
+            --arg headline "feat(icons): add $PACKAGE_NAME by @$SUBMITTER" \
+            --slurpfile additions "$additions_file" \
+            '{
+              query: $query,
+              variables: {
+                input: {
+                  branch: { repositoryNameWithOwner: $repository, branchName: $branch },
+                  expectedHeadOid: $expectedHeadOid,
+                  message: { headline: $headline },
+                  fileChanges: { additions: $additions }
+                }
+              }
+            }' > "$RUNNER_TEMP/submit-adaption-commit.json"
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/heads/$BRANCH" -f sha="$base_oid" -F force=true >/dev/null
+          gh api graphql --input "$RUNNER_TEMP/submit-adaption-commit.json" --jq '.data.createCommitOnBranch.commit.oid'
