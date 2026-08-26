@@ -4419,5 +4419,10 @@
     "format": "svg",
     "overlay": false,
     "contributors": "fankes, test"
+  },
+  "com.com": {
+    "target": "com.ss.android.ugc.aweme",
+    "label": "9",
+    "contributors": "fankes"
   }
 }
