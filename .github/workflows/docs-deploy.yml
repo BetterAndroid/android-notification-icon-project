@@ -1,0 +1,41 @@
+name: Deploy to GitHub pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "docs-source/**"
+      - ".github/workflows/**"
+      - "!.github/workflows/release-icon-resources.yml"
+      - "!.github/workflows/submit-adaption.yml"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  docs:
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build VitePress site
+        run: |
+          cd docs-source
+          yarn -i
+          yarn docs:build-gh-pages
+      - name: Deploy to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: gh-pages
+          build_dir: docs-source/dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

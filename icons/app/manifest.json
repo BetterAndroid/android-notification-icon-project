@@ -1,0 +1,4402 @@
+{
+  "com.tencent.mobileqq": {
+    "label": "QQ",
+    "format": "png",
+    "color": "#6BB8F1",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.tim": {
+    "label": "TIM",
+    "format": "png",
+    "color": "#4D88F7",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.mm": {
+    "label": {
+      "en": "WeChat",
+      "zh-CN": "微信"
+    },
+    "format": "png",
+    "color": "#2AAE67",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "com.coolapk.market": {
+    "label": "酷安",
+    "format": "png",
+    "color": "#5DA261",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.eg.android.AlipayGphone": {
+    "label": {
+      "en": "Alipay",
+      "zh-CN": "支付宝"
+    },
+    "format": "png",
+    "color": "#1678FF",
+    "overlay": false,
+    "contributors": "fankes, scrpr"
+  },
+  "com.taobao.taobao": {
+    "label": "淘宝",
+    "format": "png",
+    "color": "#FF5C00",
+    "overlay": false,
+    "contributors": "PedroZ, fankes"
+  },
+  "com.xiaomi.wearable": {
+    "label": {
+      "en": "Mi Fitness (Xiaomi Wear)",
+      "zh-CN": "小米穿戴"
+    },
+    "format": "png",
+    "color": "#FEE61B",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.sina.weibo": {
+    "label": "微博",
+    "format": "png",
+    "color": "#E89B26",
+    "overlay": false,
+    "contributors": "fankes, ovovov"
+  },
+  "com.ss.android.ugc.aweme": {
+    "label": "抖音",
+    "format": "png",
+    "color": "#232323",
+    "overlay": false,
+    "contributors": "fankes, piscesmk2013, Tan"
+  },
+  "com.ss.android.ugc.aweme.lite": {
+    "target": "com.ss.android.ugc.aweme",
+    "label": "抖音极速版"
+  },
+  "com.ss.android.ugc.trill": {
+    "target": "com.ss.android.ugc.aweme",
+    "label": "TikTok"
+  },
+  "com.zhiliaoapp.musically": {
+    "target": "com.ss.android.ugc.aweme",
+    "label": "TikTok Lite",
+    "contributors": "fankes, piscesmk2013, NekoMua, Tan"
+  },
+  "com.zhiliaoapp.musically.go": {
+    "target": "com.ss.android.ugc.aweme",
+    "label": "TikTok Lite"
+  },
+  "com.ss.android.yumme.video": {
+    "target": "com.ss.android.ugc.aweme",
+    "label": "抖音精选",
+    "contributors": "fankes, piscesmk2013, Tan, xiaotian2333"
+  },
+  "com.smile.gifmaker": {
+    "label": "快手",
+    "format": "png",
+    "color": "#FF4906",
+    "overlay": false,
+    "contributors": "PedroZ, fankes"
+  },
+  "com.kuaishou.nebula": {
+    "target": "com.smile.gifmaker",
+    "label": "快手极速版"
+  },
+  "tv.danmaku.bili": {
+    "label": "哔哩哔哩",
+    "format": "png",
+    "color": "#FF4B84",
+    "overlay": false,
+    "contributors": "fankes, PedroZ"
+  },
+  "tv.danmaku.bilibilihd": {
+    "target": "tv.danmaku.bili",
+    "label": "哔哩哔哩 HD"
+  },
+  "com.bilibili.app.in": {
+    "target": "tv.danmaku.bili",
+    "label": "哔哩哔哩 (Play)"
+  },
+  "com.zhihu.android": {
+    "label": "知乎",
+    "format": "png",
+    "color": "#0077FF",
+    "overlay": false,
+    "contributors": "PedroZ, fankes"
+  },
+  "com.zhihu.android.lite": {
+    "target": "com.zhihu.android",
+    "label": "知乎极速版",
+    "contributors": "PedroZ, fankes, Slinet6056"
+  },
+  "com.xingin.xhs": {
+    "label": {
+      "en": "rednote",
+      "zh-CN": "小红书"
+    },
+    "format": "png",
+    "color": "#DB2C42",
+    "overlay": false,
+    "contributors": "fankes, ovovov"
+  },
+  "com.xiaomi.shop": {
+    "label": "小米商城",
+    "format": "png",
+    "color": "#E64A19",
+    "overlay": false,
+    "contributors": "lamprose, fankes, NekoMua"
+  },
+  "com.oppo.store": {
+    "label": "OPPO 商城",
+    "format": "png",
+    "color": "#2B6E33",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "me.ele": {
+    "label": "饿了么",
+    "format": "png",
+    "color": "#5A9FEC",
+    "overlay": false,
+    "contributors": "lamprose, fankes"
+  },
+  "com.xiaomi.youpin": {
+    "label": "小米有品",
+    "format": "png",
+    "color": "#EE552A",
+    "overlay": false,
+    "contributors": "lamprose, fankes"
+  },
+  "ctrip.android.view": {
+    "label": "携程",
+    "format": "png",
+    "color": "#3D68D2",
+    "overlay": false,
+    "contributors": "lamprose, fankes"
+  },
+  "info.muge.appshare": {
+    "label": "App分享",
+    "format": "png",
+    "overlay": true,
+    "contributors": "lamprose"
+  },
+  "com.netease.cloudmusic": {
+    "label": "网易云音乐",
+    "format": "png",
+    "color": "#BD0020",
+    "overlay": false,
+    "contributors": "lamprose, fankes"
+  },
+  "com.netease.cloudmusic.lite": {
+    "target": "com.netease.cloudmusic",
+    "label": "网易云音乐极速版",
+    "overlay": true
+  },
+  "com.smzdm.client.android": {
+    "label": "什么值得买",
+    "format": "png",
+    "color": "#CD3935",
+    "overlay": false,
+    "contributors": "lamprose, fankes"
+  },
+  "com.dianping.v1": {
+    "label": "大众点评",
+    "format": "png",
+    "color": "#FF6633",
+    "overlay": false,
+    "contributors": "fankes, piscesmk2013"
+  },
+  "com.miui.video": {
+    "label": "小米视频",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.heytap.yoli": {
+    "target": "com.miui.video",
+    "label": "欢太视频"
+  },
+  "com.tencent.qqlive": {
+    "label": "腾讯视频",
+    "format": "png",
+    "color": "#E06639",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.qqmusic": {
+    "label": {
+      "en": "QQMusic",
+      "zh-CN": "QQ音乐"
+    },
+    "format": "png",
+    "color": "#29CBB6",
+    "overlay": false,
+    "contributors": "fankes, naicfeng"
+  },
+  "com.kugou.android": {
+    "label": "酷狗音乐",
+    "format": "png",
+    "color": "#5493CA",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.sdu.didi.psnger": {
+    "label": {
+      "en": "DiDi",
+      "zh-CN": "滴滴出行"
+    },
+    "format": "png",
+    "color": "#EAA833",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "com.cainiao.wireless": {
+    "label": "菜鸟",
+    "format": "png",
+    "color": "#4478EE",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.duokan.reader": {
+    "label": "多看阅读",
+    "format": "png",
+    "color": "#F28B3F",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.taobao.idlefish": {
+    "label": "闲鱼",
+    "format": "png",
+    "color": "#FFE610",
+    "overlay": false,
+    "contributors": "PedroZ, fankes"
+  },
+  "com.sankuai.meituan": {
+    "label": "美团",
+    "format": "png",
+    "color": "#F7BD00",
+    "overlay": true,
+    "contributors": "fankes, Gregorywx"
+  },
+  "com.sankuai.meituan.takeoutnew": {
+    "label": "美团外卖",
+    "format": "png",
+    "color": "#FFD100",
+    "overlay": true,
+    "contributors": "fankes, Gregorywx"
+  },
+  "com.tencent.androidqqmail": {
+    "label": {
+      "en": "QQmail",
+      "zh-CN": "QQ邮箱"
+    },
+    "format": "png",
+    "color": "#FABB09",
+    "overlay": false,
+    "contributors": "fankes, PedroZ"
+  },
+  "com.xiaomi.smarthome": {
+    "label": {
+      "en": "Xiaomi Home",
+      "zh-CN": "米家"
+    },
+    "format": "png",
+    "color": "#5FCE6E",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.qidian.QDReader": {
+    "label": "起点读书",
+    "format": "png",
+    "color": "#EE2334",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.autonavi.minimap": {
+    "label": {
+      "en": "AMap Global",
+      "zh-CN": "高德地图"
+    },
+    "format": "png",
+    "color": "#5292F9",
+    "overlay": false,
+    "contributors": "fankes, PedroZ"
+  },
+  "com.baidu.BaiduMap": {
+    "label": "百度地图",
+    "format": "png",
+    "color": "#277DF7",
+    "overlay": false,
+    "contributors": "fankes, PedroZ"
+  },
+  "cmb.pb": {
+    "label": "招商银行",
+    "format": "png",
+    "color": "#AB1B31",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.peopledailychina.activity": {
+    "label": "人民日报",
+    "format": "png",
+    "color": "#C9151D",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.ruguoapp.jike": {
+    "label": "即刻",
+    "format": "png",
+    "color": "#FFE411",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.jingdong.app.mall": {
+    "label": "京东",
+    "format": "png",
+    "color": "#EF0000",
+    "overlay": false,
+    "contributors": "fankes, YifePlayte"
+  },
+  "com.xunmeng.pinduoduo": {
+    "label": "拼多多",
+    "format": "png",
+    "color": "#D10006",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.jd.pingou": {
+    "label": "京喜",
+    "format": "png",
+    "color": "#F26C00",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.qt.qtl": {
+    "label": "掌上英雄联盟",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.cctv.yangshipin.app.androidp": {
+    "label": "央视频",
+    "format": "png",
+    "color": "#D80010",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.baidu.netdisk": {
+    "label": "百度网盘",
+    "format": "png",
+    "color": "#58C6FF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.jd.jdlite": {
+    "target": "com.jingdong.app.mall",
+    "label": "京东极速版"
+  },
+  "com.qiyi.video": {
+    "label": "爱奇艺",
+    "format": "png",
+    "color": "#4CC000",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.chinamworld.main": {
+    "label": "中国建设银行",
+    "format": "png",
+    "color": "#233D8C",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.duowan.kiwi": {
+    "label": "虎牙直播",
+    "format": "png",
+    "color": "#F6AB00",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.huya.kiwi": {
+    "target": "com.duowan.kiwi",
+    "label": "虎牙直播 (Play)"
+  },
+  "com.unionpay": {
+    "label": "云闪付",
+    "format": "png",
+    "color": "#CF0002",
+    "overlay": false,
+    "contributors": "fankes, scrpr, ovovov"
+  },
+  "com.icbc": {
+    "label": "中国工商银行",
+    "format": "png",
+    "color": "#A90000",
+    "overlay": false,
+    "contributors": "fankes, naicfeng"
+  },
+  "com.android.bankabc": {
+    "label": "中国农业银行",
+    "format": "png",
+    "color": "#67C1A4",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "statusbar.lyric": {
+    "label": "墨•状态栏歌词",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.ygkj.chelaile.standard": {
+    "label": "车来了",
+    "format": "png",
+    "color": "#3E6DEB",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.qq.qcloud": {
+    "label": "腾讯微云",
+    "format": "png",
+    "color": "#4081FF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "cn.xiaochuankeji.tieba": {
+    "label": "最右",
+    "format": "png",
+    "color": "#FDF001",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.chaoxing.mobile": {
+    "label": "学习通",
+    "format": "png",
+    "color": "#CF0003",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.nijigen": {
+    "label": "波洞",
+    "format": "png",
+    "color": "#EF0025",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.bilibili.comic": {
+    "label": "哔哩哔哩漫画",
+    "format": "png",
+    "color": "#D3618A",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.umetrip.android.msky.app": {
+    "label": {
+      "en": "Umetrip",
+      "zh-CN": "航旅纵横"
+    },
+    "format": "png",
+    "color": "#64AC32",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.umetrip.android.msky.huawei": {
+    "target": "com.umetrip.android.msky.app",
+    "label": {
+      "en": "Umetrip Pro",
+      "zh-CN": "航旅纵横Pro"
+    },
+    "contributors": "fankes, PedroZ"
+  },
+  "com.mihoyo.hyperion": {
+    "label": "米游社",
+    "format": "png",
+    "color": "#6BA8E8",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.xiaomi.hm.health": {
+    "label": {
+      "en": "Zepp Life",
+      "zh-CN": "小米运动"
+    },
+    "format": "png",
+    "color": "#EF5000",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.alibaba.android.rimet": {
+    "label": {
+      "en": "DingDing",
+      "zh-CN": "钉钉"
+    },
+    "format": "png",
+    "color": "#1F9FFD",
+    "overlay": false,
+    "contributors": "PedroZ, fankes"
+  },
+  "com.lemon.lv": {
+    "label": "剪映",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.lianjia.beike": {
+    "label": "贝壳找房",
+    "format": "png",
+    "color": "#2F77FF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.kiteguard": {
+    "label": "风筝守护",
+    "format": "png",
+    "color": "#4BB89B",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.xt.retouch": {
+    "label": "醒图",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.mi.health": {
+    "label": "小米运动健康",
+    "format": "png",
+    "color": "#FF5329",
+    "overlay": false,
+    "contributors": "fankes, PianCat"
+  },
+  "com.tencent.gamehelper.smoba": {
+    "label": "王者营地",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.xiaomi.jr": {
+    "label": "小米金融",
+    "format": "png",
+    "color": "#DD5333",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.dragon.read": {
+    "label": "番茄免费小说",
+    "format": "png",
+    "color": "#D81E06",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.hexin.plat.android": {
+    "label": "同花顺",
+    "format": "png",
+    "color": "#B71C21",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "cn.com.sina.finance": {
+    "label": "新浪财经",
+    "format": "png",
+    "color": "#E80000",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.xueqiu.android": {
+    "label": "雪球",
+    "format": "png",
+    "color": "#3F7EFF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.wework": {
+    "label": {
+      "en": "WeCom",
+      "zh-CN": "企业微信"
+    },
+    "format": "png",
+    "color": "#3380F2",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "top.tdtt.news": {
+    "label": "消息接收",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.wemeet.app": {
+    "label": "腾讯会议",
+    "format": "png",
+    "color": "#2F77FF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.netease.edu.ucmooc": {
+    "label": "中国大学 MOOC",
+    "format": "png",
+    "color": "#27AF50",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "tv.acfundanmaku.video": {
+    "label": "AcFun",
+    "format": "png",
+    "color": "#C92330",
+    "overlay": false,
+    "contributors": "scrpr, fankes"
+  },
+  "com.wisedu.cpdaily": {
+    "label": "今日校园",
+    "format": "png",
+    "color": "#DC4748",
+    "overlay": false,
+    "contributors": "scrpr, fankes"
+  },
+  "com.chinamworld.bocmbci": {
+    "label": "中国银行",
+    "format": "png",
+    "color": "#B62934",
+    "overlay": false,
+    "contributors": "scrpr, fankes"
+  },
+  "com.vgjump.jump": {
+    "label": "Jump",
+    "format": "png",
+    "color": "#FF3A48",
+    "overlay": false,
+    "contributors": "sddpljx, naicfeng"
+  },
+  "com.hupu.games": {
+    "label": "虎扑",
+    "format": "png",
+    "color": "#C50000",
+    "overlay": false,
+    "contributors": "sddpljx, naicfeng"
+  },
+  "com.ruanmei.ithome": {
+    "label": "IT之家",
+    "format": "png",
+    "color": "#D22222",
+    "overlay": false,
+    "contributors": "sddpljx, naicfeng"
+  },
+  "com.netease.mail": {
+    "label": {
+      "en": "Mail Master",
+      "zh-CN": "网易邮箱大师"
+    },
+    "format": "png",
+    "color": "#EC1A1C",
+    "overlay": false,
+    "contributors": "naicfeng, fankes"
+  },
+  "com.alicloud.databox": {
+    "label": "阿里云盘",
+    "format": "png",
+    "color": "#637FFD",
+    "overlay": false,
+    "contributors": "HeMing505, naicfeng"
+  },
+  "com.baidu.tieba": {
+    "label": "百度贴吧",
+    "format": "png",
+    "color": "#5584F9",
+    "overlay": false,
+    "contributors": "fankes, ovovov"
+  },
+  "com.sup.android.superb": {
+    "label": "皮皮虾",
+    "format": "png",
+    "color": "#B24C75",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.zhaopin.social": {
+    "label": "智联招聘",
+    "format": "png",
+    "color": "#0829F8",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.jd.jrapp": {
+    "label": "京东金融",
+    "format": "png",
+    "color": "#BF9964",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.manmanbuy.bijia": {
+    "label": "慢慢买",
+    "format": "png",
+    "color": "#D64800",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.hupu.shihuo": {
+    "label": "识货",
+    "format": "png",
+    "color": "#D72324",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.hpbr.bosszhipin": {
+    "label": "BOSS直聘",
+    "format": "png",
+    "color": "#5CC8C6",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "air.tv.douyu.android": {
+    "label": "斗鱼",
+    "format": "png",
+    "color": "#FF6C2D",
+    "overlay": false,
+    "contributors": "sddpljx"
+  },
+  "com.iflytek.inputmethod": {
+    "label": "讯飞输入法",
+    "format": "png",
+    "color": "#4679E9",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.qq.reader": {
+    "label": "QQ阅读",
+    "format": "png",
+    "color": "#45AFFF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.mtt": {
+    "label": "QQ浏览器",
+    "format": "png",
+    "color": "#6593F1",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.MobileTicket": {
+    "label": "铁路12306",
+    "format": "png",
+    "color": "#D0070D",
+    "overlay": false,
+    "contributors": "sddpljx"
+  },
+  "com.greenpoint.android.mc10086.activity": {
+    "label": "中国移动",
+    "format": "png",
+    "color": "#008CD9",
+    "overlay": false,
+    "contributors": "sddpljx"
+  },
+  "com.kingpoint.gmcchh": {
+    "target": "com.greenpoint.android.mc10086.activity",
+    "label": "广东移动",
+    "contributors": "sddpljx, PedroZ"
+  },
+  "com.sinovatech.unicom.ui": {
+    "label": "中国联通",
+    "format": "png",
+    "color": "#ED1A34",
+    "overlay": false,
+    "contributors": "sddpljx"
+  },
+  "com.alibaba.wireless": {
+    "label": "阿里巴巴",
+    "format": "png",
+    "color": "#FF7300",
+    "overlay": false,
+    "contributors": "sddpljx, moonbai"
+  },
+  "com.flightmanager.view": {
+    "label": "航班管家",
+    "format": "png",
+    "color": "#2987FD",
+    "overlay": false,
+    "contributors": "YifePlayte, naicfeng"
+  },
+  "com.github.kr328.clash": {
+    "label": "Clash for Android",
+    "format": "png",
+    "color": "#2A4677",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "com.ss.android.article.news": {
+    "label": "今日头条",
+    "format": "png",
+    "color": "#B9240A",
+    "overlay": false,
+    "contributors": "fankes, ovovov"
+  },
+  "com.ss.android.article.lite": {
+    "target": "com.ss.android.article.news",
+    "label": "今日头条极速版"
+  },
+  "com.yek.android.kfc.activitys": {
+    "label": "肯德基",
+    "format": "png",
+    "color": "#FF0024",
+    "overlay": false,
+    "contributors": "scrpr"
+  },
+  "com.baidu.searchbox": {
+    "label": "百度",
+    "format": "png",
+    "color": "#496CFB",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.wuba": {
+    "label": "58同城",
+    "format": "png",
+    "color": "#CD5520",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.news": {
+    "label": "腾讯新闻",
+    "format": "png",
+    "color": "#5495D0",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.mcdonalds.gma.cn": {
+    "label": "麦当劳",
+    "format": "png",
+    "color": "#FFBC0D",
+    "overlay": false,
+    "contributors": "scrpr"
+  },
+  "cn.xuexi.android": {
+    "label": "学习强国",
+    "format": "png",
+    "color": "#C42314",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "world.letsgo.booster.android.pro": {
+    "label": "LetsVPN",
+    "format": "png",
+    "overlay": true,
+    "contributors": "daifiyum"
+  },
+  "com.lynkco.customer": {
+    "label": "LynkCo",
+    "format": "png",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "com.Qunar": {
+    "label": "去哪儿旅行",
+    "format": "png",
+    "color": "#19D2DC",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.estrongs.android.pop": {
+    "label": "ES文件浏览器",
+    "format": "png",
+    "color": "#59C3EF",
+    "overlay": false,
+    "contributors": "Longli928"
+  },
+  "com.sing.client": {
+    "label": "5sing原创音乐",
+    "format": "png",
+    "color": "#5AC3EF",
+    "overlay": false,
+    "contributors": "Longli928"
+  },
+  "com.ss.android.article.video": {
+    "label": "西瓜视频",
+    "format": "png",
+    "color": "#DA1D3F",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.lucky.luckyclient": {
+    "label": "瑞幸咖啡",
+    "format": "png",
+    "color": "#172991",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.nowcasting.activity": {
+    "label": "彩云天气",
+    "format": "png",
+    "color": "#E69307",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.thestore.main": {
+    "label": "1号店",
+    "format": "png",
+    "color": "#F44416",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "tc.everphoto": {
+    "label": "时光相册",
+    "format": "png",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.taobao.etao": {
+    "label": "一淘",
+    "format": "png",
+    "color": "#D73748",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.ximalaya.ting.android": {
+    "label": "喜马拉雅",
+    "format": "png",
+    "color": "#FA2800",
+    "overlay": false,
+    "contributors": "fankes, piscesmk2013"
+  },
+  "com.ct.client": {
+    "label": "电信营业厅",
+    "format": "png",
+    "color": "#345CA1",
+    "overlay": false,
+    "contributors": "Ondiep, fankes"
+  },
+  "com.tencent.gamehelper.dnf": {
+    "label": "DNF助手",
+    "format": "png",
+    "overlay": false,
+    "contributors": "Ondiep"
+  },
+  "com.pupumall.customer": {
+    "label": "朴朴",
+    "format": "png",
+    "color": "#25C867",
+    "overlay": false,
+    "contributors": "fankes, troublewind"
+  },
+  "com.mylrc.mymusic": {
+    "label": "歌词适配",
+    "format": "png",
+    "color": "#84CDFE",
+    "overlay": false,
+    "contributors": "Longli928"
+  },
+  "com.xiaomi.mimobile": {
+    "label": "小米移动",
+    "format": "png",
+    "color": "#76BBF3",
+    "overlay": false,
+    "contributors": "Longli928"
+  },
+  "com.tencent.karaoke": {
+    "label": "全民K歌",
+    "format": "png",
+    "color": "#F2564A",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.cn21.ecloud": {
+    "label": "天翼云盘",
+    "format": "png",
+    "color": "#28A0FB",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "bin.mt.plus": {
+    "label": "MT管理器",
+    "format": "png",
+    "color": "#444444",
+    "overlay": true,
+    "contributors": "fankes, xl0911xx, PedroZ"
+  },
+  "bin.mt.plus.canary": {
+    "target": "bin.mt.plus",
+    "label": "MT管理器 (Beta)",
+    "contributors": "PedroZ"
+  },
+  "com.achievo.vipshop": {
+    "label": "唯品会",
+    "format": "png",
+    "color": "#C1097D",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.eastmoney.android.berlin": {
+    "label": "东方财富",
+    "format": "png",
+    "color": "#FF4400",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.homelink.im": {
+    "label": "Link.",
+    "format": "png",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.xindong.rocket": {
+    "label": "Tap加速器",
+    "format": "png",
+    "color": "#23262F",
+    "overlay": false,
+    "contributors": "scrpr"
+  },
+  "com.immomo.momo": {
+    "label": "MOMO陌陌",
+    "format": "png",
+    "color": "#F85FC9",
+    "overlay": false,
+    "contributors": "Longli928"
+  },
+  "com.huawei.health": {
+    "label": {
+      "en": "HUAWEI Health",
+      "zh-CN": "华为运动健康"
+    },
+    "format": "png",
+    "color": "#FFC070",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "cn.dxy.android.aspirin": {
+    "label": "丁香医生",
+    "format": "png",
+    "color": "#8C76FF",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.gwdang.app": {
+    "label": "购物党",
+    "format": "png",
+    "color": "#4DC4B1",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.eusoft.ting.en": {
+    "label": "每日英语听力",
+    "format": "png",
+    "color": "#2B99D7",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.eusoft.ting.fr": {
+    "target": "com.eusoft.ting.en",
+    "label": "每日法语听力",
+    "color": "#004FF6",
+    "contributors": "HeMing505, scrpr"
+  },
+  "com.uneed.yuni": {
+    "label": "与你",
+    "format": "png",
+    "color": "#0076FF",
+    "overlay": false,
+    "contributors": "TOBY"
+  },
+  "com.huawei.hwid": {
+    "label": "HMS Core",
+    "format": "png",
+    "color": "#DE5552",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.cndatacom.campus.cdccportalgd": {
+    "label": "广东校园",
+    "format": "png",
+    "color": "#FEBD0E",
+    "overlay": false,
+    "contributors": "SRainerc"
+  },
+  "com.max.xiaoheihe": {
+    "label": "小黑盒",
+    "format": "png",
+    "color": "#212121",
+    "overlay": true,
+    "contributors": "SRainerc, NekoMua"
+  },
+  "com.yek.android.uniqlo": {
+    "label": "优衣库",
+    "format": "png",
+    "color": "#E70012",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.cmbchina.ccd.pluto.cmbActivity": {
+    "label": "掌上生活",
+    "format": "png",
+    "color": "#EF3F3D",
+    "overlay": false,
+    "contributors": "HeMing505, piscesmk2013"
+  },
+  "com.xuanke.kaochong": {
+    "label": "考虫",
+    "format": "png",
+    "color": "#F5D01D",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.tongcheng.android": {
+    "label": "同程旅行",
+    "format": "png",
+    "color": "#5604A7",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.tencent.weread": {
+    "label": "微信读书",
+    "format": "png",
+    "color": "#31A6FF",
+    "overlay": false,
+    "contributors": "SRainerc"
+  },
+  "com.fenbi.android.servant": {
+    "label": "粉笔职教",
+    "format": "png",
+    "color": "#3C7CFC",
+    "overlay": false,
+    "contributors": "SRainerc"
+  },
+  "com.baidu.netdisk.samsung": {
+    "target": "com.baidu.netdisk",
+    "label": "百度网盘三星版",
+    "contributors": "fankes, TOBY"
+  },
+  "com.boohee.one": {
+    "label": "薄荷健康",
+    "format": "png",
+    "color": "#00C4B3",
+    "overlay": false,
+    "contributors": "SRainerc"
+  },
+  "com.maimemo.android.momo": {
+    "label": "墨墨背单词",
+    "format": "png",
+    "color": "#323232",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.icbc.elife": {
+    "label": "工银e生活",
+    "format": "png",
+    "color": "#C5050C",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.youku.phone": {
+    "label": {
+      "en": "YOUKU",
+      "zh-CN": "优酷"
+    },
+    "format": "png",
+    "color": "#FF0F6C",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.xunlei.downloadprovider": {
+    "label": "迅雷",
+    "format": "png",
+    "color": "#014FFF",
+    "overlay": false,
+    "contributors": "SRainerc"
+  },
+  "com.weico.international": {
+    "label": "微博国际版",
+    "format": "png",
+    "color": "#DF1F28",
+    "overlay": false,
+    "contributors": "fankes, Gregorywx"
+  },
+  "net.whty.app.eyu.yangzhou": {
+    "label": "扬州智慧学堂",
+    "format": "png",
+    "color": "#139FEC",
+    "overlay": false,
+    "contributors": "TOBY"
+  },
+  "com.lenovo.club.app": {
+    "label": "联想智选",
+    "format": "png",
+    "color": "#E85845",
+    "overlay": false,
+    "contributors": "troublewind"
+  },
+  "com.douban.frodo": {
+    "label": "豆瓣",
+    "format": "png",
+    "color": "#00B51D",
+    "overlay": false,
+    "contributors": "Gregorywx"
+  },
+  "cn.gov.pbc.dcep": {
+    "label": "数字人民币",
+    "format": "png",
+    "color": "#FE0000",
+    "overlay": false,
+    "contributors": "Gregorywx"
+  },
+  "cn.damai": {
+    "label": "大麦",
+    "format": "png",
+    "color": "#FF2969",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.fcbox.hiveconsumer": {
+    "label": "丰巢",
+    "format": "png",
+    "color": "#8AD32A",
+    "overlay": true,
+    "contributors": "HeMing505"
+  },
+  "com.bankcomm.Bankcomm": {
+    "label": "交通银行",
+    "format": "png",
+    "color": "#00367A",
+    "overlay": false,
+    "contributors": "troublewind"
+  },
+  "com.haier.uhome.uplus": {
+    "label": "海尔智家",
+    "format": "png",
+    "color": "#2D6AFA",
+    "overlay": false,
+    "contributors": "troublewind"
+  },
+  "com.sanron.twspopup": {
+    "label": "EasyPop",
+    "format": "png",
+    "color": "#03A9F4",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.gome.eshopnew": {
+    "label": "真快乐",
+    "format": "png",
+    "color": "#630091",
+    "overlay": false,
+    "contributors": "dreamy"
+  },
+  "com.cmcc.cmvideo": {
+    "label": "咪咕视频",
+    "format": "png",
+    "color": "#00BBFF",
+    "overlay": false,
+    "contributors": "dreamy"
+  },
+  "com.vmos.pro": {
+    "label": "VMOS Pro",
+    "format": "png",
+    "color": "#51C0FA",
+    "overlay": false,
+    "contributors": "dreamy"
+  },
+  "com.kugou.android.lite": {
+    "label": "酷狗概念版",
+    "format": "png",
+    "color": "#5493CA",
+    "overlay": false,
+    "contributors": "fankes, dreamy"
+  },
+  "com.jingyao.easybike": {
+    "label": "哈啰出行",
+    "format": "png",
+    "color": "#04A5EB",
+    "overlay": false,
+    "contributors": "fankes, AzusaHana"
+  },
+  "com.yitong.mbank.psbc": {
+    "label": "邮储银行",
+    "format": "png",
+    "color": "#42734B",
+    "overlay": false,
+    "contributors": "dreamy"
+  },
+  "com.sf.activity": {
+    "label": "顺丰快递",
+    "format": "png",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.mc.miband1": {
+    "label": "Notify for Mi Band",
+    "format": "png",
+    "color": "#1195F5",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.heytap.health": {
+    "label": "欢太健康",
+    "format": "png",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.njh.biubiu": {
+    "label": "biubiu加速器",
+    "format": "png",
+    "color": "#08CBF7",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.srcbox.file": {
+    "label": "山盒",
+    "format": "png",
+    "color": "#2682FF",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.taobao.movie.android": {
+    "label": "淘票票",
+    "format": "png",
+    "color": "#F3353E",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.tianyancha.skyeye": {
+    "label": "天眼查企业查询",
+    "format": "png",
+    "color": "#0084FF",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.x2era.xcloud.app": {
+    "label": "Fa米家",
+    "format": "png",
+    "color": "#9AE5BA",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "cn.ninebot.ninebot": {
+    "label": "九号出行",
+    "format": "png",
+    "color": "#1E1C1D",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.fdg.flashplay.farsee": {
+    "label": "飞智游戏厅",
+    "format": "png",
+    "color": "#0074FF",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.iflyrec.tjapp": {
+    "label": "讯飞听见",
+    "format": "png",
+    "color": "#0D1C38",
+    "overlay": false,
+    "contributors": "scrpr"
+  },
+  "com.gotokeep.keep": {
+    "label": "Keep",
+    "format": "png",
+    "color": "#5B4C73",
+    "overlay": false,
+    "contributors": "scrpr"
+  },
+  "com.soft.blued": {
+    "label": "Blued",
+    "format": "png",
+    "color": "#3B8FFF",
+    "overlay": false,
+    "contributors": "sY-2840216, fankes, lns103"
+  },
+  "com.youdao.translator": {
+    "label": "有道翻译官",
+    "format": "png",
+    "color": "#000000",
+    "overlay": false,
+    "contributors": "bh39"
+  },
+  "com.honeybee.newapp": {
+    "label": "蜜蜂加速器",
+    "format": "png",
+    "overlay": false,
+    "contributors": "bh39"
+  },
+  "com.daimajia.gold": {
+    "label": "稀土掘金",
+    "format": "png",
+    "color": "#5585FC",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.baidu.youavideo": {
+    "label": "一刻相册",
+    "format": "png",
+    "color": "#6540F2",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.eoffcn.questions": {
+    "label": "中公题库",
+    "format": "png",
+    "color": "#C70218",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.theotino.chinadaily": {
+    "label": "China Daily",
+    "format": "png",
+    "color": "#083E6E",
+    "overlay": false,
+    "contributors": "scrpr"
+  },
+  "com.ss.android.auto": {
+    "label": "懂车帝",
+    "format": "png",
+    "color": "#F1CB44",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tmri.app.main": {
+    "label": "交管12123",
+    "format": "png",
+    "color": "#4B83FF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.shizhuang.duapp": {
+    "label": "得物",
+    "format": "png",
+    "color": "#232323",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "cn.soulapp.android": {
+    "label": "Soul",
+    "format": "png",
+    "color": "#2A2A2A",
+    "overlay": false,
+    "contributors": "fankes, NekoMua, zxxx5902"
+  },
+  "com.p1.mobile.putong": {
+    "label": {
+      "en": "Tantan",
+      "zh-CN": "探探"
+    },
+    "format": "png",
+    "color": "#DE6819",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.feiniaobt": {
+    "label": "飞鸟下载器",
+    "format": "png",
+    "color": "#65AFCC",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.netease.uu": {
+    "label": {
+      "en": "UU Game Booster",
+      "zh-CN": "UU加速器"
+    },
+    "format": "png",
+    "color": "#42D7CD",
+    "overlay": false,
+    "contributors": "sddpljx"
+  },
+  "com.netease.uurouter": {
+    "label": "UU主机加速",
+    "format": "png",
+    "color": "#42D7CD",
+    "overlay": false,
+    "contributors": "sddpljx"
+  },
+  "com.sohu.supermarie": {
+    "label": "摸鱼kik",
+    "format": "png",
+    "color": "#825EC2",
+    "overlay": false,
+    "contributors": "Mars, fankes"
+  },
+  "com.niu.cloud": {
+    "label": {
+      "en": "NIU",
+      "zh-CN": "小牛电动"
+    },
+    "format": "png",
+    "color": "#CB0006",
+    "overlay": false,
+    "contributors": "Absinthe"
+  },
+  "com.icbc.im": {
+    "label": "工银融e联",
+    "format": "png",
+    "color": "#A7000D",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.benten.jiankong": {
+    "label": "联通流量助手",
+    "format": "png",
+    "color": "#6586F0",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.codoon.gps": {
+    "label": "咕咚",
+    "format": "png",
+    "color": "#71C67B",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.chaozh.iReaderFree": {
+    "label": "掌阅",
+    "format": "png",
+    "color": "#5496D7",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.videogo": {
+    "label": "萤石云视频",
+    "format": "png",
+    "color": "#C41971",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.edu": {
+    "label": "腾讯课堂",
+    "format": "png",
+    "color": "#2080F7",
+    "overlay": false,
+    "contributors": "leoli"
+  },
+  "com.ysy.fivegswitcher": {
+    "label": "5G开关",
+    "format": "png",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.ss.android.lark": {
+    "label": "飞书",
+    "format": "png",
+    "color": "#3370FF",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.smk": {
+    "label": "杭州市民卡",
+    "format": "png",
+    "color": "#21AF01",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.application.limits": {
+    "label": "时间锁",
+    "format": "png",
+    "color": "#58D9B3",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.netease.newsreader.activity": {
+    "label": "网易新闻",
+    "format": "png",
+    "color": "#D21112",
+    "overlay": false,
+    "contributors": "Basstorm"
+  },
+  "com.pushdeer.os": {
+    "label": "PushDeer",
+    "format": "png",
+    "color": "#3B4688",
+    "overlay": false,
+    "contributors": "Basstorm"
+  },
+  "com.onethingcloud.android": {
+    "label": "网心云",
+    "format": "png",
+    "color": "#E5C082",
+    "overlay": false,
+    "contributors": "Basstorm"
+  },
+  "com.lalamove.huolala.client": {
+    "label": {
+      "en": "Lalamove",
+      "zh-CN": "货拉拉"
+    },
+    "format": "png",
+    "color": "#FF6801",
+    "overlay": false,
+    "contributors": "Mars"
+  },
+  "com.tencent.cmocmna": {
+    "label": "腾讯手游加速器",
+    "format": "png",
+    "color": "#6DE9F1",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.maxxipoint.android": {
+    "label": "集享联盟",
+    "format": "png",
+    "color": "#F82E3E",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.goertek.mosmobile": {
+    "label": "微电子移动门户",
+    "format": "png",
+    "color": "#407AB9",
+    "overlay": false,
+    "contributors": "Mars"
+  },
+  "com.clipboard.manager": {
+    "label": "快贴",
+    "format": "png",
+    "overlay": false,
+    "contributors": "ZhangCe"
+  },
+  "com.lofter.android": {
+    "label": "LOFTER",
+    "format": "png",
+    "color": "#009C94",
+    "overlay": false,
+    "contributors": "MisakiAkeno233, jasongzy"
+  },
+  "com.vphonegaga.titan": {
+    "label": "光速虚拟机",
+    "format": "png",
+    "color": "#4157FF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.xwtec.sd.mobileclient": {
+    "target": "com.greenpoint.android.mc10086.activity",
+    "label": "山东移动",
+    "contributors": "Sontrol"
+  },
+  "com.fooview.android.fooview": {
+    "label": "FV悬浮球",
+    "format": "png",
+    "color": "#B40059",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.alibaba.aliyun": {
+    "label": "阿里云",
+    "format": "png",
+    "color": "#F15D00",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.yikaobang.yixue": {
+    "label": "医考帮",
+    "format": "png",
+    "color": "#F04D3E",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.baidu.homework": {
+    "label": "作业帮",
+    "format": "png",
+    "color": "#D73F38",
+    "overlay": false,
+    "contributors": "Sontrol"
+  },
+  "com.xiachufang": {
+    "label": "下厨房",
+    "format": "png",
+    "color": "#E53124",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.sohu.sohuvideo": {
+    "label": "搜狐视频",
+    "format": "png",
+    "color": "#EE5257",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.ponyemu.main": {
+    "label": "小马模拟器",
+    "format": "png",
+    "color": "#55B97D",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "net.treehollow.treehalo.app": {
+    "label": "抒发森林",
+    "format": "png",
+    "color": "#52A23F",
+    "overlay": false,
+    "contributors": "scrpr"
+  },
+  "com.pingan.lifecircle": {
+    "label": "平安好生活",
+    "format": "png",
+    "color": "#E83818",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.cam.geely": {
+    "label": "吉行小助手",
+    "format": "png",
+    "color": "#15A1DE",
+    "overlay": false,
+    "contributors": "fankes, NekoMua"
+  },
+  "com.pingan.carowner": {
+    "label": "平安好车主",
+    "format": "png",
+    "color": "#F87828",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.yibasan.lizhifm": {
+    "label": "荔枝",
+    "format": "png",
+    "color": "#F05880",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.qqsports": {
+    "label": "腾讯体育",
+    "format": "png",
+    "color": "#1868E0",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.yitong.zjrc.mfs.android": {
+    "label": "丰收互联",
+    "format": "png",
+    "color": "#10D0E8",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.cubic.autohome": {
+    "label": "汽车之家",
+    "format": "png",
+    "color": "#1060E0",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.psyone.brainmusic": {
+    "label": "小睡眠",
+    "format": "png",
+    "color": "#5A5BCF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.jym.mallcom.jym.mall": {
+    "label": "交易猫",
+    "format": "png",
+    "color": "#F8E048",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.dudiangushi.dudiangushi": {
+    "label": "每天读点故事",
+    "format": "png",
+    "color": "#50D8C8",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.bankcomm.maidanba": {
+    "label": "买单吧",
+    "format": "png",
+    "color": "#017AFF",
+    "overlay": false,
+    "contributors": "adminisfucker, jasongzy"
+  },
+  "com.dada.mobile.android": {
+    "label": "达达骑士版",
+    "format": "png",
+    "color": "#1086FF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.taptap": {
+    "label": "TapTap",
+    "format": "png",
+    "color": "#38C0D0",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.heytap.headset": {
+    "label": "欢律",
+    "format": "png",
+    "color": "#143046",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.taobao.trip": {
+    "label": "飞猪旅行",
+    "format": "png",
+    "color": "#FFC32F",
+    "overlay": false,
+    "contributors": "轻寒醉歌"
+  },
+  "com.kingsoft.android.cat": {
+    "label": "玲珑密保锁",
+    "format": "png",
+    "color": "#FF9E00",
+    "overlay": false,
+    "contributors": "轻寒醉歌"
+  },
+  "cn.cntv": {
+    "label": "央视影音",
+    "format": "png",
+    "color": "#C70620",
+    "overlay": false,
+    "contributors": "轻寒醉歌"
+  },
+  "com.yy.dreamer": {
+    "label": "追玩",
+    "format": "png",
+    "color": "#7754FF",
+    "overlay": false,
+    "contributors": "轻寒醉歌"
+  },
+  "com.xiaomi.router": {
+    "label": "小米 WiFi",
+    "format": "png",
+    "color": "#4981EE",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "cn.tape.tapeapp": {
+    "label": "Tape",
+    "format": "png",
+    "color": "#57D0B7",
+    "overlay": false,
+    "contributors": "leoli"
+  },
+  "com.tuya.smartiot": {
+    "label": "涂鸦智能",
+    "format": "png",
+    "color": "#F16033",
+    "overlay": false,
+    "contributors": "fankes, by32mu"
+  },
+  "com.caict.xingchengka": {
+    "label": "通信行程卡",
+    "format": "png",
+    "color": "#4FAA6A",
+    "overlay": false,
+    "contributors": "fankes, by32mu"
+  },
+  "com.yxer.packageinstalles": {
+    "label": "R-安装组件",
+    "format": "png",
+    "color": "#0DC765",
+    "overlay": true,
+    "contributors": "66Leo66"
+  },
+  "com.xuexiaoyi.xxy": {
+    "label": "学小易",
+    "format": "png",
+    "color": "#F16033",
+    "overlay": false,
+    "contributors": "fankes, by32mu"
+  },
+  "com.auto.greenskipad": {
+    "label": "绿去广告",
+    "format": "png",
+    "color": "#00B574",
+    "overlay": false,
+    "contributors": "fankes, by32mu, jasongzy"
+  },
+  "com.campmobile.snowcamera": {
+    "label": "B612",
+    "format": "png",
+    "color": "#59B3B8",
+    "overlay": false,
+    "contributors": "fankes, by32mu, jasongzy"
+  },
+  "com.sankuai.meituan.merchant": {
+    "target": "com.sankuai.meituan",
+    "label": "美团开店宝",
+    "color": "#FBDD35",
+    "overlay": false
+  },
+  "com.htinns": {
+    "label": "华住会",
+    "format": "png",
+    "color": "#4B336F",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.mxbc.mxsa": {
+    "label": "蜜雪冰城",
+    "format": "png",
+    "color": "#E70012",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.puscene.client": {
+    "label": "美味不用等",
+    "format": "png",
+    "color": "#E63C3C",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.chinatelecom.bestpayclient": {
+    "label": "翼支付",
+    "format": "png",
+    "color": "#FF2151",
+    "overlay": false,
+    "contributors": "fankes, by32mu, jasongzy"
+  },
+  "com.tencent.qt.sns": {
+    "label": "掌上穿越火线",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes, by32mu"
+  },
+  "com.crgt.ilife": {
+    "label": "掌上高铁",
+    "format": "png",
+    "color": "#1064FD",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.ylmf.androidclient": {
+    "label": "115",
+    "format": "png",
+    "color": "#3D78FE",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.yyw.box.androidclient": {
+    "target": "com.ylmf.androidclient",
+    "label": "115大屏版"
+  },
+  "com.netease.snailread": {
+    "label": "网易蜗牛读书",
+    "format": "png",
+    "color": "#963338",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.smartisanos.smartfolder.aoa": {
+    "label": "HandShaker",
+    "format": "png",
+    "color": "#7DAC00",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.smartisan.notes": {
+    "label": "锤子便签",
+    "format": "png",
+    "color": "#DDBD88",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.ziroom.ziroomcustomer": {
+    "label": "自如",
+    "format": "png",
+    "color": "#E03811",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.homelink.android": {
+    "label": "链家",
+    "format": "png",
+    "color": "#00A65A",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.oray.sunlogin": {
+    "label": {
+      "en": "Sunlogin Remote Control",
+      "zh-CN": "向日葵远程控制"
+    },
+    "format": "png",
+    "color": "#FF7247",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.gamersky": {
+    "label": "游民星空",
+    "format": "png",
+    "color": "#EE3834",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "net.ali213.YX": {
+    "label": "游侠网",
+    "format": "png",
+    "color": "#FF6600",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "cn.com.langeasy.LangEasyLexis": {
+    "label": "不背单词",
+    "format": "png",
+    "color": "#E06818",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.eco.global.app": {
+    "label": "ECOVACS HOME",
+    "format": "png",
+    "color": "#005EB8",
+    "overlay": false,
+    "contributors": "leoli"
+  },
+  "com.realtech.xiaocan": {
+    "label": "小蚕荟",
+    "format": "png",
+    "color": "#FF9000",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.yumc.phsuperapp": {
+    "label": "必胜客",
+    "format": "png",
+    "color": "#CF112B",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.tencent.gamecommunity": {
+    "label": "腾讯游戏社区",
+    "format": "png",
+    "color": "#FFE463",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.xayah.databackup": {
+    "label": "数据备份",
+    "format": "png",
+    "color": "#FFA24A",
+    "overlay": false,
+    "contributors": "leoli"
+  },
+  "com.cmri.ercs.yqx": {
+    "label": "中移移动办公",
+    "format": "png",
+    "color": "#0BDBB3",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "app.podcast.cosmos": {
+    "label": "小宇宙",
+    "format": "png",
+    "color": "#50B7DA",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.handsgo.jiakao.android": {
+    "label": "驾考宝典",
+    "format": "png",
+    "color": "#6ACAFF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.chinarainbow.tft": {
+    "label": "天府通",
+    "format": "png",
+    "color": "#059E80",
+    "overlay": false,
+    "contributors": "CredBenz"
+  },
+  "com.sfacg": {
+    "label": "菠萝包轻小说",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.kuangxiangciweimao.novel": {
+    "label": "刺猬猫阅读",
+    "format": "png",
+    "color": "#FFC23D",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.farplace.farpush": {
+    "label": "FarPush",
+    "format": "png",
+    "color": "#1EBB62",
+    "overlay": false,
+    "contributors": "fankes, NekoMua"
+  },
+  "com.example.businesshall": {
+    "target": "com.greenpoint.android.mc10086.activity",
+    "label": "浙江移动手机营业厅",
+    "contributors": "NekoMua"
+  },
+  "cn.kuwo.player": {
+    "label": "酷我音乐",
+    "format": "png",
+    "color": "#FFCD2D",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.henzanapp.miaomiaozhe": {
+    "label": "喵喵折",
+    "format": "png",
+    "color": "#FF2A3C",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.yiyou.ga": {
+    "label": "TT语音",
+    "format": "png",
+    "color": "#2196F3",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.wudaokou.hippo": {
+    "label": "盒马",
+    "format": "png",
+    "color": "#5DADE1",
+    "overlay": false,
+    "contributors": "NekoMua, Gregorywei"
+  },
+  "com.hanweb.android.zhejiang.activity": {
+    "label": "浙里办",
+    "format": "png",
+    "color": "#1492FF",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.netease.gl": {
+    "label": "网易大神",
+    "format": "png",
+    "color": "#1B203E",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.t3go.passenger": {
+    "label": "T3出行",
+    "format": "png",
+    "color": "#FF9800",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.lenovo.smartpan": {
+    "label": "数据守护者",
+    "format": "png",
+    "color": "#F2BC58",
+    "overlay": false,
+    "contributors": "gddhy"
+  },
+  "com.cmi.jegotrip": {
+    "label": {
+      "en": "JegoTrip",
+      "zh-CN": "无忧行"
+    },
+    "format": "png",
+    "color": "#EF2680",
+    "overlay": false,
+    "contributors": "gddhy"
+  },
+  "cn.emagsoftware.gamehall": {
+    "label": "咪咕快游",
+    "format": "png",
+    "color": "#1BB21A",
+    "overlay": false,
+    "contributors": "gddhy"
+  },
+  "com.baidu.duer.superapp": {
+    "label": "小度",
+    "format": "png",
+    "color": "#3D77FC",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.myzaker.ZAKER_Phone": {
+    "label": "ZAKER-扎客新闻",
+    "format": "png",
+    "color": "#F44336",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.bilibili.studio": {
+    "label": "必剪",
+    "format": "png",
+    "color": "#454545",
+    "overlay": false,
+    "contributors": "leoli"
+  },
+  "com.hori.smartcommunity": {
+    "label": "联享家",
+    "format": "png",
+    "color": "#FF672D",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.quark.browser": {
+    "label": "夸克",
+    "format": "png",
+    "color": "#6F64D1",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.alibaba.taurus.zhejiang": {
+    "label": "浙政钉",
+    "format": "png",
+    "color": "#3296FA",
+    "overlay": false,
+    "contributors": "mos1tech"
+  },
+  "com.kuaikan.comic": {
+    "label": "快看",
+    "format": "png",
+    "color": "#FAD53E",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "android.zhibo8": {
+    "label": "直播吧",
+    "format": "png",
+    "color": "#9FA8DA",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.dongqiudi.news": {
+    "label": "懂球帝",
+    "format": "png",
+    "color": "#4CAF50",
+    "overlay": false,
+    "contributors": "NekoMua, chiyema"
+  },
+  "com.zhumaonline.exercise": {
+    "label": "竹马",
+    "format": "png",
+    "color": "#1A82F7",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.anjuke.android.app": {
+    "label": "安居客",
+    "format": "png",
+    "color": "#27C893",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.airbnb.android": {
+    "label": {
+      "en": "Airbnb",
+      "zh-CN": "爱彼迎"
+    },
+    "format": "png",
+    "color": "#E57373",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.fiveplay": {
+    "label": "5EPlay",
+    "format": "png",
+    "overlay": false,
+    "contributors": "ovovov"
+  },
+  "com.zjonline.yuecheng": {
+    "label": "今日越城",
+    "format": "png",
+    "color": "#B10203",
+    "overlay": false,
+    "contributors": "mos1tech"
+  },
+  "com.cmstop.shaoxing": {
+    "label": "越牛新闻",
+    "format": "png",
+    "color": "#E60012",
+    "overlay": false,
+    "contributors": "mos1tech"
+  },
+  "com.zhejiangdaily": {
+    "label": "浙江新闻",
+    "format": "png",
+    "color": "#E6211B",
+    "overlay": false,
+    "contributors": "mos1tech"
+  },
+  "com.chinamcloud.wangjie.a3283eba9fbb2be252ff95aa8df491a9e": {
+    "label": "笛扬新闻",
+    "format": "png",
+    "color": "#1181C3",
+    "overlay": false,
+    "contributors": "mos1tech"
+  },
+  "com.dianshijia.tvlive": {
+    "label": "电视家",
+    "format": "png",
+    "color": "#218AEF",
+    "overlay": false,
+    "contributors": "mos1tech"
+  },
+  "com.alex.e": {
+    "label": "绍兴E网",
+    "format": "png",
+    "color": "#F3CC04",
+    "overlay": false,
+    "contributors": "mos1tech"
+  },
+  "cn.cntvnews": {
+    "label": "央视新闻",
+    "format": "png",
+    "color": "#011967",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.tieyou.train.ark": {
+    "label": "铁友火车票12306抢票",
+    "format": "png",
+    "color": "#FF5722",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.danlan.xiaolan": {
+    "label": "blued极速版",
+    "format": "png",
+    "color": "#2196F3",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.eeo.classin": {
+    "label": "ClassIn",
+    "format": "png",
+    "overlay": true,
+    "contributors": "RFish"
+  },
+  "com.cib.cibmb": {
+    "label": "兴业银行",
+    "format": "png",
+    "color": "#073F94",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.youdao.note": {
+    "label": "有道云笔记",
+    "format": "png",
+    "color": "#2196F3",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.citiccard.mobilebank": {
+    "label": "中信银行-动卡空间",
+    "format": "png",
+    "color": "#EB0000",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.a9second.weilaixi.wlx": {
+    "label": "蔚来校园",
+    "format": "png",
+    "color": "#3495CB",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.liveyap.timehut": {
+    "label": "时光小屋",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.hanweb.android.sdzwfw.activity": {
+    "label": "爱山东",
+    "format": "png",
+    "color": "#C90C04",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.yaya.zone": {
+    "label": "叮咚买菜",
+    "format": "png",
+    "color": "#219242",
+    "overlay": false,
+    "contributors": "Ink"
+  },
+  "com.xhey.xcamera": {
+    "label": "今日水印相机",
+    "format": "png",
+    "color": "#FFDE03",
+    "overlay": false,
+    "contributors": "Ink"
+  },
+  "com.alibaba.ailabs.tg": {
+    "label": "天猫精灵",
+    "format": "png",
+    "color": "#2463F4",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.sangfor.vpn.client.phone": {
+    "label": "EasyConnect",
+    "format": "png",
+    "color": "#A7CE58",
+    "overlay": false,
+    "contributors": "lns103"
+  },
+  "com.hanweb.izhengzhou.android": {
+    "label": "郑好办",
+    "format": "png",
+    "color": "#FF0000",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.youdao.dict": {
+    "label": "网易有道词典",
+    "format": "png",
+    "color": "#F44336",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.hoperun.intelligenceportal": {
+    "label": "我的南京",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.pwrd.steam.esports": {
+    "label": "完美世界电竞",
+    "format": "png",
+    "color": "#3C3C3C",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.com.spdb.mobilebank.per": {
+    "label": "浦发银行",
+    "format": "png",
+    "color": "#003374",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.gree.greesmarthome": {
+    "label": "格力+",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.yingsheng.hayloufun": {
+    "label": "Haylou Fun",
+    "format": "png",
+    "color": "#3093FF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "youqu.android.todesk": {
+    "label": "ToDesk",
+    "format": "png",
+    "color": "#0175FF",
+    "overlay": false,
+    "contributors": "parules"
+  },
+  "com.lerist.fakelocation": {
+    "label": "FakeLocation",
+    "format": "png",
+    "color": "#008577",
+    "overlay": false,
+    "contributors": "parules"
+  },
+  "com.ttxapps.autosync": {
+    "label": "autosync",
+    "format": "png",
+    "color": "#232323",
+    "overlay": false,
+    "contributors": "Z2549"
+  },
+  "co.runner.app": {
+    "label": "悦跑圈",
+    "format": "png",
+    "color": "#E71419",
+    "overlay": false,
+    "contributors": "Ink"
+  },
+  "com.garmin.android.apps.gccm": {
+    "label": "佳速度",
+    "format": "png",
+    "color": "#11ADED",
+    "overlay": false,
+    "contributors": "Ink"
+  },
+  "com.garmin.android.apps.connectmobile": {
+    "label": "Connect",
+    "format": "png",
+    "color": "#11ADED",
+    "overlay": false,
+    "contributors": "Ink"
+  },
+  "com.czb.chezhubang": {
+    "label": "团油",
+    "format": "png",
+    "color": "#E31836",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.duorong.smarttool": {
+    "label": "时光序",
+    "format": "png",
+    "color": "#2C88FF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.kaiheila": {
+    "label": "KOOK语音 (原开黑啦)",
+    "format": "png",
+    "color": "#7ACC35",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.sankuai.meituan.dispatch.crowdsource": {
+    "target": "com.sankuai.meituan",
+    "label": "美团众包",
+    "contributors": "fankes, Gregorywx, NekoMua"
+  },
+  "com.koudai.weidian.buyer": {
+    "label": "微店",
+    "format": "png",
+    "color": "#F44336",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.chinamobile.mcloud": {
+    "label": "中国移动云盘",
+    "format": "png",
+    "color": "#0190FC",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.gorgeous.lite": {
+    "label": "轻颜相机",
+    "format": "png",
+    "color": "#0190FC",
+    "overlay": false,
+    "contributors": "wuyulunbijay"
+  },
+  "com.szzc": {
+    "label": "神州租车",
+    "format": "png",
+    "color": "#FCBA00",
+    "overlay": false,
+    "contributors": "parules"
+  },
+  "com.midea.ai.appliances": {
+    "label": "美的家居",
+    "format": "png",
+    "color": "#166BFB",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.hexin.zhanghu": {
+    "label": "同花顺投资记账本",
+    "format": "png",
+    "color": "#D90629",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.gov.tax.its": {
+    "label": "个人所得税",
+    "format": "png",
+    "color": "#2FA3FF",
+    "overlay": false,
+    "contributors": "parules"
+  },
+  "com.jiongji.andriod.card": {
+    "label": "百词斩",
+    "format": "png",
+    "overlay": false,
+    "contributors": "Rock＆Z"
+  },
+  "com.tfsmy.apps.android.tfsmy": {
+    "label": "天府市民云",
+    "format": "png",
+    "color": "#38257B",
+    "overlay": false,
+    "contributors": "parules"
+  },
+  "com.lingkou.leetcode": {
+    "label": "LeetCode",
+    "format": "png",
+    "color": "#EBA340",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.rytong.ceair": {
+    "label": {
+      "en": "China Eastern Airlines",
+      "zh-CN": "东方航空"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "Gregorywei"
+  },
+  "com.yuedong.sport": {
+    "label": "悦动圈",
+    "format": "png",
+    "color": "#21CF56",
+    "overlay": false,
+    "contributors": "parules"
+  },
+  "com.alimama.moon": {
+    "label": "淘宝联盟",
+    "format": "png",
+    "color": "#FF5C00",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.tencent.map": {
+    "label": {
+      "en": "Tencent Maps",
+      "zh-CN": "腾讯地图"
+    },
+    "format": "png",
+    "color": "#29B6F6",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.jsb.china": {
+    "label": "江苏银行",
+    "format": "png",
+    "color": "#0066B3",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.csii.jsbank.zxyh": {
+    "target": "cn.jsb.china",
+    "label": "天天理财"
+  },
+  "cn.samsclub.app": {
+    "label": "山姆会员商店",
+    "format": "png",
+    "color": "#0167A0",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.snda.wifilocating": {
+    "label": "WIFI万能钥匙",
+    "format": "png",
+    "color": "#039BE5",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.starbucks.cn": {
+    "label": "星巴克",
+    "format": "png",
+    "color": "#00BFA5",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.pingan.paces.ccms": {
+    "label": "平安口袋银行",
+    "format": "png",
+    "color": "#F57F3F",
+    "overlay": false,
+    "contributors": "ovovov"
+  },
+  "com.cupidapp.live": {
+    "label": "翻咔",
+    "format": "png",
+    "color": "#FF4040",
+    "overlay": false,
+    "contributors": "Sakitami"
+  },
+  "com.xuetangx.ykt": {
+    "label": "雨课堂",
+    "format": "png",
+    "color": "#1978F8",
+    "overlay": false,
+    "contributors": "Sakitami"
+  },
+  "com.kwai.videoeditor": {
+    "label": "快影",
+    "format": "png",
+    "overlay": false,
+    "contributors": "Mc-user1688"
+  },
+  "net.afdian.afdian": {
+    "label": "爱发电",
+    "format": "png",
+    "color": "#673AB7",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.tencent.android.qqdownloader": {
+    "label": "应用宝",
+    "format": "png",
+    "color": "#19A1DF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.csair.mbp": {
+    "label": {
+      "en": "China Southern Airlines",
+      "zh-CN": "南方航空"
+    },
+    "format": "png",
+    "color": "#E53E31",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.baidu.baidutranslate": {
+    "label": {
+      "en": "Baidu Translate",
+      "zh-CN": "百度翻译"
+    },
+    "format": "png",
+    "color": "#219EF7",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.dianyun.pcgo": {
+    "label": "菜机",
+    "format": "png",
+    "color": "#550B29",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.kmxs.reader": {
+    "label": "七猫免费小说",
+    "format": "png",
+    "color": "#FFCD40",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.wondertek.paper": {
+    "label": "澎湃新闻",
+    "format": "png",
+    "color": "#000000",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.sankuai.youxuan": {
+    "label": "美团优选",
+    "format": "png",
+    "color": "#FFD203",
+    "overlay": false,
+    "contributors": "Ink"
+  },
+  "com.mi.earphone": {
+    "label": "小米耳机",
+    "format": "png",
+    "color": "#232323",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "cn.skyrin.ntfh": {
+    "label": "一条通知",
+    "format": "png",
+    "color": "#1AAD19",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.antfortune.wealth": {
+    "label": "蚂蚁财富",
+    "format": "png",
+    "color": "#2162F4",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.sankuai.movie": {
+    "label": "猫眼",
+    "format": "png",
+    "color": "#E4342B",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.wuba.zhuanzhuan": {
+    "label": "转转",
+    "format": "png",
+    "color": "#FF0100",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.lingti.android.ns": {
+    "label": "灵缇游戏加速器",
+    "format": "png",
+    "color": "#FB4B44",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.xinhang.mobileclient": {
+    "target": "com.greenpoint.android.mc10086.activity",
+    "label": "中国移动河南",
+    "contributors": "fankes, sddpljx"
+  },
+  "com.jiuyu.sptcc.cordova": {
+    "label": "上海交通卡",
+    "format": "png",
+    "color": "#5D44BF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.PhantomSix.animedb": {
+    "label": "民萌",
+    "format": "png",
+    "color": "#E8AE8A",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.ccb.longjiLife": {
+    "target": "com.chinamworld.main",
+    "label": "建行生活"
+  },
+  "com.ss.android.lark.kazdtq": {
+    "label": "天书",
+    "format": "png",
+    "color": "#D32D26",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.alibaba.cloudmail": {
+    "label": "阿里邮箱",
+    "format": "png",
+    "color": "#C7453C",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "dji.go.v5": {
+    "label": "DJI Fly",
+    "format": "png",
+    "color": "#2D2F2F",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.teamtalk.im": {
+    "label": "TeamTalk",
+    "format": "png",
+    "color": "#5FCD55",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.wangc.todolist": {
+    "label": "一木清单",
+    "format": "png",
+    "color": "#4D9CEB",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.xs.fm": {
+    "label": "番茄畅听",
+    "format": "png",
+    "color": "#F32D05",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.ulearning.yxy": {
+    "label": "优学院",
+    "format": "png",
+    "color": "#EA523F",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.nfdaily.nfplus": {
+    "label": "南方Plus",
+    "format": "png",
+    "color": "#F64E45",
+    "overlay": false,
+    "contributors": "SRainerc"
+  },
+  "com.mxchip.petmarvel": {
+    "label": "滴宠生活",
+    "format": "png",
+    "color": "#E70015",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.maidu.gkld": {
+    "label": "公考雷达",
+    "format": "png",
+    "color": "#5ED2BB",
+    "overlay": false,
+    "contributors": "SRainerc"
+  },
+  "com.ebank.creditcard": {
+    "label": "阳光惠生活",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.wallstreetcn.news": {
+    "label": "华尔街见闻",
+    "format": "png",
+    "color": "#1478F0",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.navinfo.gwead": {
+    "label": "魏",
+    "format": "png",
+    "color": "#000000",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.netease.buff": {
+    "label": "网易BUFF",
+    "format": "png",
+    "color": "#343E4B",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.tencent.weworklocal": {
+    "label": "武汉政务",
+    "format": "png",
+    "color": "#0082EF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.taou.maimai": {
+    "label": "脉脉",
+    "format": "png",
+    "color": "#0351FC",
+    "overlay": false,
+    "contributors": "NekoMua, ylg-999"
+  },
+  "com.nowcoder.app.florida": {
+    "label": "牛客",
+    "format": "png",
+    "color": "#01DFA6",
+    "overlay": false,
+    "contributors": "NekoMua, ylg-999"
+  },
+  "com.dahua.leapmotor": {
+    "label": "零跑",
+    "format": "png",
+    "color": "#242424",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.xiaomi.mico": {
+    "label": "小爱音箱",
+    "format": "png",
+    "color": "#F44336",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.shixiseng.activity": {
+    "label": "实习僧",
+    "format": "png",
+    "color": "#338BFF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.whrcbank.mbank": {
+    "label": "武汉农商银行",
+    "format": "png",
+    "color": "#C71D28",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.xgimi.zhushou": {
+    "label": "极米",
+    "format": "png",
+    "color": "#469EFF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.job.android": {
+    "label": "前程无忧51job",
+    "format": "png",
+    "color": "#FD6905",
+    "overlay": false,
+    "contributors": "NekoMua, ylg-999"
+  },
+  "com.webank.wemoney": {
+    "label": "微众银行",
+    "format": "png",
+    "color": "#3D60CC",
+    "overlay": false,
+    "contributors": "NekoMua, ylg-999"
+  },
+  "com.spdbccc.app": {
+    "label": "浦大喜奔",
+    "format": "png",
+    "color": "#013C7E",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.unexpected.traffic": {
+    "label": "流量监控",
+    "format": "png",
+    "color": "#424850",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.lietou.mishu": {
+    "label": "猎聘",
+    "format": "png",
+    "color": "#FF6400",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.hunantv.imgo.activity": {
+    "label": "芒果TV",
+    "format": "png",
+    "color": "#F45202",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.banciyuan.bcywebview": {
+    "label": "半次元",
+    "format": "png",
+    "color": "#FA4B8B",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.wondershare.spotmau": {
+    "label": "斑点猫",
+    "format": "png",
+    "color": "#F1761A",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.multibyte.esender.jiedian": {
+    "label": "易博通",
+    "format": "png",
+    "color": "#910581",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.yitong.mbank": {
+    "label": "江苏农商行",
+    "format": "png",
+    "color": "#D3012E",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.xiaodigu.app": {
+    "label": "小嘀咕",
+    "format": "png",
+    "color": "#F16348",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.taobao.qianniu": {
+    "label": "千牛",
+    "format": "png",
+    "color": "#3D7EFF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.tencent.qqlivei18n": {
+    "target": "com.tencent.qqlive",
+    "label": "WeTv",
+    "contributors": "fankes, NekoMua"
+  },
+  "com.baseus.intelligent": {
+    "label": "倍思",
+    "format": "png",
+    "color": "#FFF000",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.baidu.lbs.xinlingshou": {
+    "target": "me.ele",
+    "label": "饿了么零售商家版",
+    "contributors": "lamprose, fankes, NekoMua"
+  },
+  "com.sankuai.meituan.meituanwaimaibusiness": {
+    "target": "com.sankuai.meituan.takeoutnew",
+    "label": "美团外卖商家版",
+    "contributors": "fankes, Gregorywx, NekoMua"
+  },
+  "com.shibaqiang.forum": {
+    "label": "十八腔",
+    "format": "png",
+    "color": "#0191F2",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.meituan.retail.v.android": {
+    "label": "美团买菜",
+    "format": "png",
+    "color": "#35BD00",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.midea.vm.washer": {
+    "label": "U净",
+    "format": "png",
+    "color": "#4542CE",
+    "overlay": true,
+    "contributors": "NekoMua"
+  },
+  "com.haier.uhome.washer": {
+    "label": "海狸洗衣",
+    "format": "png",
+    "color": "#FCE021",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.able.wisdomtree": {
+    "label": "知到",
+    "format": "png",
+    "color": "#F57C00",
+    "overlay": false,
+    "contributors": "Yuwen"
+  },
+  "com.android36kr.app": {
+    "label": "36氪",
+    "format": "png",
+    "color": "#206CFF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.mfw.roadbook": {
+    "label": "马蜂窝",
+    "format": "png",
+    "color": "#FFD510",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.unexpected.ts": {
+    "label": "1TS",
+    "format": "png",
+    "color": "#535353",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.teslamotors.tesla": {
+    "label": "Tesla",
+    "format": "png",
+    "color": "#CC0000",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.xiaochuankeji.zuiyouLite": {
+    "label": "皮皮搞笑",
+    "format": "png",
+    "color": "#FF698D",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "me.tangke.gamecores": {
+    "label": "机核",
+    "format": "png",
+    "color": "#F83055",
+    "overlay": false,
+    "contributors": "zombieP"
+  },
+  "com.byd.aeri.caranywhere": {
+    "label": "比亚迪汽车",
+    "format": "png",
+    "color": "#D70815",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.superelement.pomodoro": {
+    "label": "专注清单",
+    "format": "png",
+    "color": "#FF3B41",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.taobao.litetao": {
+    "label": "淘特",
+    "format": "png",
+    "color": "#F44336",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "de.bmw.connected.mobile20.cn": {
+    "label": "My BMW",
+    "format": "png",
+    "color": "#0093DD",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.haodf.android": {
+    "label": "好大夫在线",
+    "format": "png",
+    "color": "#055AD7",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.crec.wxwork": {
+    "label": "中铁e通",
+    "format": "png",
+    "color": "#0167D2",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.bankofbeijing.mobilebanking": {
+    "label": "北京银行",
+    "format": "png",
+    "color": "#EB2E2E",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.luna.music": {
+    "label": "汽水音乐",
+    "format": "png",
+    "color": "#81FF43",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.cs_credit_bank": {
+    "label": "发现精彩",
+    "format": "png",
+    "color": "#F0261F",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.yiche.autoeasy": {
+    "label": "易车",
+    "format": "png",
+    "color": "#3266FF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.baidu.autocar": {
+    "label": "有驾",
+    "format": "png",
+    "color": "#05C1BA",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.missevan": {
+    "label": "猫耳FM",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.ecitic.bank.mobile": {
+    "label": "中信银行",
+    "format": "png",
+    "color": "#D80012",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.sankuai.moviepro": {
+    "target": "com.sankuai.movie",
+    "label": "猫眼专业版",
+    "contributors": "NekoMua, Moscaver"
+  },
+  "com.huami.watch.hmwatchmanager": {
+    "label": "Zepp",
+    "format": "png",
+    "color": "#1C2334",
+    "overlay": true,
+    "contributors": "Moscaver"
+  },
+  "com.yipiao": {
+    "label": "智行火车票12306抢票",
+    "format": "png",
+    "color": "#1A8CFF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.unipus.ucampus.student": {
+    "label": "U校园",
+    "format": "png",
+    "color": "#299EFD",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "gofasting.fastingtracker.fasting.intermittentfasting": {
+    "label": "gofasting",
+    "format": "png",
+    "color": "#00B358",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.apple.bnd": {
+    "label": "Beats",
+    "format": "png",
+    "color": "#F14338",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.unnoo.quan": {
+    "label": "知识星球",
+    "format": "png",
+    "color": "#23B091",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.baidu.baijia": {
+    "label": "百家号",
+    "format": "png",
+    "color": "#3956D7",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.netease.mobimail": {
+    "target": "com.netease.mail",
+    "label": {
+      "en": "NetEase Mail",
+      "zh-CN": "网易邮箱"
+    },
+    "contributors": "naicfeng, fankes, NekoMua"
+  },
+  "com.shanbay.news": {
+    "label": "扇贝阅读",
+    "format": "png",
+    "color": "#25BC9A",
+    "overlay": false,
+    "contributors": "Moscaver"
+  },
+  "com.hustzp.com.xichuangzhu": {
+    "label": "西窗烛",
+    "format": "png",
+    "color": "#A4141C",
+    "overlay": false,
+    "contributors": "Moscaver"
+  },
+  "cn.wedea.arrrt": {
+    "label": "Arrrt",
+    "format": "png",
+    "color": "#343434",
+    "overlay": false,
+    "contributors": "NestRoomPast"
+  },
+  "com.duolingo": {
+    "label": {
+      "en": "Duolingo",
+      "zh-CN": "多邻国"
+    },
+    "format": "png",
+    "color": "#57CA0A",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.plan.kot32.tomatotime": {
+    "label": "番茄ToDo",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.china3s.android": {
+    "label": {
+      "en": "Spring Airlines",
+      "zh-CN": "春秋航空"
+    },
+    "format": "png",
+    "color": "#27D763",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cmccwm.mobilemusic": {
+    "label": "咪咕音乐",
+    "format": "png",
+    "color": "#FC3669",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.feeyo.vz.pro.cdm": {
+    "label": "飞常准业内版",
+    "format": "png",
+    "color": "#1B87FE",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "mobi.w3studio.apps.android.shsmy.phone": {
+    "label": "随申办市民云",
+    "format": "png",
+    "color": "#C11920",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.icbc.biz.elife": {
+    "label": "工银商户之家",
+    "format": "png",
+    "color": "#A90000",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.yonghui.hyd": {
+    "label": "永辉生活",
+    "format": "png",
+    "color": "#FF1A34",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.tmall.wireless": {
+    "label": "手机天猫",
+    "format": "png",
+    "color": "#FF0036",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.szt.pay": {
+    "label": "深圳通",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.cmcc.hebao": {
+    "label": "和包",
+    "format": "png",
+    "color": "#E41B8E",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.com.cmbc.newmbank": {
+    "label": "民生银行",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.jd.jxj": {
+    "label": "京粉",
+    "format": "png",
+    "color": "#EF0000",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.baixin.mobilebank": {
+    "label": "百信银行",
+    "format": "png",
+    "color": "#0B64E5",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.huawei.welink": {
+    "label": "Welink",
+    "format": "png",
+    "color": "#0D94FF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.cgbchina.xpt": {
+    "target": "com.cs_credit_bank",
+    "label": "广发银行"
+  },
+  "cn.wsds.gamemaster": {
+    "label": "迅游手游加速器",
+    "format": "png",
+    "color": "#00B35B",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.xiaoxun.xun": {
+    "label": "小寻",
+    "format": "png",
+    "color": "#FF5A00",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.amazon.kindle": {
+    "label": "Amazon Kindle",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.netease.yanxuan": {
+    "label": "网易严选",
+    "format": "png",
+    "color": "#F64516",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.mp": {
+    "label": "订阅号助手",
+    "format": "png",
+    "color": "#07C160",
+    "overlay": true,
+    "contributors": "Giresharu"
+  },
+  "com.microsoft.office.outlook": {
+    "label": "Outlook",
+    "format": "png",
+    "color": "#0178D4",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.yueme.itv": {
+    "label": "小翼管家",
+    "format": "png",
+    "color": "#3DC3A4",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.kongfz.app": {
+    "label": "孔夫子旧书网",
+    "format": "png",
+    "color": "#CE1A27",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.baidu.xin.aiqicha": {
+    "label": "爱企查",
+    "format": "png",
+    "color": "#2074FF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.netease.android.cloudgame": {
+    "label": "网易云游戏",
+    "format": "png",
+    "color": "#03C47E",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.mfcloudcalculate.networkdisk": {
+    "label": "123云盘",
+    "format": "png",
+    "color": "#5A7DFD",
+    "overlay": true,
+    "contributors": "NekoMua, FEC_Sky"
+  },
+  "com.guwendao.gwd": {
+    "label": "古文岛",
+    "format": "png",
+    "color": "#383838",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.cotticoffee.cotticlient": {
+    "label": "库迪咖啡",
+    "format": "png",
+    "color": "#E45D50",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.airstarbank.mobilebanking": {
+    "label": "天星银行",
+    "format": "png",
+    "color": "#0196FF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.alipay.antbank.hk.portal": {
+    "label": "螞蟻銀行(香港)",
+    "format": "png",
+    "color": "#0067FF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.suning.mobile.ebuy": {
+    "label": "苏宁易购",
+    "format": "png",
+    "color": "#FF002D",
+    "overlay": false,
+    "contributors": "FEC_Sky"
+  },
+  "com.huawei.appmarket": {
+    "label": {
+      "en": "HUAWEI AppGallery",
+      "zh-CN": "华为应用市场"
+    },
+    "format": "png",
+    "color": "#FA5657",
+    "overlay": false,
+    "contributors": "FEC_Sky"
+  },
+  "com.zwfw.YueZhengYi": {
+    "label": "粤政易",
+    "format": "png",
+    "overlay": false,
+    "contributors": "Cheukfung"
+  },
+  "com.gopeed": {
+    "label": "Gopeed",
+    "format": "png",
+    "color": "#5DC76C",
+    "overlay": false,
+    "contributors": "轻寒醉歌"
+  },
+  "com.zmzx.college.search": {
+    "label": "大学搜题酱",
+    "format": "png",
+    "color": "#2655FF",
+    "overlay": false,
+    "contributors": "leoli"
+  },
+  "com.qeeyou.apps.android.onlinetreasure": {
+    "label": "奇游联机宝",
+    "format": "png",
+    "color": "#02A0E9",
+    "overlay": false,
+    "contributors": "Giresharu"
+  },
+  "com.yantu.ytvip": {
+    "label": "研途考研",
+    "format": "png",
+    "color": "#494FF5",
+    "overlay": false,
+    "contributors": "leoli"
+  },
+  "com.yantu.viphd": {
+    "target": "com.yantu.ytvip",
+    "label": "研途考研HD"
+  },
+  "com.qixin.mihuas": {
+    "label": "米画师",
+    "format": "png",
+    "color": "#FF5E83",
+    "overlay": false,
+    "contributors": "李太白"
+  },
+  "com.singularity.tiangong": {
+    "label": "天工",
+    "format": "png",
+    "color": "#346AFF",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "com.cebbank.mobile.cemb": {
+    "label": "光大银行",
+    "format": "png",
+    "color": "#8014C9",
+    "overlay": false,
+    "contributors": "jeffrey, 09277632"
+  },
+  "net.haozaixian": {
+    "label": "好课在线",
+    "format": "png",
+    "color": "#232323",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "cn.paperang.mm": {
+    "label": "喵喵机",
+    "format": "png",
+    "color": "#232323",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "com.ksxxzk.edu": {
+    "label": "潇湘高考",
+    "format": "png",
+    "color": "#3C90FF",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "cn.eol.wen": {
+    "label": "掌上高考",
+    "format": "png",
+    "color": "#F16600",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "com.bwton.tjmetro": {
+    "label": "天津地铁",
+    "format": "png",
+    "color": "#FF0102",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.github.metacubex.clash.meta": {
+    "label": "Clash Meta For Android",
+    "format": "png",
+    "color": "#1E4379",
+    "overlay": true,
+    "contributors": "PianCat"
+  },
+  "com.ruanmei.yaozhi": {
+    "label": "要知",
+    "format": "png",
+    "overlay": false,
+    "contributors": "Ink"
+  },
+  "com.jin10": {
+    "label": "金十数据",
+    "format": "png",
+    "color": "#4E77E1",
+    "overlay": false,
+    "contributors": "Ink"
+  },
+  "com.xunmeng.merchant": {
+    "label": "拼多多商家版",
+    "format": "png",
+    "color": "#D10006",
+    "overlay": true,
+    "contributors": "Ink"
+  },
+  "com.hypergryph.skland": {
+    "label": "森空岛",
+    "format": "png",
+    "color": "#C6E522",
+    "overlay": false,
+    "contributors": "Ink"
+  },
+  "deepal.com.cn.app": {
+    "label": "深蓝汽车",
+    "format": "png",
+    "color": "#132543",
+    "overlay": false,
+    "contributors": "Ink"
+  },
+  "com.kurogame.kjq": {
+    "label": "库街区",
+    "format": "png",
+    "color": "#151D34",
+    "overlay": false,
+    "contributors": "ybhgl"
+  },
+  "com.moji.mjweather": {
+    "label": "墨迹天气",
+    "format": "png",
+    "color": "#5756FF",
+    "overlay": false,
+    "contributors": "ybhgl"
+  },
+  "com.ifreedomer.flix": {
+    "label": "Flix",
+    "format": "png",
+    "color": "#0A84FF",
+    "overlay": false,
+    "contributors": "ybhgl"
+  },
+  "cn.wps.moffice_eng": {
+    "label": "WPS Office",
+    "format": "png",
+    "color": "#FF2323",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "com.moonshot.kimichat": {
+    "label": {
+      "en": "Kimi",
+      "zh-CN": "Kimi智能助手"
+    },
+    "format": "png",
+    "color": "#232323",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "com.yiban.app": {
+    "label": "易班",
+    "format": "png",
+    "color": "#232323",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "com.hnjiajie.zhixiaole": {
+    "label": "智校乐",
+    "format": "png",
+    "color": "#FDA200",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "com.huachenjie.shandong_school": {
+    "label": "闪动校园",
+    "format": "png",
+    "color": "#650AEC",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "com.cmbchina.amoffice": {
+    "label": "招乎",
+    "format": "png",
+    "color": "#C7142D",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.nbbank": {
+    "label": "宁波银行",
+    "format": "png",
+    "color": "#FF9800",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.hxb.mobile.client": {
+    "label": "华夏银行",
+    "format": "png",
+    "color": "#F44336",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "cn.dxy.medicinehelper": {
+    "label": "用药助手",
+    "format": "png",
+    "color": "#455A64",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.xiaoe.client": {
+    "label": "小鹅通",
+    "format": "png",
+    "color": "#1472FF",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.shanbay.sentence": {
+    "label": "扇贝单词英语版",
+    "format": "png",
+    "color": "#00BFA5",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.nowcasting.huawei": {
+    "target": "com.nowcasting.activity",
+    "label": "彩云天气Pro",
+    "contributors": "PedroZ, NekoMua"
+  },
+  "com.valvesoftware.android.steam.friendsui": {
+    "label": "Steam Chat",
+    "format": "png",
+    "color": "#263238",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.tipsoon.android": {
+    "label": "简讯",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "vz.com": {
+    "label": "飞常准",
+    "format": "png",
+    "color": "#2196F3",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.android.icredit": {
+    "label": "企查查-企业查询",
+    "format": "png",
+    "color": "#2196F3",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.baidu.netdisk.xiaomi.appunion": {
+    "target": "com.baidu.netdisk",
+    "label": "百度网盘联运版",
+    "contributors": "fankes, NekoMua"
+  },
+  "com.jd.iots": {
+    "label": "京东小家",
+    "format": "png",
+    "color": "#E83A50",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.mm.android.lc": {
+    "label": "乐橙",
+    "format": "png",
+    "color": "#F18D00",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.github.jing332.tts_server_android": {
+    "label": "TTS Server",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.cctv.cctv5ultimate": {
+    "label": "央视体育",
+    "format": "png",
+    "color": "#FF1514",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.haizitong.hzt.jia": {
+    "label": "孩子通家长端",
+    "format": "png",
+    "color": "#F77C2A",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "io.jagat.lite": {
+    "label": "Jagat",
+    "format": "png",
+    "color": "#FB47C0",
+    "overlay": false,
+    "contributors": "Sakitami, NekoMua"
+  },
+  "cn.jagat.main": {
+    "target": "io.jagat.lite"
+  },
+  "com.leisu.sports": {
+    "label": "雷速体育",
+    "format": "png",
+    "color": "#D72B43",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.zol.android": {
+    "label": "中关村在线",
+    "format": "png",
+    "color": "#01AEF4",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.microsoft.emmx": {
+    "label": "Microsoft Edge",
+    "format": "png",
+    "color": "#2196F3",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.kingsoft.xiezuo": {
+    "label": "金山协作",
+    "format": "png",
+    "color": "#2168F8",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.slkj.paotui.worker": {
+    "label": "UU跑腿跑男端",
+    "format": "png",
+    "color": "#FE6D0F",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.aihuishou.opt": {
+    "label": "拍机堂",
+    "format": "png",
+    "color": "#FF461F",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.ipc360home": {
+    "label": "IPC360 Home",
+    "format": "png",
+    "color": "#FEC627",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.netease.huajia": {
+    "label": "画加",
+    "format": "png",
+    "color": "#0FC0D3",
+    "overlay": false,
+    "contributors": "PianCat"
+  },
+  "com.ideal.flyerteacafes": {
+    "label": "飞客",
+    "format": "png",
+    "color": "#3669FE",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.huawei.works": {
+    "target": "com.huawei.welink",
+    "label": "WeLink",
+    "color": "#F14B3D",
+    "contributors": "Ollie"
+  },
+  "com.sundiro.honda.electric": {
+    "label": "Honda电动",
+    "format": "png",
+    "color": "#E5001F",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.heytap.ocsp.client": {
+    "label": "众包",
+    "format": "png",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.sankuai.meituan.enterprise": {
+    "target": "com.sankuai.meituan",
+    "label": "美团企业版",
+    "color": "#FFD100",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.android.haitong": {
+    "label": "海通e海通财",
+    "format": "png",
+    "color": "#395FAA",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.bambulab.creator": {
+    "label": "Bambu Handy",
+    "format": "png",
+    "color": "#009E3C",
+    "overlay": false,
+    "contributors": "Illustar0"
+  },
+  "bbl.intl.bambulab.com": {
+    "target": "com.bambulab.creator"
+  },
+  "com.mybank.android.phone": {
+    "label": "网商银行",
+    "format": "png",
+    "color": "#045695",
+    "overlay": false,
+    "contributors": "uselessbug"
+  },
+  "com.hsbank.mobilebank": {
+    "label": "徽商银行",
+    "format": "png",
+    "color": "#E50113",
+    "overlay": false,
+    "contributors": "uselessbug"
+  },
+  "com.modian.app": {
+    "label": "摩点",
+    "format": "png",
+    "color": "#00BCDE",
+    "overlay": false,
+    "contributors": "heinumin, PianCat"
+  },
+  "com.hihonor.cloudmusic": {
+    "target": "com.netease.cloudmusic",
+    "label": "荣耀音乐",
+    "contributors": "heinumin, lamprose, fankes"
+  },
+  "com.apple.android.music": {
+    "label": "Apple Music",
+    "format": "png",
+    "color": "#F62C48",
+    "overlay": false,
+    "contributors": "HuaJi2333DaDa"
+  },
+  "com.pingan.smt": {
+    "label": "i深圳",
+    "format": "png",
+    "color": "#3B86EF",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "org.akanework.gramophone": {
+    "label": "留声机",
+    "format": "png",
+    "overlay": false,
+    "contributors": "李太白"
+  },
+  "com.kaidishi.lock": {
+    "label": "凯迪仕",
+    "format": "png",
+    "color": "#224B8F",
+    "overlay": false,
+    "contributors": "Autines"
+  },
+  "com.routon.edurelease": {
+    "label": "智慧校园",
+    "format": "png",
+    "color": "#F47920",
+    "overlay": false,
+    "contributors": "Autines"
+  },
+  "com.binance.dev": {
+    "label": "币安",
+    "format": "png",
+    "color": "#F0B90A",
+    "overlay": false,
+    "contributors": "Illustar0"
+  },
+  "com.xiaomi.superhexa": {
+    "label": "米家眼镜",
+    "format": "png",
+    "overlay": false,
+    "contributors": "zzyym"
+  },
+  "org.moegirl.moegirlview": {
+    "label": "萌娘百科",
+    "format": "png",
+    "color": "#25962B",
+    "overlay": false,
+    "contributors": "zzyym"
+  },
+  "com.ss.android.ugc.livelite": {
+    "label": "抖音商城",
+    "format": "png",
+    "overlay": false,
+    "contributors": "zzyym"
+  },
+  "com.huaruibank.android.hulubank": {
+    "label": "华瑞银行",
+    "format": "png",
+    "color": "#B48845",
+    "overlay": false,
+    "contributors": "uselessbug"
+  },
+  "com.mtb": {
+    "label": "民泰银行",
+    "format": "png",
+    "color": "#D21208",
+    "overlay": false,
+    "contributors": "uselessbug"
+  },
+  "com.fdbank.newmobile": {
+    "label": "富滇银行",
+    "format": "png",
+    "color": "#9D2330",
+    "overlay": false,
+    "contributors": "uselessbug"
+  },
+  "com.csii.tianjin.mobilebank": {
+    "label": "天津银行",
+    "format": "png",
+    "color": "#005099",
+    "overlay": false,
+    "contributors": "uselessbug"
+  },
+  "com.mutangtech.qianji": {
+    "label": "钱迹",
+    "format": "png",
+    "color": "#3792FA",
+    "overlay": false,
+    "contributors": "Illustar0"
+  },
+  "com.epicgames.portal": {
+    "label": "Epic Games",
+    "format": "png",
+    "overlay": false,
+    "contributors": "cybaijie"
+  },
+  "global.longbridge.app.android": {
+    "label": "长桥",
+    "format": "png",
+    "overlay": false,
+    "contributors": "cybaijie"
+  },
+  "ProjectInsight.InsightBox": {
+    "label": "InsightBox",
+    "format": "png",
+    "overlay": false,
+    "contributors": "月月"
+  },
+  "com.tencent.hunyuan.app.chat": {
+    "label": "腾讯元宝",
+    "format": "png",
+    "color": "#6DBC8F",
+    "overlay": false,
+    "contributors": "月月"
+  },
+  "com.forms": {
+    "label": "缤纷生活",
+    "format": "png",
+    "color": "#B3413C",
+    "overlay": false,
+    "contributors": "uselessbug"
+  },
+  "org.telegram.group": {
+    "label": "Turrit",
+    "format": "png",
+    "color": "#4577F7",
+    "overlay": false,
+    "contributors": "月月"
+  },
+  "com.yf.smart.coros.dist": {
+    "label": "COROS",
+    "format": "png",
+    "color": "#CF0003",
+    "overlay": false,
+    "contributors": "Kyuofox"
+  },
+  "com.ypt.pay": {
+    "label": "YPT",
+    "format": "png",
+    "color": "#99EA65",
+    "overlay": false,
+    "contributors": "Illustar0"
+  },
+  "hub.lab.hsx": {
+    "label": "HSXAudio",
+    "format": "png",
+    "overlay": false,
+    "contributors": "Kaeisol"
+  },
+  "com.weilaishanhai.oopz": {
+    "label": "Oopz",
+    "format": "png",
+    "overlay": false,
+    "contributors": "Kaeisol"
+  },
+  "cn.amazon.mShop.android": {
+    "label": "亚马逊购物",
+    "format": "png",
+    "overlay": false,
+    "contributors": "cybaijie"
+  },
+  "com.amazon.mShop.android.shopping": {
+    "target": "cn.amazon.mShop.android"
+  },
+  "cn.futu.trader": {
+    "label": "富途牛牛",
+    "format": "png",
+    "color": "#FF6702",
+    "overlay": false,
+    "contributors": "cybaijie"
+  },
+  "com.moomoo.trade": {
+    "label": "moomoo",
+    "format": "png",
+    "color": "#FF6900",
+    "overlay": false,
+    "contributors": "cybaijie"
+  },
+  "com.sony.store.china": {
+    "label": "索尼中国",
+    "format": "png",
+    "overlay": false,
+    "contributors": "cybaijie"
+  },
+  "com.tencent.voov": {
+    "target": "com.tencent.wemeet.app",
+    "label": "VooV",
+    "contributors": "fankes, Kaeisol"
+  },
+  "com.phoenix.read": {
+    "label": "红果免费短剧",
+    "format": "png",
+    "color": "#F69845",
+    "overlay": false,
+    "contributors": "lamprose"
+  },
+  "com.lockin.loock": {
+    "label": "鹿客管家",
+    "format": "png",
+    "color": "#E30121",
+    "overlay": false,
+    "contributors": "parzival"
+  },
+  "com.psbc.mportal": {
+    "label": "邮连",
+    "format": "png",
+    "color": "#24843E",
+    "overlay": false,
+    "contributors": "parzival"
+  },
+  "com.landray.kkplus": {
+    "label": "中国铁设",
+    "format": "png",
+    "overlay": false,
+    "contributors": "ningge"
+  },
+  "cn.volvo.vcc": {
+    "label": "沃尔沃车世界",
+    "format": "png",
+    "overlay": false,
+    "contributors": "parzival"
+  },
+  "org.breezyweather": {
+    "label": "Breezy Weather",
+    "format": "png",
+    "overlay": false,
+    "contributors": "Liyang"
+  },
+  "com.ss.android.ugc.aweme.mobile": {
+    "target": "com.ss.android.ugc.aweme",
+    "label": "抖音Play版"
+  },
+  "cn.com.hzb.mobilebank.per": {
+    "label": "杭州银行",
+    "format": "png",
+    "color": "#004EA1",
+    "overlay": true,
+    "contributors": "uselessbug"
+  },
+  "org.mozilla.firefox": {
+    "label": "Firefox",
+    "format": "png",
+    "color": "#FF7139",
+    "overlay": false,
+    "contributors": "Maj. Major Major Major"
+  },
+  "com.gf.client": {
+    "label": "广发易淘金",
+    "format": "png",
+    "color": "#2B62D9",
+    "overlay": false,
+    "contributors": "cybaijie"
+  },
+  "cn.com.gf.android_store": {
+    "target": "com.gf.client",
+    "label": "广发证券开户"
+  },
+  "com.gf.miaoda": {
+    "target": "com.gf.client",
+    "label": "广发证券开户尊享版"
+  },
+  "cn.yingmi.qieman.hermione": {
+    "label": "且慢",
+    "format": "png",
+    "color": "#69D4FA",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.eusoft.eudic": {
+    "label": "欧路词典",
+    "format": "png",
+    "color": "#1684EB",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.zxunity.android.yzyx": {
+    "label": "有知有行",
+    "format": "png",
+    "color": "#45A5FF",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.dreame.smartlife": {
+    "label": "DREAME",
+    "format": "png",
+    "color": "#E6C697",
+    "overlay": false,
+    "contributors": "parzival"
+  },
+  "com.larus.nova": {
+    "label": "豆包",
+    "format": "png",
+    "color": "#6366F1",
+    "overlay": false,
+    "contributors": "月月, Giresharu"
+  },
+  "com.gwm.fusion": {
+    "label": "长城汽车",
+    "format": "png",
+    "overlay": false,
+    "contributors": "ningge"
+  },
+  "com.ft07.serverchan.app3.server_app3": {
+    "label": "Server 酱",
+    "format": "png",
+    "color": "#00598C",
+    "overlay": false,
+    "contributors": "PianCat"
+  },
+  "com.sencent.mm": {
+    "label": "名人朋友圈",
+    "format": "png",
+    "color": "#212121",
+    "overlay": false,
+    "contributors": "Charles112"
+  },
+  "com.nintendo.znsa": {
+    "label": "Nintendo Today!",
+    "format": "png",
+    "color": "#E40210",
+    "overlay": false,
+    "contributors": "Giresharu"
+  },
+  "net.evecom.android.mztapp": {
+    "label": "闽政通",
+    "format": "png",
+    "color": "#294A9D",
+    "overlay": false,
+    "contributors": "Giresharu"
+  },
+  "cn.com.bmac.nfc": {
+    "label": "北京一卡通",
+    "format": "png",
+    "color": "#0072FF",
+    "overlay": false,
+    "contributors": "AlexLiuDev233"
+  },
+  "com.tdx.AndroidNew": {
+    "label": "通达信",
+    "format": "png",
+    "color": "#D52530",
+    "overlay": false,
+    "contributors": "ZhangCe"
+  },
+  "top.coclyun.clipshare": {
+    "label": "ClipShare",
+    "format": "png",
+    "overlay": false,
+    "contributors": "Faith-Mian"
+  },
+  "net.thunderbird.android": {
+    "label": "Thunderbird",
+    "format": "png",
+    "color": "#1480E2",
+    "overlay": false,
+    "contributors": "Maj. Major Major Major"
+  },
+  "com.follow.clash": {
+    "label": "FlClash",
+    "format": "png",
+    "color": "#6666FB",
+    "overlay": false,
+    "contributors": "2cc"
+  },
+  "com.quark.clouddrive": {
+    "label": "夸克网盘",
+    "format": "png",
+    "color": "#0C52FF",
+    "overlay": false,
+    "contributors": "ZhangCe"
+  },
+  "com.petkit.android": {
+    "label": "小佩宠物",
+    "format": "png",
+    "color": "#FE8D35",
+    "overlay": false,
+    "contributors": "ZhangCe"
+  }
+}

@@ -1,0 +1,83 @@
+name: Notification Icon Adaption Request
+description: Use this template to submit a notification icon adaption request / 通知图标优化适配须使用此模板提交
+labels: [request-adaption]
+title: "[Notification Icon Adaption Request]"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Please fill in the necessary information for the notification icon of the app you need to adapt below.
+
+        **Notice Before Submission**
+
+        Please make sure you have contacted the app developer first if possible,
+        as we recommend that you contact the app developer to adapt the notification icon themselves before submitting an issue here.
+
+        Already have icon adaptation resources? Please go to the [Ready to Submit](https://betterandroid.github.io/android-notification-icon-project/en/contribute/submit) documentation page.
+
+        ### 请在下方填写你需要适配的应用通知图标的必要信息。
+
+        **提交前须知**
+
+        可优先联系到应用开发者的，我们建议优先联系应用开发者自行适配通知图标，而不是前往这里提交 Issue。
+
+        已有图标适配资源？请前往文档的 [准备提交](https://betterandroid.github.io/android-notification-icon-project/zh-cn/contribute/submit) 页面。
+  - type: dropdown
+    attributes:
+      label: "Category / 类别"
+      options:
+        - "Third-party Apps / 第三方应用"
+        - "Games / 游戏"
+        - "System Apps / 系统应用"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "App Label / 应用名称"
+      description: "Here to fill in the app label, for example: **WeChat** / 这里填写应用的名称，例如：**微信**"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "App Package Name / 应用包名"
+      description: "Here to fill in the app package name, for example: **com.tencent.mm** / 这里填写应用的包名，例如：**com.tencent.mm**"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "Color / 颜色"
+      description: |
+        Here to fill in the notification icon color in the notification center, required to be in hexadecimal, for example: **#232323**.
+        If you don't know what hexadecimal color is, you can refer to [here](https://www.colorhexa.com/).
+        Leave it blank to use the system primary color.
+
+        这里填写通知图标在通知中心中的颜色，要求为 16 进制，例如：**#232323**。
+        如果不知道什么是 16 进制颜色，可以参考 [这里](https://www.qtccolor.com/tool/hex.aspx) 的取色。
+        留空代表使用系统默认主题色。
+    validations:
+      required: false
+  - type: input
+    attributes:
+      label: "App Download Source Link / 应用下载渠道、来源地址链接"
+      description: "Please fill in where we should get the download link of the app you need to adapt / 请填写我们应该从何处得到你需要适配的这个应用的下载链接"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Notification Icon Usage Scenario / 简单描述适配的通知图标使用场景"
+      description: "Briefly describe when the current app's notification icon becomes colorful, non-standard, and the actions that trigger push notifications, such as Xiaomi Push or HMS Push / 简单描述一下当前应用的通知图标在何时会变成彩色的、不规范的以及可触发推送通知的操作，例如小米推送或 HMS 推送"
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: "Confirm the information you submitted / 确认一下你提交的信息"
+      description: |
+        To ensure the quality of the issue and avoid wasting unnecessary time,
+        issues that do not check the options below will be closed directly.
+        Please make sure you have **checked the options below** before submitting.
+
+        为了确保 Issue 的质量和避免浪费不必要的时间，未勾选下方选项的 Issue 将直接被关闭。
+        请一定确保你已经 **勾选下方的选项** 后再提交。
+      options:
+        - label: "I confirm that the above information is accurate / 我确保上述信息准确无误"
+          required: false

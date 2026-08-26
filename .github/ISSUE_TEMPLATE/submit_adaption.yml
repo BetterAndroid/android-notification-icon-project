@@ -1,0 +1,93 @@
+name: Notification Icon Adaption Submission
+description: Use this template to submit a checked notification icon resource / 已经检查通过的通知图标资源须使用此模板提交
+labels: [submit-adaption]
+title: "[Notification Icon Adaption Submission]"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please make sure to create this issue through [here](https://betterandroid.github.io/android-notification-icon-project/en/contribute/submit) and paste the complete content with the prefix "ANIP_RESOURCE" in the "Icon Resource" field below (if any).
+
+        请确保通过 [这里](https://betterandroid.github.io/android-notification-icon-project/zh-cn/contribute/submit) 创建此 Issue，并在下方的 “图标资源” 字段中粘贴前缀为 “ANIP_RESOURCE” 的完整内容 (如果有)。
+  - type: dropdown
+    id: category
+    attributes:
+      label: "Category / 类别"
+      options:
+        - Third-party Apps / 第三方应用
+        - Games / 游戏
+        - System · Common / 系统 · 通用
+        - System · HyperOS/MIUI / 系统 · HyperOS/MIUI
+        - System · ColorOS / 系统 · ColorOS
+    validations:
+      required: true
+  - type: input
+    id: package-name
+    attributes:
+      label: "App Package Name / 应用包名"
+      placeholder: "Here to fill in the app package name, for example: **com.tencent.mm** / 这里填写应用的包名，例如：**com.tencent.mm**"
+    validations:
+      required: true
+  - type: input
+    id: target
+    attributes:
+      label: "Target App Package Name / 目标应用包名"
+      description: "App package name of an existing resource in the selected category (Optional) / 当前类别下已有资源的应用包名 (可选)"
+    validations:
+      required: false
+  - type: textarea
+    id: label
+    attributes:
+      label: "App Label / 应用名称"
+      description: "A plain label, or a compact locale-keyed JSON object. / 普通名称，或以 I18n 代号为 key 的压缩格式 JSON 对象。"
+    validations:
+      required: true
+  - type: input
+    id: color
+    attributes:
+      label: "Color / 颜色"
+      placeholder: "#RRGGBB"
+    validations:
+      required: false
+  - type: dropdown
+    id: icon-format
+    attributes:
+      label: "Icon Type / 图标类型"
+      options:
+        - SVG
+        - PNG
+    validations:
+      required: true
+  - type: dropdown
+    id: overlay
+    attributes:
+      label: "Overlay / 覆盖"
+      description: "`false` is the recommended default / 推荐保持默认为 `false`"
+      options:
+        - "false"
+        - "true"
+      default: 0
+    validations:
+      required: true
+  - type: input
+    id: contributors
+    attributes:
+      label: "Contributors / 贡献者"
+      description: "Separate multiple contributors with a comma and a space / 多个贡献者使用英文逗号加空格分隔"
+    validations:
+      required: true
+  - type: textarea
+    id: remark
+    attributes:
+      label: "Remarks / 备注"
+      description: "Additional information, maximum 300 characters (Optional) / 补充信息，最多 300 字 (可选)"
+    validations:
+      required: false
+  - type: textarea
+    id: icon-resource
+    attributes:
+      label: "Icon Resource / 图标资源"
+      description: 'Please paste the complete content with the prefix "ANIP_RESOURCE" copied from the document (Optional) / 请粘贴从文档中复制的前缀为 “ANIP_RESOURCE” 的完整内容 (可选)'
+      placeholder: "ANIP_RESOURCE:..."
+    validations:
+      required: false

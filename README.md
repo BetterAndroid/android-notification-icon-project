@@ -1,38 +1,83 @@
-# Android 通知图标规范适配计划
+# Android Notification Icon Project
 
-[![GitHub license](https://img.shields.io/github/license/fankes/AndroidNotifyIconAdapt?color=blue&style=flat-square)](https://github.com/HighCapable/YukiHookAPI/blob/master/LICENSE)
-[![Telegram](https://img.shields.io/badge/discussion-Telegram-blue.svg?logo=telegram&style=flat-square)](https://t.me/XiaofangInternet)
-[![Telegram](https://img.shields.io/badge/discussion%20dev-Telegram-blue.svg?logo=telegram&style=flat-square)](https://t.me/HighCapable_Dev)
+[![GitHub license](https://img.shields.io/github/license/BetterAndroid/android-notification-icon-project?color=blue&style=flat-square)](https://github.com/BetterAndroid/android-notification-icon-project/blob/main/LICENSE)
+[![Telegram](https://img.shields.io/badge/discussion%20dev-Telegram-blue.svg?logo=telegram&style=flat-square)](https://t.me/BetterAndroid_Dev)
+[![QQ](https://img.shields.io/badge/discussion%20dev-QQ-blue.svg?logo=tencent-qq&logoColor=red&style=flat-square)](https://qm.qq.com/cgi-bin/qm/qr?k=Pnsc5RY6N2mBKFjOLPiYldbAbprAU3V7&jump_from=webapi&authKey=X5EsOVzLXt1dRunge8ryTxDRrh9/IiW1Pua75eDLh9RE3KXE+bwXIYF5cWri/9lf)
 
-这是一个在线规则平台，为国内 Android 不规范的 APP 和厂商适配原生通知图标与规范图标修复。
+<img src="img-src/icon.svg" width = "100" height = "100" alt="LOGO"/>
 
-## For Non-Chinese Users
+Provides standardized monochrome icon resources for apps and vendor systems that do not conform to the Android standard notification design.
 
-This project will not be adapted i18n for now, please stay tuned in the future.
+English | [简体中文](README-zh-CN.md)
 
-## 开始使用
+| <img src="https://github.com/BetterAndroid/.github/blob/main/img-src/logo.png?raw=true" width = "30" height = "30" alt="LOGO"/> | [BetterAndroid](https://github.com/BetterAndroid) |
+| ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
 
-- [点击这里](https://fankes.github.io/AndroidNotifyIconAdapt) 打开在线规则平台查看项目介绍、通知图标优化名单的全部内容以及调试、生成、贡献通知图标规则。
+This project belongs to the organization above. **Click the link to follow us** and discover more awesome projects.
 
-## 许可证
+## What's this
 
-- [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html)
+This is an Android notification icon project that provides standardized monochrome icon resources for apps and vendor systems that do not conform to the Android standard notification design.
+
+This project was created to bring order to the fragmented third-party app ecosystem, so that third-party app notification icons can also follow the Android standard notification icon design guidelines.
+
+At its root, the problem is the ecosystem fragmentation caused by MIUI's non-standard Xiaomi Push notification icons. Other vendors have not fully resolved it either. Instead, most adopted Apple's approach of using an app's launcher icon as its primary notification icon, a deceptive kind of "solution". vivo maintained its own set of monochrome notification icons, but gradually abandoned that approach in later versions of OriginOS.
+
+As the project lead, I believe Google is responsible for this problem. Android clearly specifies notification icon design guidelines, but Google has not enforced them on vendors, allowing vendors to undermine the standard notification icon design without constraint.
+
+Most ironically, Google itself abandoned the mandatory notification icon tinting guideline in Android 16 and set notification icons in the notification panel to app launcher icons, completing its wholesale concession to the ecosystem.
+
+This project began in 2022 under the name **AndroidNotifyIconAdapt**. That ill-fitting name once left the project with resources but no standards. It has now been officially renamed **Android Notification Icon Project** (codenamed **ANIP**) and its original icon resource rules have been completely revised. The project will now move toward more modern, continuous community maintenance.
+
+This project has been changed from the original **AGPL-3.0** license to **Apache-2.0**. ANIP will continue to be open under the current license, and anyone can use, modify, and distribute the resources of this project in compliance with the license. Changes to the license do not automatically apply to previous versions.
+
+## Get Started
+
+| <img src="img-src/icon.svg" width = "30" height = "30" alt="LOGO"/> | [ANIP Documentation](https://betterandroid.github.io/android-notification-icon-project/en) |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+
+You can go to the documentation page to see how to use existing icon resources, request adaptation, or participate in community maintenance.
+
+## Trademark Disclaimer
+
+All product names, logos, and brands displayed in this project are property of their respective owners. 
+All company, product, and service names used in this repository are for identification, compatibility, and illustrative purposes only. 
+Use of these names, logos, and brands does not imply endorsement.
+
+## More Projects
+
+<!--suppress HtmlDeprecatedAttribute -->
+<div align="center">
+    <h2>Hey, wait a second! 👋</h2>
+    <h3>If this project was helpful, why not stick around and check out more of my work below?</h3>
+    <h3>Feel free to leave a follow or a star ⭐️ if they bring you value!</h3>
+    <h1><a href="https://github.com/fankes/fankes/blob/main/project-promote/README.md">→ Click here to discover more of my projects ←</a></h1>
+</div>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/chart?repos=BetterAndroid/android-notification-icon-project&type=date&legend=top-left&sealed_token=NEbQx4a25VUk_FxFUwWhGWPewHaWOtfNrpH9yjoNhgBFeWN9Q1-TGC3xVK2UkWc_eeYUuBdlzPOuldMJSes5FTLxrgHesm6AtiqaquRbk5WPUgF_NDDR9A)](https://www.star-history.com/?repos=BetterAndroid%2Fandroid-notification-icon-project&type=date&legend=top-left)
+
+## License
+
+- [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
 ```
-Copyright (C) 2017 Fankes Studio(qzmmcn@163.com)
+Apache License Version 2.0
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
+Copyright (C) 2019 HighCapable
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```
 
-版权所有 © 2017 Fankes Studio(qzmmcn@163.com)
+Copyright © 2019 HighCapable

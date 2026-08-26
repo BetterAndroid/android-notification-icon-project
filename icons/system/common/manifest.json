@@ -1,0 +1,46 @@
+{
+  "android": {
+    "label": {
+      "en": "Android System",
+      "zh-CN": "Android 系统"
+    },
+    "format": "png",
+    "color": "#72C476",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.android.nfc": {
+    "label": {
+      "en": "NFC Service",
+      "zh-CN": "NFC 服务"
+    },
+    "format": "png",
+    "color": "#212121",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.miui.weather2": {
+    "label": {
+      "en": "Xiaomi Weather",
+      "zh-CN": "小米天气"
+    },
+    "format": "png",
+    "color": "#5F94E2",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.coloros.weather2": {
+    "target": "com.miui.weather2",
+    "label": {
+      "en": "ColorOS Weather",
+      "zh-CN": "ColorOS 天气"
+    }
+  },
+  "com.coloros.weather.service": {
+    "target": "com.miui.weather2",
+    "label": {
+      "en": "ColorOS Weather Service",
+      "zh-CN": "ColorOS 天气服务"
+    }
+  }
+}

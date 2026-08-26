@@ -1,0 +1,407 @@
+{
+  "com.miui.securitycenter": {
+    "label": {
+      "en": "Security",
+      "zh-CN": "手机管家"
+    },
+    "format": "png",
+    "color": "#4981EC",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "com.xiaomi.simactivate.service": {
+    "label": {
+      "en": "Xiaomi SIM Activation Service",
+      "zh-CN": "小米 SIM 卡激活服务"
+    },
+    "format": "png",
+    "color": "#F49026",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.miui.gallery": {
+    "label": {
+      "en": "Gallery",
+      "zh-CN": "小米相册"
+    },
+    "format": "png",
+    "color": "#888FFF",
+    "overlay": false,
+    "contributors": "parules"
+  },
+  "com.miui.misound": {
+    "label": {
+      "en": "Sound Effects",
+      "zh-CN": "音质音效"
+    },
+    "format": "png",
+    "color": "#82529D",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.miui.systemAdSolution": {
+    "label": {
+      "en": "msa",
+      "zh-CN": "智能服务"
+    },
+    "format": "png",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "com.miui.voiceassist": {
+    "label": {
+      "en": "XiaoAI",
+      "zh-CN": "小爱同学"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.xiaomi.aireco": {
+    "target": "com.miui.voiceassist",
+    "label": {
+      "en": "XiaoAI Suggestions",
+      "zh-CN": "小爱建议"
+    },
+    "contributors": "fankes, HuaJi2333DaDa"
+  },
+  "com.miui.cloudservice": {
+    "label": {
+      "en": "Xiaomi Cloud",
+      "zh-CN": "小米云服务"
+    },
+    "format": "png",
+    "color": "#05A5FA",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.android.thememanager": {
+    "label": {
+      "en": "Themes",
+      "zh-CN": "主题壁纸"
+    },
+    "format": "png",
+    "color": "#D943A5",
+    "overlay": false,
+    "contributors": "PedroZ, fankes"
+  },
+  "com.xiaomi.market": {
+    "label": {
+      "en": "GetApps",
+      "zh-CN": "应用商店"
+    },
+    "format": "png",
+    "color": "#F16033",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.android.providers.downloads": {
+    "label": {
+      "en": "Downloads",
+      "zh-CN": "下载管理程序"
+    },
+    "format": "png",
+    "color": "#72C476",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "com.android.browser": {
+    "label": {
+      "en": "Mi Browser",
+      "zh-CN": "浏览器"
+    },
+    "format": "png",
+    "color": "#50AFFF",
+    "overlay": false,
+    "contributors": "PedroZ, fankes"
+  },
+  "com.xiaomi.vipaccount": {
+    "label": {
+      "en": "Xiaomi Community",
+      "zh-CN": "小米社区"
+    },
+    "format": "png",
+    "color": "#F03C51",
+    "overlay": false,
+    "contributors": "lamprose, fankes"
+  },
+  "com.miui.player": {
+    "label": {
+      "en": "Mi Music",
+      "zh-CN": "小米音乐"
+    },
+    "format": "png",
+    "color": "#29CBB6",
+    "overlay": false,
+    "contributors": "naicfeng, fankes"
+  },
+  "com.huazz145push": {
+    "label": "huazz145专用推送",
+    "format": "png",
+    "color": "#F16033",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.xiaomi.migameservice": {
+    "label": {
+      "en": "Game Highlights",
+      "zh-CN": "游戏高能时刻"
+    },
+    "format": "png",
+    "color": "#4389F9",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.iflytek.inputmethod.miui": {
+    "label": {
+      "en": "iFlytek Input Method for MIUI",
+      "zh-CN": "讯飞输入法小米版"
+    },
+    "format": "png",
+    "color": "#4679E9",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.lbe.security.miui": {
+    "label": {
+      "en": "Permission Management Service",
+      "zh-CN": "权限管理服务"
+    },
+    "format": "png",
+    "color": "#3B8FFF",
+    "overlay": false,
+    "contributors": "sddpljx"
+  },
+  "com.miui.tsmclient": {
+    "label": {
+      "en": "Mi Smart Card",
+      "zh-CN": "小米智能卡"
+    },
+    "format": "png",
+    "color": "#177DE7",
+    "overlay": true,
+    "contributors": "sddpljx"
+  },
+  "com.mipay.wallet": {
+    "label": {
+      "en": "Mi Wallet",
+      "zh-CN": "小米钱包"
+    },
+    "format": "png",
+    "color": "#0CA8FF",
+    "overlay": false,
+    "contributors": "PedroZ, sddpljx"
+  },
+  "com.xiaomi.aiasst.service": {
+    "label": {
+      "en": "XiaoAI Call",
+      "zh-CN": "小爱通话"
+    },
+    "format": "png",
+    "color": "#0AAAFA",
+    "overlay": true,
+    "contributors": "parules"
+  },
+  "com.xiaomi.aiasst.vision": {
+    "label": {
+      "en": "XiaoAI Translate",
+      "zh-CN": "小爱翻译"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.xiaomi.mirror": {
+    "label": {
+      "en": "Interconnectivity (formerly MIUI+)",
+      "zh-CN": "小米妙享 (原 MIUI+)"
+    },
+    "format": "png",
+    "color": "#21A2EE",
+    "overlay": true,
+    "contributors": "PedroZ, parules"
+  },
+  "com.android.mms": {
+    "label": {
+      "en": "Messages",
+      "zh-CN": "短信"
+    },
+    "format": "png",
+    "color": "#FFA744",
+    "overlay": true,
+    "contributors": "PedroZ"
+  },
+  "com.miui.thirdappassistant": {
+    "label": {
+      "en": "Third-party App Anomaly Analysis",
+      "zh-CN": "三方应用异常分析"
+    },
+    "format": "png",
+    "color": "#68E68C",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.mfashiongallery.emag": {
+    "label": {
+      "en": "Wallpaper Carousel",
+      "zh-CN": "小米画报"
+    },
+    "format": "png",
+    "color": "#E487AE",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.miui.mishare.connectivity": {
+    "label": {
+      "en": "Mi Share",
+      "zh-CN": "小米互传"
+    },
+    "format": "png",
+    "color": "#7F98FC",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.miui.voicetrigger": {
+    "label": {
+      "en": "Voice Wake-up",
+      "zh-CN": "语音唤醒"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "HeMing505"
+  },
+  "com.miui.audiomonitor": {
+    "label": {
+      "en": "Recording Assistant",
+      "zh-CN": "录音助手"
+    },
+    "format": "png",
+    "color": "#FF3A3A",
+    "overlay": false,
+    "contributors": "Mars, fankes"
+  },
+  "com.miui.bugreport": {
+    "label": {
+      "en": "Feedback",
+      "zh-CN": "用户反馈"
+    },
+    "format": "png",
+    "color": "#21A2EE",
+    "overlay": false,
+    "contributors": "fankes, jasongzy"
+  },
+  "com.miui.miservice": {
+    "target": "com.miui.bugreport",
+    "label": {
+      "en": "Services & Feedback",
+      "zh-CN": "服务与反馈"
+    },
+    "color": "#F33739"
+  },
+  "com.miui.newhome": {
+    "label": {
+      "en": "Content Center",
+      "zh-CN": "内容中心"
+    },
+    "format": "png",
+    "color": "#FF441A",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.xiaomi.gamecenter": {
+    "label": {
+      "en": "Game Center",
+      "zh-CN": "游戏中心"
+    },
+    "format": "png",
+    "color": "#55C6CE",
+    "overlay": false,
+    "contributors": "fankes, parules"
+  },
+  "com.xiaomi.gamecenter.sdk.service": {
+    "target": "com.xiaomi.gamecenter",
+    "label": {
+      "en": "Game Services",
+      "zh-CN": "游戏服务"
+    },
+    "color": "#08BFFB",
+    "contributors": "parules"
+  },
+  "com.xiaomi.drivemode": {
+    "label": {
+      "en": "Driving Mode",
+      "zh-CN": "驾车场景"
+    },
+    "format": "png",
+    "color": "#615EE2",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.android.email": {
+    "label": {
+      "en": "Email",
+      "zh-CN": "电子邮件"
+    },
+    "format": "png",
+    "color": "#27A7FC",
+    "overlay": true,
+    "contributors": "jasongzy"
+  },
+  "com.xiaomi.bluetooth": {
+    "label": {
+      "en": "MIUI Bluetooth",
+      "zh-CN": "MIUI 蓝牙"
+    },
+    "format": "png",
+    "color": "#4C80FC",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "com.android.settings": {
+    "label": {
+      "en": "Settings",
+      "zh-CN": "设置"
+    },
+    "format": "png",
+    "color": "#42A5F5",
+    "overlay": true,
+    "contributors": "NekoMua"
+  },
+  "com.miui.fm": {
+    "label": "蜻蜓FM",
+    "format": "png",
+    "color": "#D8271C",
+    "overlay": false,
+    "contributors": "ghcsd"
+  },
+  "com.android.fileexplorer": {
+    "label": {
+      "en": "File Manager",
+      "zh-CN": "文件管理"
+    },
+    "format": "png",
+    "color": "#FFC550",
+    "overlay": false,
+    "contributors": "Raipt"
+  },
+  "com.android.soundrecorder": {
+    "label": {
+      "en": "Recorder",
+      "zh-CN": "录音机"
+    },
+    "format": "png",
+    "color": "#FF3A3A",
+    "overlay": false,
+    "contributors": "Mars, fankes"
+  },
+  "com.miui.personalassistant": {
+    "label": {
+      "en": "App Vault",
+      "zh-CN": "智能助理"
+    },
+    "format": "png",
+    "color": "#19A5FA",
+    "overlay": false,
+    "contributors": "Illustar0"
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "com.tencent.tmgp.sgame": {
+    "label": "王者荣耀",
+    "format": "png",
+    "overlay": false,
+    "contributors": "lamprose, fankes"
+  },
+  "com.tencent.tmgp.pubgmhd": {
+    "label": "和平精英",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.tencent.lolm": {
+    "label": "英雄联盟手游",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.miHoYo.Yuanshen": {
+    "label": "原神",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.miHoYo.GenshinImpact": {
+    "target": "com.miHoYo.Yuanshen",
+    "label": "原神 (国际服)"
+  },
+  "com.miHoYo.ys.mi": {
+    "target": "com.miHoYo.Yuanshen",
+    "label": "原神 (小米渠道服)"
+  },
+  "com.miHoYo.ys.bilibili": {
+    "target": "com.miHoYo.Yuanshen",
+    "label": "原神 (哔哩哔哩渠道服)",
+    "contributors": "fankes, heming505"
+  },
+  "com.miHoYo.enterprise.NGHSoD": {
+    "label": "崩坏3",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.netease.sky": {
+    "label": "光·遇",
+    "format": "png",
+    "color": "#D78951",
+    "overlay": false,
+    "contributors": "leoli"
+  },
+  "com.netease.sky.mi": {
+    "target": "com.netease.sky",
+    "label": "光·遇 (小米渠道服)"
+  },
+  "com.netease.sky.nearme.gamecenter": {
+    "target": "com.netease.sky",
+    "label": "光·遇 (OPPO 渠道服)"
+  },
+  "com.netease.sky.vivo": {
+    "target": "com.netease.sky",
+    "label": "光·遇 (vivo 渠道服)"
+  },
+  "com.tencent.jkchess": {
+    "label": "金铲铲之战",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.ali.games.star.mini01": {
+    "label": "三国志幻想大陆",
+    "format": "png",
+    "color": "#B5BFFB",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.baitian.aobi.czs.mi": {
+    "label": "奥比岛 (小米渠道服)",
+    "format": "png",
+    "color": "#A3B1E8",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.miHoYo.hkrpg": {
+    "label": "崩坏：星穹铁道",
+    "format": "png",
+    "overlay": false,
+    "contributors": "NekoMua, ZzzZzh"
+  },
+  "com.HoYoverse.hkrpgoversea": {
+    "target": "com.miHoYo.hkrpg",
+    "label": "崩坏：星穹铁道 (国际服)"
+  },
+  "com.tencent.tmgp.cod": {
+    "label": "使命召唤手游",
+    "format": "png",
+    "color": "#ECD613",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "com.bilibili.azurlane": {
+    "label": "碧蓝航线",
+    "format": "png",
+    "color": "#FF6699",
+    "overlay": false,
+    "contributors": "zzyym"
+  },
+  "com.YoStarEN.AzurLane": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (国际服)"
+  },
+  "com.YoStarJP.AzurLane": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (日服)"
+  },
+  "com.hkmanjuu.azurlane.gp": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (台服)"
+  },
+  "com.bilibili.blhx.huawei": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (华为渠道服)"
+  },
+  "com.bilibili.blhx.mi": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (小米渠道服)"
+  },
+  "com.tencent.tmgp.bilibili.blhx": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (腾讯应用宝渠道服)"
+  },
+  "com.bilibili.blhx.baidu": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (百度渠道服)"
+  },
+  "com.bilibili.blhx.qihoo": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (360渠道服)"
+  },
+  "com.bilibili.blhx.nearme.gamecenter": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (oppo渠道服)"
+  },
+  "com.bilibili.blhx.vivo": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (vivo渠道服)"
+  },
+  "com.bilibili.blhx.mz": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (魅族渠道服)"
+  },
+  "com.bilibili.blhx.dl": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (当乐渠道服)"
+  },
+  "com.bilibili.blhx.lenovo": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (联想渠道服)"
+  },
+  "com.bilibili.blhx.uc": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (UC九游渠道服)"
+  },
+  "com.bilibili.blhx.mzw": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (拇指玩渠道服)"
+  },
+  "com.yiwu.blhx.yx15": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (一五游戏渠道服)"
+  },
+  "com.bilibili.blhx.m4399": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (4399渠道服)"
+  },
+  "com.bilibili.blhx.bilibiliMove": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (迁移渠道服)"
+  },
+  "com.hkmanjuu.azurlane.gp.mc": {
+    "target": "com.bilibili.azurlane",
+    "label": "碧蓝航线 (台服)"
+  }
+}

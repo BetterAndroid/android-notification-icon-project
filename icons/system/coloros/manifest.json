@@ -1,0 +1,498 @@
+{
+  "com.coloros.phonemanager": {
+    "label": {
+      "en": "Phone Manager",
+      "zh-CN": "手机管家"
+    },
+    "format": "png",
+    "color": "#85C3AF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.heytap.browser": {
+    "label": {
+      "en": "Browser",
+      "zh-CN": "浏览器"
+    },
+    "format": "png",
+    "color": "#50AFFF",
+    "overlay": true,
+    "contributors": "PedroZ, fankes"
+  },
+  "com.heytap.reader": {
+    "label": {
+      "en": "Reader",
+      "zh-CN": "阅读"
+    },
+    "format": "png",
+    "color": "#F2A135",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.heytap.speechassist": {
+    "label": {
+      "en": "Breeno Assistant",
+      "zh-CN": "小布助手"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.coloros.shortcuts": {
+    "label": {
+      "en": "Breeno Commands",
+      "zh-CN": "小布指令"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.android.contacts": {
+    "label": {
+      "en": "Contacts",
+      "zh-CN": "联系人"
+    },
+    "format": "png",
+    "color": "#166ED2",
+    "overlay": false,
+    "contributors": "fankes, AzusaHana"
+  },
+  "com.android.incallui": {
+    "target": "com.android.contacts",
+    "label": {
+      "en": "Phone",
+      "zh-CN": "电话"
+    }
+  },
+  "com.android.mms": {
+    "label": {
+      "en": "Messages",
+      "zh-CN": "信息"
+    },
+    "format": "png",
+    "color": "#30D391",
+    "overlay": false,
+    "contributors": "fankes, AzusaHana"
+  },
+  "com.heytap.market": {
+    "label": {
+      "en": "App Market",
+      "zh-CN": "软件商店"
+    },
+    "format": "png",
+    "color": "#58D37D",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.android.providers.downloads": {
+    "label": {
+      "en": "Downloads",
+      "zh-CN": "下载管理程序"
+    },
+    "format": "png",
+    "color": "#72C476",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.finshell.wallet": {
+    "label": {
+      "en": "Wallet",
+      "zh-CN": "钱包"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.heytap.cloud": {
+    "label": {
+      "en": "Cloud",
+      "zh-CN": "云服务"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.android.bluetooth": {
+    "label": {
+      "en": "Bluetooth",
+      "zh-CN": "蓝牙"
+    },
+    "format": "png",
+    "color": "#4C80FC",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.coloros.alarmclock": {
+    "label": {
+      "en": "Clock",
+      "zh-CN": "时钟"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.coloros.sceneservice": {
+    "label": {
+      "en": "Data Service Platform",
+      "zh-CN": "数据服务平台"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.oplus.screenrecorder": {
+    "label": {
+      "en": "Screen Recording (OnePlus)",
+      "zh-CN": "屏幕录制 (一加)"
+    },
+    "format": "png",
+    "color": "#EC3E50",
+    "overlay": false,
+    "contributors": "fankes, PedroZ"
+  },
+  "com.coloros.screenrecorder": {
+    "label": {
+      "en": "Screen Recording (OPPO)",
+      "zh-CN": "屏幕录制 (OPPO)"
+    },
+    "format": "png",
+    "color": "#DB762F",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.coloros.sharescreen": {
+    "label": {
+      "en": "Screen Sharing",
+      "zh-CN": "屏幕共享"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.coloros.assistantscreen": {
+    "label": {
+      "en": "Smart Assistant",
+      "zh-CN": "速览"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.oppo.usercenter": {
+    "label": {
+      "en": "My OPPO",
+      "zh-CN": "我的 OPPO"
+    },
+    "format": "png",
+    "color": "#F4BF1F",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.oppo.vip": {
+    "target": "com.oppo.usercenter",
+    "label": {
+      "en": "My OPPO (Channel)",
+      "zh-CN": "我的 OPPO (渠道)"
+    }
+  },
+  "com.heytap.vip": {
+    "target": "com.oppo.usercenter",
+    "label": {
+      "en": "My OnePlus",
+      "zh-CN": "我的一加"
+    }
+  },
+  "com.oppo.community": {
+    "label": {
+      "en": "OPPO Community",
+      "zh-CN": "OPPO 社区"
+    },
+    "format": "png",
+    "color": "#62C9A9",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.oneplus.bbs": {
+    "label": {
+      "en": "OnePlus Community",
+      "zh-CN": "一加社区"
+    },
+    "format": "png",
+    "color": "#F44336",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.realmecomm.app": {
+    "target": "com.oppo.community",
+    "label": {
+      "en": "realme Community",
+      "zh-CN": "Realme 社区"
+    },
+    "color": "#FFD700",
+    "contributors": "PedroZ, fankes"
+  },
+  "com.oplus.ota": {
+    "label": {
+      "en": "Software Update",
+      "zh-CN": "软件更新"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.oplus.battery": {
+    "label": {
+      "en": "Battery",
+      "zh-CN": "电池"
+    },
+    "format": "png",
+    "color": "#5BCA46",
+    "overlay": false,
+    "contributors": "PedroZ, AzusaHana, fankes"
+  },
+  "com.android.email": {
+    "label": {
+      "en": "Email",
+      "zh-CN": "电子邮件"
+    },
+    "format": "png",
+    "color": "#2B579A",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.coloros.calendar": {
+    "label": {
+      "en": "Calendar",
+      "zh-CN": "日历"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.heytap.themestore": {
+    "label": {
+      "en": "Theme Store",
+      "zh-CN": "主题商店"
+    },
+    "format": "png",
+    "color": "#D943A5",
+    "overlay": false,
+    "contributors": "PedroZ, fankes"
+  },
+  "com.nearme.gamecenter": {
+    "label": {
+      "en": "Game Center",
+      "zh-CN": "游戏中心"
+    },
+    "format": "png",
+    "color": "#E04D42",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.coloros.familyguard": {
+    "label": {
+      "en": "Family Space",
+      "zh-CN": "家庭空间"
+    },
+    "format": "png",
+    "color": "#29D583",
+    "overlay": false,
+    "contributors": "PedroZ"
+  },
+  "com.oplus.linker": {
+    "label": {
+      "en": "Device Interconnection Service",
+      "zh-CN": "设备互联服务"
+    },
+    "format": "png",
+    "color": "#426BFF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.coloros.digitalwellbeing": {
+    "label": {
+      "en": "Digital Wellbeing",
+      "zh-CN": "应用使用时间"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.oplus.uxdesign": {
+    "label": {
+      "en": "Personalizations",
+      "zh-CN": "个性化定制"
+    },
+    "format": "png",
+    "color": "#5ACB46",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.android.launcher": {
+    "label": {
+      "en": "System Launcher",
+      "zh-CN": "系统桌面"
+    },
+    "format": "png",
+    "color": "#285EF6",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.oneplus.brickmode": {
+    "label": {
+      "en": "Zen Mode",
+      "zh-CN": "禅定模式"
+    },
+    "format": "png",
+    "color": "#3E3CD5",
+    "overlay": true,
+    "contributors": "fankes"
+  },
+  "com.coloros.securitypermission": {
+    "label": {
+      "en": "Permission Management",
+      "zh-CN": "权限管理"
+    },
+    "format": "png",
+    "color": "#0079FF",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.coloros.codebook": {
+    "label": {
+      "en": "Password Book",
+      "zh-CN": "密码本"
+    },
+    "format": "png",
+    "color": "#63C9A9",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.coloros.findmyphone": {
+    "label": {
+      "en": "Find My Phone",
+      "zh-CN": "查找"
+    },
+    "format": "png",
+    "color": "#2B5ED2",
+    "overlay": false,
+    "contributors": "fankes"
+  },
+  "com.coloros.soundrecorder": {
+    "label": {
+      "en": "Recorder",
+      "zh-CN": "录音"
+    },
+    "format": "png",
+    "color": "#FB422E",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.oplus.games": {
+    "label": {
+      "en": "Games",
+      "zh-CN": "游戏助手"
+    },
+    "format": "png",
+    "color": "#4332C3",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.heytap.music": {
+    "label": {
+      "en": "Music",
+      "zh-CN": "音乐"
+    },
+    "format": "png",
+    "color": "#EA6057",
+    "overlay": false,
+    "contributors": "NekoMua"
+  },
+  "com.oplus.audiomonitor": {
+    "label": {
+      "en": "Smart Voice",
+      "zh-CN": "智慧语音"
+    },
+    "format": "png",
+    "color": "#09D750",
+    "overlay": false,
+    "contributors": "09277632"
+  },
+  "com.heytap.book": {
+    "target": "com.heytap.reader",
+    "label": {
+      "en": "Bookstore",
+      "zh-CN": "书城"
+    },
+    "contributors": "fankes, 09277632"
+  },
+  "com.coloros.gallery3d": {
+    "label": {
+      "en": "Photos",
+      "zh-CN": "相册"
+    },
+    "format": "png",
+    "color": "#55A1FE",
+    "overlay": false,
+    "contributors": "lns103"
+  },
+  "com.oplus.vdc": {
+    "label": {
+      "en": "Peripheral Device Convergence Framework",
+      "zh-CN": "外设融合框架"
+    },
+    "format": "png",
+    "color": "#1593F8",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.oplus.nas": {
+    "label": {
+      "en": "Network Services",
+      "zh-CN": "网络服务"
+    },
+    "format": "png",
+    "color": "#1A6AFF",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.oneplus.member": {
+    "label": {
+      "en": "My OnePlus",
+      "zh-CN": "我的一加"
+    },
+    "format": "png",
+    "color": "#FF3355",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.coloros.operationManual": {
+    "label": {
+      "en": "Help & Feedback",
+      "zh-CN": "帮助与反馈"
+    },
+    "format": "png",
+    "color": "#FF7700",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.oplus.eyeprotect": {
+    "label": {
+      "en": "Eye Comfort",
+      "zh-CN": "护眼模式"
+    },
+    "format": "png",
+    "color": "#FFD700",
+    "overlay": false,
+    "contributors": "oosl"
+  },
+  "com.oplus.aimemory": {
+    "label": {
+      "en": "AI Mind Space",
+      "zh-CN": "小布记忆"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "giresharu"
+  }
+}

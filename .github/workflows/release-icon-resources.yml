@@ -1,0 +1,78 @@
+name: Release Icon Resources
+
+on:
+  workflow_call:
+    inputs:
+      sha:
+        description: Commit SHA to package
+        required: true
+        type: string
+      contributor:
+        description: GitHub username credited in the release notes
+        required: true
+        type: string
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release-icon-resources:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: icon-resources-release
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha || github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Resolve Icon Resource Release
+        id: release
+        run: |
+          resolved_sha=$(git rev-parse HEAD)
+          tag="${resolved_sha:0:7}"
+          echo "sha=$resolved_sha" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release $tag already exists; skipping."
+            exit 0
+          fi
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare Icon Resource Release
+        if: steps.release.outputs.exists == 'false'
+        id: bundle
+        env:
+          CONTRIBUTOR: ${{ inputs.contributor || github.actor }}
+          SHA: ${{ steps.release.outputs.sha }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          before_tag=$(gh release list --repo "$GITHUB_REPOSITORY" --limit 1 --json tagName --jq '.[0].tagName // empty')
+          if [[ -z "$before_tag" ]]; then
+            before_tag=$(git rev-parse --short=7 "$SHA^")
+          fi
+          archive="$RUNNER_TEMP/anip-bundle-$TAG.zip"
+          (
+            cd icons
+            zip -qr "$archive" app game system
+          )
+          {
+            echo "**Contributor**: @$CONTRIBUTOR"
+            echo
+            echo "**Full Changelog**: https://github.com/$GITHUB_REPOSITORY/compare/$before_tag...$TAG"
+          } > "$RUNNER_TEMP/anip-release-notes.md"
+          echo "archive=$archive" >> "$GITHUB_OUTPUT"
+
+      - name: Publish Icon Resource Release
+        if: steps.release.outputs.exists == 'false'
+        env:
+          ARCHIVE: ${{ steps.bundle.outputs.archive }}
+          SHA: ${{ steps.release.outputs.sha }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          gh release create "$TAG" "$ARCHIVE" --repo "$GITHUB_REPOSITORY" --target "$SHA" --title "$TAG" --notes-file "$RUNNER_TEMP/anip-release-notes.md"

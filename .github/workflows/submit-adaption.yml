@@ -1,0 +1,154 @@
+name: Submit Notification Icon Adaption
+
+on:
+  issues:
+    types: [opened, reopened, unlabeled]
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  process-issue:
+    if: >-
+      github.event_name == 'issues' &&
+      contains(github.event.issue.labels.*.name, 'submit-adaption') &&
+      !contains(github.event.issue.labels.*.name, 'submit-adaption-done') &&
+      (github.event.action == 'opened' || github.event.action == 'reopened' ||
+      (github.event.action == 'unlabeled' && github.event.label.name == 'submit-adaption-violation'))
+    runs-on: ubuntu-latest
+    concurrency:
+      group: submit-adaption-issue-${{ github.event.issue.number }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate Submission and Prepare Files
+        id: submission
+        run: node .github/scripts/submit-adaption.mjs --apply "$GITHUB_EVENT_PATH"
+
+      - name: Mark invalid submission
+        if: steps.submission.outputs.valid == 'false'
+        env:
+          VALIDATION_ERRORS: ${{ steps.submission.outputs.errors }}
+        run: |
+          gh issue edit "$ISSUE_NUMBER" --add-label submit-adaption-violation
+          {
+            echo 'The automated submission check failed:'
+            echo
+            echo "$VALIDATION_ERRORS"
+            echo
+            echo 'Correct the Issue Form values, then ask an administrator to remove `submit-adaption-violation` to run the check again.'
+          } > "$RUNNER_TEMP/submit-adaption-error.md"
+          gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/submit-adaption-error.md"
+
+      - name: Create Submission Branch
+        if: steps.submission.outputs.valid == 'true'
+        env:
+          BRANCH: ${{ steps.submission.outputs.branch }}
+          PACKAGE_NAME: ${{ steps.submission.outputs.package_name }}
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git switch -c "$BRANCH"
+          git add -- icons
+          git commit -m "Add notification icon for $PACKAGE_NAME"
+          git push origin "$BRANCH"
+
+      - name: Open Draft Pull Request
+        if: steps.submission.outputs.valid == 'true'
+        id: pull-request
+        env:
+          BRANCH: ${{ steps.submission.outputs.branch }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          PACKAGE_NAME: ${{ steps.submission.outputs.package_name }}
+          SUMMARY: ${{ steps.submission.outputs.summary }}
+        run: |
+          {
+            echo "$SUMMARY"
+            echo
+            echo "Submitted from #$ISSUE_NUMBER."
+          } > "$RUNNER_TEMP/submit-adaption-pr.md"
+          pr_url=$(gh pr create --draft --base "$DEFAULT_BRANCH" --head "$BRANCH" --title "Add notification icon for $PACKAGE_NAME" --body-file "$RUNNER_TEMP/submit-adaption-pr.md")
+
+      - name: Mark Submission Under Review
+        if: steps.submission.outputs.valid == 'true'
+        env:
+          PR_URL: ${{ steps.pull-request.outputs.url }}
+        run: |
+          gh issue edit "$ISSUE_NUMBER" --add-label submit-adaption-pre
+          gh issue comment "$ISSUE_NUMBER" --body "Draft pull request created: $PR_URL"
+
+  finish-merged-submission:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      startsWith(github.event.pull_request.head.ref, 'anip/submit-')
+    runs-on: ubuntu-latest
+    outputs:
+      contributor: ${{ steps.submission-context.outputs.contributor }}
+      issue_number: ${{ steps.submission-context.outputs.issue_number }}
+    concurrency:
+      group: submit-adaption-merge-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HEAD_REF: ${{ github.event.pull_request.head.ref }}
+      PR_BODY: ${{ github.event.pull_request.body }}
+    steps:
+      - name: Resolve Submission Context
+        id: submission-context
+        run: |
+          issue_number="${HEAD_REF#anip/submit-}"
+          if [[ ! "$issue_number" =~ ^[0-9]+$ ]] || [[ "$PR_BODY" != *"#$issue_number"* ]]; then
+            echo 'Pull request does not contain a valid submission issue reference.' >&2
+            exit 1
+          fi
+          if ! gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name' | grep -Fxq submit-adaption-pre; then
+            echo 'Referenced issue is not an active automated submission.' >&2
+            exit 1
+          fi
+          contributor=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json author --jq '.author.login')
+          if [[ -z "$contributor" || "$contributor" == 'null' ]]; then
+            echo 'Unable to resolve the submission issue author.' >&2
+            exit 1
+          fi
+          echo "issue_number=$issue_number" >> "$GITHUB_OUTPUT"
+          echo "contributor=$contributor" >> "$GITHUB_OUTPUT"
+
+      - name: Delete Temporary Branch
+        run: |
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$HEAD_REF" >/dev/null 2>&1; then
+            gh api --method DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$HEAD_REF"
+          fi
+
+  release-merged-submission:
+    needs: finish-merged-submission
+    uses: ./.github/workflows/release-icon-resources.yml
+    with:
+      sha: ${{ github.event.pull_request.merge_commit_sha }}
+      contributor: ${{ needs.finish-merged-submission.outputs.contributor }}
+
+  complete-merged-submission:
+    needs: [finish-merged-submission, release-merged-submission]
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ISSUE_NUMBER: ${{ needs.finish-merged-submission.outputs.issue_number }}
+    steps:
+      - name: Complete Submission Lifecycle
+        run: |
+          gh issue edit "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --remove-label submit-adaption-pre --add-label submit-adaption-done
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "Submission completed by merged pull request #${{ github.event.pull_request.number }}."
