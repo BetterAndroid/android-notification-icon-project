@@ -58,12 +58,13 @@ jobs:
         env:
           BRANCH: ${{ steps.submission.outputs.branch }}
           PACKAGE_NAME: ${{ steps.submission.outputs.package_name }}
+          SUBMITTER: ${{ github.event.issue.user.login }}
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git switch -c "$BRANCH"
           git add -- icons
-          git commit -m "Add notification icon for $PACKAGE_NAME"
+          git commit -m "feat(icons): add notification icon for $PACKAGE_NAME by @$SUBMITTER"
           git push origin "$BRANCH"
 
       - name: Open Draft Pull Request
