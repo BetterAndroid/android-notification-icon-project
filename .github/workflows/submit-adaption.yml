@@ -203,12 +203,12 @@ jobs:
     runs-on: ubuntu-latest
     concurrency:
       group: submit-adaption-sync-${{ github.event.pull_request.number }}
-      cancel-in-progress: false
+      cancel-in-progress: true
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       HEAD_REF: ${{ github.event.pull_request.head.ref }}
-      PR_ACTION: ${{ github.event.action }}
       PR_BODY: ${{ github.event.pull_request.body }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
       - name: Synchronize Submission Issue State
         run: |
@@ -224,10 +224,11 @@ jobs:
             echo 'Referenced issue is not an active automated submission.' >&2
             exit 1
           fi
+          pr_state=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json state --jq '.state')
           issue_state=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json state --jq '.state')
-          if [[ "$PR_ACTION" == 'reopened' && "$issue_state" == 'CLOSED' ]]; then
+          if [[ "$pr_state" == 'OPEN' && "$issue_state" == 'CLOSED' ]]; then
             gh issue reopen "$issue_number" --repo "$GITHUB_REPOSITORY"
-          elif [[ "$PR_ACTION" == 'closed' && "$issue_state" == 'OPEN' ]]; then
+          elif [[ "$pr_state" == 'CLOSED' && "$issue_state" == 'OPEN' ]]; then
             gh issue close "$issue_number" --repo "$GITHUB_REPOSITORY" --reason 'not planned'
           fi
 
