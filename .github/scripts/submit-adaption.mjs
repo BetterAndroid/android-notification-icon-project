@@ -405,6 +405,7 @@ const validateAndApply = (event, applyChanges) => {
         }
     }
     return {
+        appLabel: typeof label === 'string' ? label : Object.values(label)[0],
         branch: `anip/submit-${issue.number}`,
         packageName,
         summary: target
@@ -421,6 +422,7 @@ const main = () => {
     try {
         const result = validateAndApply(event, applyChanges);
         writeOutput('valid', 'true');
+        writeOutput('app_label', result.appLabel);
         writeOutput('branch', result.branch);
         writeOutput('package_name', result.packageName);
         writeOutput('summary', result.summary);

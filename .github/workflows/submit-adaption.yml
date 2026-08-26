@@ -106,7 +106,7 @@ jobs:
             --arg repository "$GITHUB_REPOSITORY" \
             --arg branch "$BRANCH" \
             --arg expectedHeadOid "$base_oid" \
-            --arg headline "feat(icons): add notification icon for $PACKAGE_NAME by @$SUBMITTER" \
+            --arg headline "feat(icons): add $PACKAGE_NAME by @$SUBMITTER" \
             --slurpfile additions "$additions_file" \
             '{
               query: $query,
@@ -125,6 +125,7 @@ jobs:
         if: steps.submission.outputs.valid == 'true'
         id: pull-request
         env:
+          APP_LABEL: ${{ steps.submission.outputs.app_label }}
           BRANCH: ${{ steps.submission.outputs.branch }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           PACKAGE_NAME: ${{ steps.submission.outputs.package_name }}
@@ -135,7 +136,7 @@ jobs:
             echo
             echo "Submitted from #$ISSUE_NUMBER."
           } > "$RUNNER_TEMP/submit-adaption-pr.md"
-          pr_url=$(gh pr create --base "$DEFAULT_BRANCH" --head "$BRANCH" --title "[Submission] Add notification icon for $PACKAGE_NAME" --body-file "$RUNNER_TEMP/submit-adaption-pr.md")
+          pr_url=$(gh pr create --base "$DEFAULT_BRANCH" --head "$BRANCH" --title "[Submission] Add $APP_LABEL ($PACKAGE_NAME)" --body-file "$RUNNER_TEMP/submit-adaption-pr.md")
           pr_number="${pr_url##*/}"
           echo "number=$pr_number" >> "$GITHUB_OUTPUT"
 
