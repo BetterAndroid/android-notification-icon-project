@@ -40,7 +40,6 @@ jobs:
           pr_data=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$HEAD_REF" --state all --limit 1 --json number,state --jq '.[0] | [.number, .state] | @tsv')
           if [[ -z "$pr_data" ]]; then
             echo 'found=false' >> "$GITHUB_OUTPUT"
-            echo 'recreate=true' >> "$GITHUB_OUTPUT"
             exit 0
           fi
           read -r pr_number pr_state <<< "$pr_data"
@@ -63,7 +62,7 @@ jobs:
         if: steps.existing-pull-request.outputs.found != 'true'
         run: node .github/scripts/submit-adaption.mjs --apply "$GITHUB_EVENT_PATH"
 
-      - name: Mark invalid submission
+      - name: Mark Invalid Submission
         if: steps.submission.outputs.valid == 'false'
         env:
           VALIDATION_ERRORS: ${{ steps.submission.outputs.errors }}
@@ -78,28 +77,53 @@ jobs:
           } > "$RUNNER_TEMP/submit-adaption-error.md"
           gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/submit-adaption-error.md"
 
-      - name: Create Submission Branch
+      - name: Create Signed Submission Commit
         if: steps.submission.outputs.valid == 'true'
         env:
           BRANCH: ${{ steps.submission.outputs.branch }}
           PACKAGE_NAME: ${{ steps.submission.outputs.package_name }}
-          RECREATE: ${{ steps.existing-pull-request.outputs.recreate }}
+          RECREATE: ${{ github.event.action == 'reopened' }}
           SUBMITTER: ${{ github.event.issue.user.login }}
         run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          base_oid=$(git rev-parse HEAD)
           if [[ "$RECREATE" == 'true' ]]; then
-            git switch -C "$BRANCH"
+            if gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$BRANCH" >/dev/null 2>&1; then
+              gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/heads/$BRANCH" -f sha="$base_oid" -F force=true >/dev/null
+            else
+              gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/heads/$BRANCH" -f sha="$base_oid" >/dev/null
+            fi
           else
-            git switch -c "$BRANCH"
+            gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/heads/$BRANCH" -f sha="$base_oid" >/dev/null
           fi
-          git add -- icons
-          git commit -m "feat(icons): add notification icon for $PACKAGE_NAME by @$SUBMITTER"
-          if [[ "$RECREATE" == 'true' ]]; then
-            git push --force-with-lease origin "$BRANCH"
-          else
-            git push origin "$BRANCH"
+          additions='[]'
+          while IFS= read -r -d '' path; do
+            contents=$(base64 -w 0 "$path")
+            additions=$(jq --arg path "$path" --arg contents "$contents" '. + [{ path: $path, contents: $contents }]' <<< "$additions")
+          done < <(git ls-files --modified --others --exclude-standard -z -- icons)
+          if [[ $(jq 'length' <<< "$additions") -eq 0 ]]; then
+            echo 'No icon resource changes were prepared.' >&2
+            exit 1
           fi
+          query='mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid } } }'
+          jq -n \
+            --arg query "$query" \
+            --arg repository "$GITHUB_REPOSITORY" \
+            --arg branch "$BRANCH" \
+            --arg expectedHeadOid "$base_oid" \
+            --arg headline "feat(icons): add notification icon for $PACKAGE_NAME by @$SUBMITTER" \
+            --argjson additions "$additions" \
+            '{
+              query: $query,
+              variables: {
+                input: {
+                  branch: { repositoryNameWithOwner: $repository, branchName: $branch },
+                  expectedHeadOid: $expectedHeadOid,
+                  message: { headline: $headline },
+                  fileChanges: { additions: $additions }
+                }
+              }
+            }' > "$RUNNER_TEMP/submit-adaption-commit.json"
+          gh api graphql --input "$RUNNER_TEMP/submit-adaption-commit.json" --jq '.data.createCommitOnBranch.commit.oid'
 
       - name: Open Pull Request
         if: steps.submission.outputs.valid == 'true'
