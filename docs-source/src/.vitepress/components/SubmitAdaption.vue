@@ -16,12 +16,10 @@ import {
     categorySpecs,
     loadIconResources,
     resolveLabel,
-    type CategoryId,
     type LoadedCategory,
     type ManifestLabel,
     type ResolvedIconEntry
 } from '../data/icon-resources';
-import componentMessages from '../locales/components.json';
 import {
     resetSubmitAdaptionState,
     submitAdaptionState,
@@ -41,10 +39,6 @@ const maxResourceSize = 24 * 1024;
 const maxRemarkLength = 300;
 const contributorCookieName = 'anip-contributors';
 const contributorCookieMaxAge = 60 * 60 * 24 * 365;
-const issueCategoryLabels = Object.fromEntries(categorySpecs.map(({ id }) => [
-    id,
-    `${componentMessages.en.submitAdaption.categoryNames[id]} / ${componentMessages['zh-cn'].submitAdaption.categoryNames[id]}`
-])) as Record<CategoryId, string>;
 
 const categories = ref<LoadedCategory[]>([]);
 const resourcesLoading = ref(true);
@@ -555,7 +549,7 @@ const createIconPayload = async () => {
 const createIssueUrl = () => {
     const parameters = new URLSearchParams({
         template: 'submit_adaption.yml',
-        'anip-category': issueCategoryLabels[category.value],
+        'anip-category': String(categorySpecs.findIndex(({ id }) => id === category.value)),
         'anip-package-name': packageName.value.trim(),
         'anip-target': selectedTarget.value?.key ?? '',
         'anip-label': typeof serializedLabel.value === 'string'

@@ -14,13 +14,7 @@ const colorPattern = /^#[0-9A-F]{6}$/;
 const resourcePrefix = 'ANIP_RESOURCE:';
 const maxIconDimension = 150;
 const maxResourceSize = 24 * 1024;
-const categoryOptions = [
-    { id: 'app', label: 'Third-party Apps / 第三方应用', path: 'app' },
-    { id: 'game', label: 'Games / 游戏', path: 'game' },
-    { id: 'common', label: 'System · Common / 系统 · 通用', path: 'system/common' },
-    { id: 'mios', label: 'System · HyperOS/MIUI / 系统 · HyperOS/MIUI', path: 'system/mios' },
-    { id: 'coloros', label: 'System · ColorOS / 系统 · ColorOS', path: 'system/coloros' }
-];
+const categoryPaths = ['app', 'game', 'system/common', 'system/mios', 'system/coloros'];
 const fieldNames = {
     category: 'Category / 类别',
     packageName: 'App Package Name / 应用包名',
@@ -30,8 +24,8 @@ const fieldNames = {
     format: 'Icon Type / 图标类型',
     overlay: 'Overlay / 覆盖',
     contributors: 'Contributors / 贡献者',
-    remark: 'Remarks / 备注',
-    iconResource: 'Icon Resource / 图标资源'
+    iconResource: 'Icon Resource / 图标资源',
+    remark: 'Remarks / 备注'
 };
 const expectedFields = Object.values(fieldNames);
 const crcTable = Array.from({ length: 256 }, (_, value) => {
@@ -351,10 +345,9 @@ const validateAndApply = (event, applyChanges) => {
     if (!issue || typeof issue.body !== 'string') fail('GitHub issue event data is missing.');
     const fields = parseIssueFields(issue.body);
     const categoryValue = normalizeOptional(fields[fieldNames.category]);
-    const categoryIndex = categoryOptions.findIndex((option) => option.label === categoryValue);
-    const categoryOption = categoryOptions[categoryIndex];
-    if (!categoryOption) fail('Category is invalid.');
-    const { id: category, path: categoryPath } = categoryOption;
+    const categoryIndex = /^\d+$/.test(categoryValue) ? Number(categoryValue) : -1;
+    const categoryPath = categoryPaths[categoryIndex];
+    if (!categoryPath) fail('Category is invalid.');
     const packageName = normalizeOptional(fields[fieldNames.packageName]);
     if (!packageNamePattern.test(packageName)) fail('App Package Name is invalid.');
     const target = normalizeOptional(fields[fieldNames.target]);
@@ -413,11 +406,10 @@ const validateAndApply = (event, applyChanges) => {
     }
     return {
         branch: `anip/submit-${issue.number}`,
-        category,
         packageName,
         summary: target
-            ? `Add ${packageName} targeting ${target} in ${category}`
-            : `Add ${packageName}.${format} in ${category}`
+            ? `Add ${packageName} targeting ${target} in ${categoryPath}`
+            : `Add ${packageName}.${format} in ${categoryPath}`
     };
 };
 
@@ -430,7 +422,6 @@ const main = () => {
         const result = validateAndApply(event, applyChanges);
         writeOutput('valid', 'true');
         writeOutput('branch', result.branch);
-        writeOutput('category', result.category);
         writeOutput('package_name', result.packageName);
         writeOutput('summary', result.summary);
     } catch (error) {
