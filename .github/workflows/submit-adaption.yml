@@ -235,3 +235,4 @@ jobs:
         run: |
           gh issue edit "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --remove-label submit-adaption-pre --add-label submit-adaption-done
           gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "Submission completed by merged pull request #${{ github.event.pull_request.number }}."
+          gh issue close "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --reason completed
