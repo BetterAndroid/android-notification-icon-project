@@ -58,6 +58,8 @@ jobs:
       - name: Validate Submission and Prepare Files
         id: submission
         if: steps.existing-pull-request.outputs.found != 'true'
+        env:
+          ANIP_FORMATTED_ISSUE_BODY_PATH: ${{ runner.temp }}/submit-adaption-issue.md
         run: node .github/scripts/submit-adaption.mjs --apply "$GITHUB_EVENT_PATH"
 
       - name: Mark Invalid Submission
@@ -74,6 +76,12 @@ jobs:
             echo 'Checking failed, please correct the issue form values, then ask an administrator to remove `submit-adaption-violation` to run the check again.'
           } > "$RUNNER_TEMP/submit-adaption-error.md"
           gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/submit-adaption-error.md"
+
+      - name: Collapse Issue Icon Resource
+        if: >-
+          steps.submission.outputs.valid == 'true' &&
+          steps.submission.outputs.body_formatted == 'true'
+        run: gh issue edit "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/submit-adaption-issue.md"
 
       - name: Create Signed Submission Commit
         if: steps.submission.outputs.valid == 'true'

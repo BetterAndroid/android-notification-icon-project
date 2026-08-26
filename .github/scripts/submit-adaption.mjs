@@ -80,6 +80,33 @@ const parseIssueFields = (body) => {
     return Object.fromEntries(fields);
 };
 
+const normalizeIconResource = (value) => {
+    const normalized = normalizeOptional(value);
+    const codeBlockPatterns = [
+        /^<code(?:\s[^>]*)?>([\s\S]*?)<\/code>$/i,
+        /^<pre>\s*<code(?:\s[^>]*)?>([\s\S]*?)<\/code>\s*<\/pre>$/i,
+        /^<details>\s*<summary>[^<]*<\/summary>\s*<pre>\s*<code(?:\s[^>]*)?>([\s\S]*?)<\/code>\s*<\/pre>\s*<\/details>$/i
+    ];
+    for (const pattern of codeBlockPatterns) {
+        const match = normalized.match(pattern);
+        if (match) return match[1].trim();
+    }
+    return normalized;
+};
+
+const formatIconResourceBody = (body) => {
+    const heading = `### ${fieldNames.iconResource}\n\n`;
+    const headingStart = body.indexOf(heading);
+    if (headingStart < 0) return body;
+    const contentStart = headingStart + heading.length;
+    const nextHeading = body.indexOf('\n\n### ', contentStart);
+    const contentEnd = nextHeading < 0 ? body.length : nextHeading;
+    const iconResource = normalizeIconResource(body.slice(contentStart, contentEnd));
+    if (!iconResource.startsWith(resourcePrefix)) return body;
+    const collapsed = `<details><summary>Expand to view</summary><pre><code>${iconResource}</code></pre></details>`;
+    return `${body.slice(0, contentStart)}${collapsed}${body.slice(contentEnd)}`;
+};
+
 const decodeIconPayload = (value) => {
     if (!value.startsWith(resourcePrefix) || value.includes('\n'))
         fail('Icon Resource must contain one complete ANIP_RESOURCE payload.');
@@ -379,7 +406,7 @@ const validateAndApply = (event, applyChanges) => {
         const targetFormat = targetRule.format.toLocaleLowerCase();
         if (targetFormat !== format) fail('Icon Type does not match the target resource format.');
     } else {
-        const iconResource = normalizeOptional(fields[fieldNames.iconResource]);
+        const iconResource = normalizeIconResource(fields[fieldNames.iconResource]);
         if (!iconResource) fail('Icon Resource is required when Target App Package Name is empty.');
         const payload = decodeIconPayload(iconResource);
         if (!hasExactKeys(payload, ['data', 'format', 'mimeType', 'schemaVersion', 'sha256', 'size']))
@@ -421,8 +448,13 @@ const main = () => {
     const event = JSON.parse(readFileSync(eventPath, 'utf8'));
     try {
         const result = validateAndApply(event, applyChanges);
+        const formattedBody = formatIconResourceBody(event.issue.body);
+        const bodyFormatted = formattedBody !== event.issue.body;
+        if (bodyFormatted && process.env.ANIP_FORMATTED_ISSUE_BODY_PATH)
+            writeFileSync(process.env.ANIP_FORMATTED_ISSUE_BODY_PATH, formattedBody);
         writeOutput('valid', 'true');
         writeOutput('app_label', result.appLabel);
+        writeOutput('body_formatted', String(bodyFormatted));
         writeOutput('branch', result.branch);
         writeOutput('package_name', result.packageName);
         writeOutput('summary', result.summary);
