@@ -4410,5 +4410,14 @@
     "target": "tv.danmaku.bili",
     "label": "叔叔我啊",
     "contributors": "fankes"
+  },
+  "com.clear.zsz1": {
+    "label": {
+      "en": "Clear",
+      "zh-CN": "清理"
+    },
+    "format": "svg",
+    "overlay": false,
+    "contributors": "fankes, test"
   }
 }
