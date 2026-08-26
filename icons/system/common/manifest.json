@@ -42,5 +42,10 @@
       "en": "ColorOS Weather Service",
       "zh-CN": "ColorOS 天气服务"
     }
+  },
+  "bfc.bfc": {
+    "target": "com.android.nfc",
+    "label": "Bfc",
+    "contributors": "fankes"
   }
 }
