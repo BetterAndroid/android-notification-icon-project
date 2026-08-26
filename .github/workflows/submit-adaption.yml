@@ -71,7 +71,7 @@ jobs:
             echo
             echo "$VALIDATION_ERRORS"
             echo
-            echo 'Correct the Issue Form values, then ask an administrator to remove `submit-adaption-violation` to run the check again.'
+            echo 'Checking failed, please correct the issue form values, then ask an administrator to remove `submit-adaption-violation` to run the check again.'
           } > "$RUNNER_TEMP/submit-adaption-error.md"
           gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/submit-adaption-error.md"
 
@@ -135,7 +135,7 @@ jobs:
             echo
             echo "Submitted from #$ISSUE_NUMBER."
           } > "$RUNNER_TEMP/submit-adaption-pr.md"
-          pr_url=$(gh pr create --base "$DEFAULT_BRANCH" --head "$BRANCH" --title "Add notification icon for $PACKAGE_NAME" --body-file "$RUNNER_TEMP/submit-adaption-pr.md")
+          pr_url=$(gh pr create --base "$DEFAULT_BRANCH" --head "$BRANCH" --title "[Submission] Add notification icon for $PACKAGE_NAME" --body-file "$RUNNER_TEMP/submit-adaption-pr.md")
           pr_number="${pr_url##*/}"
           echo "number=$pr_number" >> "$GITHUB_OUTPUT"
 
