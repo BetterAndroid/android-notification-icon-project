@@ -4398,5 +4398,11 @@
     "color": "#FE8D35",
     "overlay": false,
     "contributors": "ZhangCe"
+  },
+  "com.a.b.c.d.e.f": {
+    "label": "我的胶原蛋白",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
   }
 }
