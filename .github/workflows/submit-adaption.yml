@@ -29,13 +29,11 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ISSUE_NUMBER: ${{ github.event.issue.number }}
     steps:
-      - name: Restore Existing Pull Request
+      - name: Resolve Existing Pull Request
         id: existing-pull-request
-        if: >-
-          github.event.action == 'reopened' &&
-          contains(github.event.issue.labels.*.name, 'submit-adaption-pre')
         env:
           HEAD_REF: anip/submit-${{ github.event.issue.number }}
+          ISSUE_ACTION: ${{ github.event.action }}
         run: |
           pr_data=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$HEAD_REF" --state all --limit 1 --json number,state --jq '.[0] | [.number, .state] | @tsv')
           if [[ -z "$pr_data" ]]; then
@@ -43,7 +41,7 @@ jobs:
             exit 0
           fi
           read -r pr_number pr_state <<< "$pr_data"
-          if [[ "$pr_state" == 'CLOSED' ]]; then
+          if [[ "$ISSUE_ACTION" == 'reopened' && "$pr_state" == 'CLOSED' ]]; then
             gh pr reopen "$pr_number" --repo "$GITHUB_REPOSITORY"
           fi
           echo 'found=true' >> "$GITHUB_OUTPUT"
@@ -82,25 +80,23 @@ jobs:
         env:
           BRANCH: ${{ steps.submission.outputs.branch }}
           PACKAGE_NAME: ${{ steps.submission.outputs.package_name }}
-          RECREATE: ${{ github.event.action == 'reopened' }}
           SUBMITTER: ${{ github.event.issue.user.login }}
         run: |
           base_oid=$(git rev-parse HEAD)
-          if [[ "$RECREATE" == 'true' ]]; then
-            if gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$BRANCH" >/dev/null 2>&1; then
-              gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/heads/$BRANCH" -f sha="$base_oid" -F force=true >/dev/null
-            else
-              gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/heads/$BRANCH" -f sha="$base_oid" >/dev/null
-            fi
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$BRANCH" >/dev/null 2>&1; then
+            gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/heads/$BRANCH" -f sha="$base_oid" -F force=true >/dev/null
           else
             gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/heads/$BRANCH" -f sha="$base_oid" >/dev/null
           fi
-          additions='[]'
+          additions_file="$RUNNER_TEMP/submit-adaption-additions.jsonl"
+          content_file="$RUNNER_TEMP/submit-adaption-content.base64"
+          : > "$additions_file"
           while IFS= read -r -d '' path; do
-            contents=$(base64 -w 0 "$path")
-            additions=$(jq --arg path "$path" --arg contents "$contents" '. + [{ path: $path, contents: $contents }]' <<< "$additions")
+            base64 -w 0 "$path" > "$content_file"
+            jq -cn --arg path "$path" --rawfile contents "$content_file" \
+              '{ path: $path, contents: $contents }' >> "$additions_file"
           done < <(git ls-files --modified --others --exclude-standard -z -- icons)
-          if [[ $(jq 'length' <<< "$additions") -eq 0 ]]; then
+          if [[ ! -s "$additions_file" ]]; then
             echo 'No icon resource changes were prepared.' >&2
             exit 1
           fi
@@ -111,7 +107,7 @@ jobs:
             --arg branch "$BRANCH" \
             --arg expectedHeadOid "$base_oid" \
             --arg headline "feat(icons): add notification icon for $PACKAGE_NAME by @$SUBMITTER" \
-            --argjson additions "$additions" \
+            --slurpfile additions "$additions_file" \
             '{
               query: $query,
               variables: {
