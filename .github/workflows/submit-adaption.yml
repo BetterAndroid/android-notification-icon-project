@@ -146,6 +146,11 @@ jobs:
             echo "$SUMMARY"
             echo
             echo "Submitted from #$ISSUE_NUMBER."
+            echo
+            echo 'Have a branch conflicts problem? Admin can send this command below to resolve.'
+            echo '```'
+            echo '/anip resolve-conflict'
+            echo '```'
           } > "$RUNNER_TEMP/submit-adaption-pr.md"
           if [[ "$HAS_EXISTING_PR" == 'true' ]]; then
             pr_number="$EXISTING_PR_NUMBER"

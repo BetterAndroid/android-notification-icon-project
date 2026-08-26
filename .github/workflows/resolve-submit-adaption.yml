@@ -13,7 +13,7 @@ jobs:
   resolve-command:
     if: >-
       github.event.issue.pull_request &&
-      contains(github.event.comment.body, '@github-actions') &&
+      contains(github.event.comment.body, '/anip resolve-conflict') &&
       github.event.comment.user.login != 'github-actions[bot]'
     runs-on: ubuntu-latest
     outputs:
@@ -36,11 +36,19 @@ jobs:
             echo 'requested=false' >> "$GITHUB_OUTPUT"
             exit 0
           }
-          shopt -s nocasematch
-          if [[ ! "$COMMENT_BODY" =~ (^|[[:space:]])@github-actions(\[bot\])?[[:space:]]+(fix|resolve)($|[^[:alnum:]_]) ]]; then
+          command_line=$(awk '
+            {
+              line = $0
+              gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+              if (length(line)) {
+                print tolower(line)
+                exit
+              }
+            }
+          ' <<< "$COMMENT_BODY")
+          if [[ "$command_line" != '/anip resolve-conflict' ]]; then
             ignore_command
           fi
-          shopt -u nocasematch
           permission=$(gh api "repos/$GITHUB_REPOSITORY/collaborators/$ACTOR/permission" --jq '.permission' 2>/dev/null || true)
           if [[ "$permission" != 'admin' ]]; then
             ignore_command
