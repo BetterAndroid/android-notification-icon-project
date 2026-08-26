@@ -4398,5 +4398,11 @@
     "color": "#FE8D35",
     "overlay": false,
     "contributors": "ZhangCe"
+  },
+  "com.sync.sync": {
+    "label": "SYnc!!",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes"
   }
 }
