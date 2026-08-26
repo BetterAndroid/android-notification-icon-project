@@ -4424,5 +4424,9 @@
     "target": "com.ss.android.ugc.aweme",
     "label": "9",
     "contributors": "fankes"
+  },
+  "husonghua.lang": {
+    "target": "com.coolapk.market",
+    "label": "叔叔你啊"
   }
 }
