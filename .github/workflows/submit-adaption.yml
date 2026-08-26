@@ -35,7 +35,7 @@ jobs:
           HEAD_REF: anip/submit-${{ github.event.issue.number }}
           ISSUE_ACTION: ${{ github.event.action }}
         run: |
-          pr_data=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$HEAD_REF" --state all --limit 1 --json number,state --jq '.[0] | [.number, .state] | @tsv')
+          pr_data=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$HEAD_REF" --state all --limit 1 --json number,state --jq '.[] | [.number, .state] | @tsv')
           if [[ -z "$pr_data" ]]; then
             echo 'found=false' >> "$GITHUB_OUTPUT"
             exit 0
@@ -164,7 +164,7 @@ jobs:
     steps:
       - name: Close Pull Request
         run: |
-          pr_data=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$HEAD_REF" --state all --limit 1 --json number,state --jq '.[0] | [.number, .state] | @tsv')
+          pr_data=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$HEAD_REF" --state all --limit 1 --json number,state --jq '.[] | [.number, .state] | @tsv')
           if [[ -z "$pr_data" ]]; then
             exit 0
           fi
