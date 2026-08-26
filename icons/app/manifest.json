@@ -4398,5 +4398,15 @@
     "color": "#FE8D35",
     "overlay": false,
     "contributors": "ZhangCe"
+  },
+  "com.smallrestart": {
+    "label": {
+      "en": "smamml restart",
+      "zh-CN": "小重启"
+    },
+    "format": "png",
+    "color": "#7350BA",
+    "overlay": true,
+    "contributors": "fankes"
   }
 }
