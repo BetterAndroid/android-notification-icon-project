@@ -3,7 +3,7 @@ name: Submit Notification Icon Adaption
 on:
   issues:
     types: [opened, edited, reopened, closed, unlabeled]
-  pull_request:
+  pull_request_target:
     types: [closed, reopened]
 
 permissions:
@@ -194,7 +194,7 @@ jobs:
 
   sync-unmerged-submission-issue:
     if: >-
-      github.event_name == 'pull_request' &&
+      github.event_name == 'pull_request_target' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       startsWith(github.event.pull_request.head.ref, 'anip/submit-') &&
       (github.event.action == 'reopened' ||
@@ -233,7 +233,7 @@ jobs:
 
   finish-merged-submission:
     if: >-
-      github.event_name == 'pull_request' &&
+      github.event_name == 'pull_request_target' &&
       github.event.pull_request.merged == true &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       startsWith(github.event.pull_request.head.ref, 'anip/submit-')
