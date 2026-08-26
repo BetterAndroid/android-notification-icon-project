@@ -2,9 +2,9 @@ name: Submit Notification Icon Adaption
 
 on:
   issues:
-    types: [opened, reopened, closed, unlabeled]
+    types: [opened, edited, reopened, closed, unlabeled]
   pull_request:
-    types: [closed]
+    types: [closed, reopened]
 
 permissions:
   contents: write
@@ -18,6 +18,9 @@ jobs:
       contains(github.event.issue.labels.*.name, 'submit-adaption') &&
       !contains(github.event.issue.labels.*.name, 'submit-adaption-done') &&
       (github.event.action == 'opened' || github.event.action == 'reopened' ||
+      (github.event.action == 'edited' &&
+      github.event.issue.state == 'open' &&
+      github.actor != 'github-actions[bot]') ||
       (github.event.action == 'unlabeled' &&
       github.event.label.name == 'submit-adaption-violation' &&
       !contains(github.event.issue.labels.*.name, 'submit-adaption-pre')))
@@ -45,19 +48,17 @@ jobs:
             gh pr reopen "$pr_number" --repo "$GITHUB_REPOSITORY"
           fi
           echo 'found=true' >> "$GITHUB_OUTPUT"
+          echo "number=$pr_number" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v4
-        if: steps.existing-pull-request.outputs.found != 'true'
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4
-        if: steps.existing-pull-request.outputs.found != 'true'
         with:
           node-version: 22
 
       - name: Validate Submission and Prepare Files
         id: submission
-        if: steps.existing-pull-request.outputs.found != 'true'
         env:
           ANIP_FORMATTED_ISSUE_BODY_PATH: ${{ runner.temp }}/submit-adaption-issue.md
         run: node .github/scripts/submit-adaption.mjs --apply "$GITHUB_EVENT_PATH"
@@ -129,13 +130,15 @@ jobs:
             }' > "$RUNNER_TEMP/submit-adaption-commit.json"
           gh api graphql --input "$RUNNER_TEMP/submit-adaption-commit.json" --jq '.data.createCommitOnBranch.commit.oid'
 
-      - name: Open Pull Request
+      - name: Create or Update Pull Request
         if: steps.submission.outputs.valid == 'true'
         id: pull-request
         env:
           APP_LABEL: ${{ steps.submission.outputs.app_label }}
           BRANCH: ${{ steps.submission.outputs.branch }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          EXISTING_PR_NUMBER: ${{ steps.existing-pull-request.outputs.number }}
+          HAS_EXISTING_PR: ${{ steps.existing-pull-request.outputs.found }}
           PACKAGE_NAME: ${{ steps.submission.outputs.package_name }}
           SUMMARY: ${{ steps.submission.outputs.summary }}
         run: |
@@ -144,12 +147,19 @@ jobs:
             echo
             echo "Submitted from #$ISSUE_NUMBER."
           } > "$RUNNER_TEMP/submit-adaption-pr.md"
-          pr_url=$(gh pr create --base "$DEFAULT_BRANCH" --head "$BRANCH" --title "[Submission] Add $APP_LABEL ($PACKAGE_NAME)" --body-file "$RUNNER_TEMP/submit-adaption-pr.md")
-          pr_number="${pr_url##*/}"
+          if [[ "$HAS_EXISTING_PR" == 'true' ]]; then
+            pr_number="$EXISTING_PR_NUMBER"
+            gh pr edit "$pr_number" --repo "$GITHUB_REPOSITORY" --title "[Submission] Add $APP_LABEL ($PACKAGE_NAME)" --body-file "$RUNNER_TEMP/submit-adaption-pr.md"
+          else
+            pr_url=$(gh pr create --base "$DEFAULT_BRANCH" --head "$BRANCH" --title "[Submission] Add $APP_LABEL ($PACKAGE_NAME)" --body-file "$RUNNER_TEMP/submit-adaption-pr.md")
+            pr_number="${pr_url##*/}"
+          fi
           echo "number=$pr_number" >> "$GITHUB_OUTPUT"
 
       - name: Mark Submission Under Review
-        if: steps.submission.outputs.valid == 'true'
+        if: >-
+          steps.submission.outputs.valid == 'true' &&
+          steps.existing-pull-request.outputs.found != 'true'
         env:
           PR_NUMBER: ${{ steps.pull-request.outputs.number }}
         run: |
@@ -180,6 +190,45 @@ jobs:
           read -r pr_number pr_state <<< "$pr_data"
           if [[ "$pr_state" == 'OPEN' ]]; then
             gh pr close "$pr_number" --repo "$GITHUB_REPOSITORY"
+          fi
+
+  sync-unmerged-submission-issue:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      startsWith(github.event.pull_request.head.ref, 'anip/submit-') &&
+      (github.event.action == 'reopened' ||
+      (github.event.action == 'closed' &&
+      github.event.pull_request.merged == false))
+    runs-on: ubuntu-latest
+    concurrency:
+      group: submit-adaption-sync-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HEAD_REF: ${{ github.event.pull_request.head.ref }}
+      PR_ACTION: ${{ github.event.action }}
+      PR_BODY: ${{ github.event.pull_request.body }}
+    steps:
+      - name: Synchronize Submission Issue State
+        run: |
+          issue_number="${HEAD_REF#anip/submit-}"
+          if [[ ! "$issue_number" =~ ^[0-9]+$ ]] || [[ "$PR_BODY" != *"#$issue_number"* ]]; then
+            echo 'Pull request does not contain a valid submission issue reference.' >&2
+            exit 1
+          fi
+          labels=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
+          if ! grep -Fxq submit-adaption <<< "$labels" ||
+            ! grep -Fxq submit-adaption-pre <<< "$labels" ||
+            grep -Fxq submit-adaption-done <<< "$labels"; then
+            echo 'Referenced issue is not an active automated submission.' >&2
+            exit 1
+          fi
+          issue_state=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json state --jq '.state')
+          if [[ "$PR_ACTION" == 'reopened' && "$issue_state" == 'CLOSED' ]]; then
+            gh issue reopen "$issue_number" --repo "$GITHUB_REPOSITORY"
+          elif [[ "$PR_ACTION" == 'closed' && "$issue_state" == 'OPEN' ]]; then
+            gh issue close "$issue_number" --repo "$GITHUB_REPOSITORY" --reason 'not planned'
           fi
 
   finish-merged-submission:
