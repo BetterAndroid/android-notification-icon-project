@@ -409,7 +409,7 @@ const validateAndApply = (event, applyChanges) => {
         packageName,
         summary: target
             ? `Add \`${packageName}\` targeting \`${target}\` in ${categoryPath}.`
-            : `Add \`${packageName}.${format}\` in ${categoryPath}.`
+            : `Add \`${packageName}\` in ${categoryPath}.`
     };
 };
 

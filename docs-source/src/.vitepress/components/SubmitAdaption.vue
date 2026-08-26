@@ -547,8 +547,12 @@ const createIconPayload = async () => {
     } satisfies IconPayload;
 };
 const createIssueUrl = () => {
+    const titleLabel = typeof serializedLabel.value === 'string'
+        ? serializedLabel.value
+        : Object.values(serializedLabel.value)[0] ?? '';
     const parameters = new URLSearchParams({
         template: 'submit_adaption.yml',
+        title: `[Submission] ${titleLabel}`,
         'anip-category': String(categorySpecs.findIndex(({ id }) => id === category.value)),
         'anip-package-name': packageName.value.trim(),
         'anip-target': selectedTarget.value?.key ?? '',

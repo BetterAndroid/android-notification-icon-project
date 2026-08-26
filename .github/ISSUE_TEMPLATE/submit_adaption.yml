@@ -1,7 +1,7 @@
 name: Notification Icon Adaption Submission
 description: Use this template to submit a checked notification icon resource / 已经检查通过的通知图标资源须使用此模板提交
 labels: [submit-adaption]
-title: "[Notification Icon Adaption Submission]"
+title: "[Submission]"
 body:
   - type: markdown
     attributes:

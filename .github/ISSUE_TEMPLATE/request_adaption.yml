@@ -1,7 +1,7 @@
 name: Notification Icon Adaption Request
 description: Use this template to submit a notification icon adaption request / 通知图标优化适配须使用此模板提交
 labels: [request-adaption]
-title: "[Notification Icon Adaption Request]"
+title: "[Request] "
 body:
   - type: markdown
     attributes:
