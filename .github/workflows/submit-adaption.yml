@@ -2,7 +2,7 @@ name: Submit Notification Icon Adaption
 
 on:
   issues:
-    types: [opened, reopened, unlabeled]
+    types: [opened, reopened, closed, unlabeled]
   pull_request:
     types: [closed]
 
@@ -18,7 +18,9 @@ jobs:
       contains(github.event.issue.labels.*.name, 'submit-adaption') &&
       !contains(github.event.issue.labels.*.name, 'submit-adaption-done') &&
       (github.event.action == 'opened' || github.event.action == 'reopened' ||
-      (github.event.action == 'unlabeled' && github.event.label.name == 'submit-adaption-violation'))
+      (github.event.action == 'unlabeled' &&
+      github.event.label.name == 'submit-adaption-violation' &&
+      !contains(github.event.issue.labels.*.name, 'submit-adaption-pre')))
     runs-on: ubuntu-latest
     concurrency:
       group: submit-adaption-issue-${{ github.event.issue.number }}
@@ -27,15 +29,38 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ISSUE_NUMBER: ${{ github.event.issue.number }}
     steps:
+      - name: Restore Existing Pull Request
+        id: existing-pull-request
+        if: >-
+          github.event.action == 'reopened' &&
+          contains(github.event.issue.labels.*.name, 'submit-adaption-pre')
+        env:
+          HEAD_REF: anip/submit-${{ github.event.issue.number }}
+        run: |
+          pr_data=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$HEAD_REF" --state all --limit 1 --json number,state --jq '.[0] | [.number, .state] | @tsv')
+          if [[ -z "$pr_data" ]]; then
+            echo 'found=false' >> "$GITHUB_OUTPUT"
+            echo 'recreate=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          read -r pr_number pr_state <<< "$pr_data"
+          if [[ "$pr_state" == 'CLOSED' ]]; then
+            gh pr reopen "$pr_number" --repo "$GITHUB_REPOSITORY"
+          fi
+          echo 'found=true' >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v4
+        if: steps.existing-pull-request.outputs.found != 'true'
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4
+        if: steps.existing-pull-request.outputs.found != 'true'
         with:
           node-version: 22
 
       - name: Validate Submission and Prepare Files
         id: submission
+        if: steps.existing-pull-request.outputs.found != 'true'
         run: node .github/scripts/submit-adaption.mjs --apply "$GITHUB_EVENT_PATH"
 
       - name: Mark invalid submission
@@ -58,16 +83,25 @@ jobs:
         env:
           BRANCH: ${{ steps.submission.outputs.branch }}
           PACKAGE_NAME: ${{ steps.submission.outputs.package_name }}
+          RECREATE: ${{ steps.existing-pull-request.outputs.recreate }}
           SUBMITTER: ${{ github.event.issue.user.login }}
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git switch -c "$BRANCH"
+          if [[ "$RECREATE" == 'true' ]]; then
+            git switch -C "$BRANCH"
+          else
+            git switch -c "$BRANCH"
+          fi
           git add -- icons
           git commit -m "feat(icons): add notification icon for $PACKAGE_NAME by @$SUBMITTER"
-          git push origin "$BRANCH"
+          if [[ "$RECREATE" == 'true' ]]; then
+            git push --force-with-lease origin "$BRANCH"
+          else
+            git push origin "$BRANCH"
+          fi
 
-      - name: Open Draft Pull Request
+      - name: Open Pull Request
         if: steps.submission.outputs.valid == 'true'
         id: pull-request
         env:
@@ -81,15 +115,43 @@ jobs:
             echo
             echo "Submitted from #$ISSUE_NUMBER."
           } > "$RUNNER_TEMP/submit-adaption-pr.md"
-          pr_url=$(gh pr create --draft --base "$DEFAULT_BRANCH" --head "$BRANCH" --title "Add notification icon for $PACKAGE_NAME" --body-file "$RUNNER_TEMP/submit-adaption-pr.md")
+          pr_url=$(gh pr create --base "$DEFAULT_BRANCH" --head "$BRANCH" --title "Add notification icon for $PACKAGE_NAME" --body-file "$RUNNER_TEMP/submit-adaption-pr.md")
+          pr_number="${pr_url##*/}"
+          echo "number=$pr_number" >> "$GITHUB_OUTPUT"
 
       - name: Mark Submission Under Review
         if: steps.submission.outputs.valid == 'true'
         env:
-          PR_URL: ${{ steps.pull-request.outputs.url }}
+          PR_NUMBER: ${{ steps.pull-request.outputs.number }}
         run: |
           gh issue edit "$ISSUE_NUMBER" --add-label submit-adaption-pre
-          gh issue comment "$ISSUE_NUMBER" --body "Draft pull request created: $PR_URL"
+          gh issue comment "$ISSUE_NUMBER" --body "Hello, thank you for your contribution. Your submission has been approved and a PR (#$PR_NUMBER) has been created. Please wait for the administrator to process it."
+
+  close-submission-pull-request:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'closed' &&
+      contains(github.event.issue.labels.*.name, 'submit-adaption') &&
+      contains(github.event.issue.labels.*.name, 'submit-adaption-pre') &&
+      !contains(github.event.issue.labels.*.name, 'submit-adaption-done')
+    runs-on: ubuntu-latest
+    concurrency:
+      group: submit-adaption-issue-${{ github.event.issue.number }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HEAD_REF: anip/submit-${{ github.event.issue.number }}
+    steps:
+      - name: Close Pull Request
+        run: |
+          pr_data=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$HEAD_REF" --state all --limit 1 --json number,state --jq '.[0] | [.number, .state] | @tsv')
+          if [[ -z "$pr_data" ]]; then
+            exit 0
+          fi
+          read -r pr_number pr_state <<< "$pr_data"
+          if [[ "$pr_state" == 'OPEN' ]]; then
+            gh pr close "$pr_number" --repo "$GITHUB_REPOSITORY"
+          fi
 
   finish-merged-submission:
     if: >-

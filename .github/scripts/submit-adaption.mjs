@@ -408,8 +408,8 @@ const validateAndApply = (event, applyChanges) => {
         branch: `anip/submit-${issue.number}`,
         packageName,
         summary: target
-            ? `Add ${packageName} targeting ${target} in ${categoryPath}`
-            : `Add ${packageName}.${format} in ${categoryPath}`
+            ? `Add \`${packageName}\` targeting \`${target}\` in ${categoryPath}.`
+            : `Add \`${packageName}.${format}\` in ${categoryPath}.`
     };
 };
 
