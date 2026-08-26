@@ -4405,5 +4405,10 @@
     "color": "#724AD9",
     "overlay": true,
     "contributors": "fankes"
+  },
+  "com.shushu": {
+    "target": "tv.danmaku.bili",
+    "label": "叔叔我啊",
+    "contributors": "fankes"
   }
 }
