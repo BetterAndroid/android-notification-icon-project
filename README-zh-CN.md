@@ -54,7 +54,7 @@
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/chart?repos=BetterAndroid/android-notification-icon-project&type=date&legend=top-left&sealed_token=NEbQx4a25VUk_FxFUwWhGWPewHaWOtfNrpH9yjoNhgBFeWN9Q1-TGC3xVK2UkWc_eeYUuBdlzPOuldMJSes5FTLxrgHesm6AtiqaquRbk5WPUgF_NDDR9A)](https://www.star-history.com/?repos=BetterAndroid%2Fandroid-notification-icon-project&type=date&legend=top-left)
+[![Star History Chart](https://api.star-history.com/chart?repos=BetterAndroid/android-notification-icon-project&type=date&legend=top-left&sealed_token=vAndrMBOsVaHmyJBj4lVnvACbMYhogwowucoYRlsii2zY4vcynd7Vk_d-0C57H8DNPlEDH2piE0-DjCoFBwxrs3ebhFsj1G0WNqwKao1lK7XtTVvuBZQow)](https://www.star-history.com/?repos=BetterAndroid%2Fandroid-notification-icon-project&type=date&legend=top-left)
 
 ## 许可证
 
