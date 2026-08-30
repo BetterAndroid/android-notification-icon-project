@@ -412,5 +412,14 @@
     "format": "png",
     "overlay": false,
     "contributors": "MOCHbbb"
+  },
+  "com.milink.service": {
+    "target": "com.xiaomi.mirror",
+    "label": {
+      "en": "Xiaomi HyperConnect",
+      "zh-CN": "设备互联"
+    },
+    "overlay": false,
+    "contributors": "fankes"
   }
 }
