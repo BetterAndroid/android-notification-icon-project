@@ -4869,5 +4869,14 @@
     "color": "#0055FF",
     "overlay": false,
     "contributors": "Taylorc0804"
+  },
+  "com.didi.es.psngr": {
+    "target": "com.sdu.didi.psnger",
+    "label": {
+      "en": "DiDi for Business",
+      "zh-CN": "滴滴企业版"
+    },
+    "overlay": false,
+    "contributors": "fankes, zweidyx"
   }
 }
