@@ -4878,5 +4878,12 @@
     },
     "overlay": false,
     "contributors": "fankes, zweidyx"
+  },
+  "com.huawei.smarthome": {
+    "label": "智慧生活",
+    "format": "png",
+    "color": "#006BE4",
+    "overlay": false,
+    "contributors": "plplpmmmmh"
   }
 }
