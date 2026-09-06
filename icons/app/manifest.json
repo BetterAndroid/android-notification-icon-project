@@ -4885,5 +4885,12 @@
     "color": "#006BE4",
     "overlay": false,
     "contributors": "plplpmmmmh"
+  },
+  "com.box.app": {
+    "label": "Box",
+    "format": "png",
+    "color": "#000000",
+    "overlay": false,
+    "contributors": "plplpmmmmh"
   }
 }
