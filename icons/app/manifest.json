@@ -4892,5 +4892,11 @@
     "color": "#000000",
     "overlay": false,
     "contributors": "plplpmmmmh"
+  },
+  "com.ss.android.lark.kacrc": {
+    "label": "润工作3.0",
+    "format": "png",
+    "overlay": false,
+    "contributors": "GOOOWEI"
   }
 }
