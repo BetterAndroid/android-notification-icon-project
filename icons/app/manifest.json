@@ -4898,5 +4898,15 @@
     "format": "png",
     "overlay": false,
     "contributors": "GOOOWEI"
+  },
+  "com.geely.consumer": {
+    "label": {
+      "en": "Geely Auto",
+      "zh-CN": "吉利汽车"
+    },
+    "format": "png",
+    "color": "#74AFFF",
+    "overlay": false,
+    "contributors": "fankes, Taylorc0804"
   }
 }
