@@ -4991,5 +4991,12 @@
     "color": "#23B7D2",
     "overlay": false,
     "contributors": "fankes, Taylorc0804"
+  },
+  "com.guotai.dazhihui": {
+    "label": "国泰海通君弘",
+    "format": "png",
+    "color": "#F42A28",
+    "overlay": false,
+    "contributors": "oosl"
   }
 }
