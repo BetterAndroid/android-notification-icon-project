@@ -4998,5 +4998,11 @@
     "color": "#F42A28",
     "overlay": false,
     "contributors": "oosl"
+  },
+  "me.yun.lspilot": {
+    "label": "LSPilot",
+    "format": "svg",
+    "overlay": false,
+    "contributors": "KIITTID"
   }
 }
