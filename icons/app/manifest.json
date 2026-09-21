@@ -4998,5 +4998,11 @@
     "color": "#F42A28",
     "overlay": false,
     "contributors": "oosl"
+  },
+  "com.fluxdown.app": {
+    "label": "FluxDown",
+    "format": "svg",
+    "overlay": false,
+    "contributors": "KIITTID"
   }
 }
