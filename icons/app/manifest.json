@@ -5033,5 +5033,12 @@
     "color": "#212121",
     "overlay": false,
     "contributors": "fankes, Taylorc0804"
+  },
+  "com.chehejia.livis": {
+    "label": "理想同学",
+    "format": "png",
+    "color": "#175550",
+    "overlay": false,
+    "contributors": "oosl"
   }
 }
