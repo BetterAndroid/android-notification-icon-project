@@ -5040,5 +5040,12 @@
     "color": "#175550",
     "overlay": false,
     "contributors": "oosl"
+  },
+  "com.waimaiii.waimaiii": {
+    "label": "歪麦霸王餐",
+    "format": "png",
+    "color": "#FF6633",
+    "overlay": false,
+    "contributors": "catsimple"
   }
 }
