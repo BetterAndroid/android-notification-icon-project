@@ -1,0 +1,77 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.highcapable.anip.sdk.config////PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/index.html
+$dokka.location:com.highcapable.anip.sdk.config/AnipConfig///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-anip-config/index.html
+$dokka.location:com.highcapable.anip.sdk.config/AnipConfig/AnipConfig/#com.highcapable.anip.sdk.type.SystemVariant?#java.io.File?#com.highcapable.anip.sdk.config.RemoteSource/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-anip-config/-anip-config.html
+$dokka.location:com.highcapable.anip.sdk.config/AnipConfig/cacheDirectory/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-anip-config/cache-directory.html
+$dokka.location:com.highcapable.anip.sdk.config/AnipConfig/source/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-anip-config/source.html
+$dokka.location:com.highcapable.anip.sdk.config/AnipConfig/systemVariant/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-anip-config/system-variant.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource.Companion///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/-companion/index.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource.Companion/Custom/#kotlin.String#com.highcapable.anip.sdk.config.RemoteSource.UrlResolver?/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/-companion/-custom.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource.Companion/GITHUB_OFFICIAL_REPO_SLUG/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/-companion/-g-i-t-h-u-b_-o-f-f-i-c-i-a-l_-r-e-p-o_-s-l-u-g.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource.Companion/GitHub/#kotlin.String#com.highcapable.anip.sdk.config.RemoteSource.UrlResolver?/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/-companion/-git-hub.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource.Companion/GitLab/#kotlin.String#kotlin.String#com.highcapable.anip.sdk.config.RemoteSource.UrlResolver?/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/-companion/-git-lab.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource.Companion/Static/#kotlin.String#com.highcapable.anip.sdk.config.RemoteSource.UrlResolver?/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/-companion/-static.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource.UrlResolver///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/-url-resolver/index.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource.UrlResolver/resolve/#kotlin.String#kotlin.String?#kotlin.String/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/-url-resolver/resolve.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/index.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource/manifestUrl/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/manifest-url.html
+$dokka.location:com.highcapable.anip.sdk.config/RemoteSource/urlResolver/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.config/-remote-source/url-resolver.html
+$dokka.location:com.highcapable.anip.sdk.entity////PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/index.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIcon///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon/index.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIcon/availableLabels/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon/available-labels.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIcon/color/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon/color.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIcon/contributors/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon/contributors.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIcon/label/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon/label.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIcon/loadBitmap/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon/load-bitmap.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIcon/overlay/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon/overlay.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIcon/packageName/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon/package-name.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIcon/toString/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon/to-string.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIconSnapshot///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon-snapshot/index.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIconSnapshot/getBitmap/#com.highcapable.anip.sdk.entity.NotificationIcon/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon-snapshot/get-bitmap.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIconSnapshot/getBitmap/#kotlin.String/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon-snapshot/get-bitmap.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIconSnapshot/getIcon/#kotlin.String/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon-snapshot/get-icon.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIconSnapshot/icons/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon-snapshot/icons.html
+$dokka.location:com.highcapable.anip.sdk.entity/NotificationIconSnapshot/memorySizeBytes/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.entity/-notification-icon-snapshot/memory-size-bytes.html
+$dokka.location:com.highcapable.anip.sdk.type////PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.type/index.html
+$dokka.location:com.highcapable.anip.sdk.type/IconCategory.ALL///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}anip-sdk/com.highcapable.anip.sdk.type/-icon-category/-a-l-l/index.html
+$dokka.location:com.highcapable.anip.sdk.type/IconCategory.APP///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}anip-sdk/com.highcapable.anip.sdk.type/-icon-category/-a-p-p/index.html
+$dokka.location:com.highcapable.anip.sdk.type/IconCategory.GAME///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}anip-sdk/com.highcapable.anip.sdk.type/-icon-category/-g-a-m-e/index.html
+$dokka.location:com.highcapable.anip.sdk.type/IconCategory.SYSTEM///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}anip-sdk/com.highcapable.anip.sdk.type/-icon-category/-s-y-s-t-e-m/index.html
+$dokka.location:com.highcapable.anip.sdk.type/IconCategory///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.type/-icon-category/index.html
+$dokka.location:com.highcapable.anip.sdk.type/IconCategory/entries/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.type/-icon-category/entries.html
+$dokka.location:com.highcapable.anip.sdk.type/IconCategory/valueOf/#kotlin.String/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.type/-icon-category/value-of.html
+$dokka.location:com.highcapable.anip.sdk.type/IconCategory/values/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.type/-icon-category/values.html
+$dokka.location:com.highcapable.anip.sdk.type/SystemVariant.COLOROS///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}anip-sdk/com.highcapable.anip.sdk.type/-system-variant/-c-o-l-o-r-o-s/index.html
+$dokka.location:com.highcapable.anip.sdk.type/SystemVariant.COMMON///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}anip-sdk/com.highcapable.anip.sdk.type/-system-variant/-c-o-m-m-o-n/index.html
+$dokka.location:com.highcapable.anip.sdk.type/SystemVariant.MIOS///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}anip-sdk/com.highcapable.anip.sdk.type/-system-variant/-m-i-o-s/index.html
+$dokka.location:com.highcapable.anip.sdk.type/SystemVariant///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.type/-system-variant/index.html
+$dokka.location:com.highcapable.anip.sdk.type/SystemVariant/entries/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.type/-system-variant/entries.html
+$dokka.location:com.highcapable.anip.sdk.type/SystemVariant/valueOf/#kotlin.String/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.type/-system-variant/value-of.html
+$dokka.location:com.highcapable.anip.sdk.type/SystemVariant/values/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk.type/-system-variant/values.html
+$dokka.location:com.highcapable.anip.sdk////PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/index.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult.Status.FAILED///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/-status/-f-a-i-l-e-d/index.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult.Status.SUCCESS///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/-status/-s-u-c-c-e-s-s/index.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult.Status.UP_TO_DATE///PointingToDeclaration/{"org.jetbrains.dokka.links.EnumEntryDRIExtra":{"key":"org.jetbrains.dokka.links.EnumEntryDRIExtra"}}anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/-status/-u-p_-t-o_-d-a-t-e/index.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult.Status///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/-status/index.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult.Status/entries/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/-status/entries.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult.Status/valueOf/#kotlin.String/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/-status/value-of.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult.Status/values/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/-status/values.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/index.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult/FetchResult/#kotlin.String#com.highcapable.anip.sdk.Anip.FetchResult.Status/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/-fetch-result.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult/isOk/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/is-ok.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult/message/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/message.html
+$dokka.location:com.highcapable.anip.sdk/Anip.FetchResult/status/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/-fetch-result/status.html
+$dokka.location:com.highcapable.anip.sdk/Anip///PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/index.html
+$dokka.location:com.highcapable.anip.sdk/Anip/Anip/#android.content.Context#com.highcapable.anip.sdk.config.AnipConfig/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/-anip.html
+$dokka.location:com.highcapable.anip.sdk/Anip/config/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/config.html
+$dokka.location:com.highcapable.anip.sdk/Anip/createSnapshot/#com.highcapable.anip.sdk.type.IconCategory/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/create-snapshot.html
+$dokka.location:com.highcapable.anip.sdk/Anip/fetch/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/fetch.html
+$dokka.location:com.highcapable.anip.sdk/Anip/getIcon/#kotlin.String/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/get-icon.html
+$dokka.location:com.highcapable.anip.sdk/Anip/getIcons/#com.highcapable.anip.sdk.type.IconCategory/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/get-icons.html
+$dokka.location:com.highcapable.anip.sdk/Anip/reload/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/reload.html
+$dokka.location:com.highcapable.anip.sdk/Anip/timestamp/#/PointingToDeclaration/anip-sdk/com.highcapable.anip.sdk/-anip/timestamp.html
+com.highcapable.anip.sdk
+com.highcapable.anip.sdk.config
+com.highcapable.anip.sdk.entity
+com.highcapable.anip.sdk.type
