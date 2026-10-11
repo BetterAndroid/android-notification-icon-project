@@ -5071,5 +5071,11 @@
     "color": "#518EF0",
     "overlay": false,
     "contributors": "fankes, zxygood"
+  },
+  "com.ss.android.ugc.live": {
+    "label": "抖音火山版",
+    "format": "png",
+    "overlay": true,
+    "contributors": "Lewis liu"
   }
 }
