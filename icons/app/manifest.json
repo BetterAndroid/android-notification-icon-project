@@ -5083,5 +5083,14 @@
     "color": "#158E7D",
     "overlay": false,
     "contributors": "plplpmmmmh"
+  },
+  "com.tencent.wechatkids": {
+    "target": "com.tencent.mm",
+    "label": {
+      "en": "WeChat Kids",
+      "zh-CN": "微信手表版"
+    },
+    "color": "#02A7F0",
+    "contributors": "NekoMua"
   }
 }
