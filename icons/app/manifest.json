@@ -5076,5 +5076,12 @@
     "target": "com.ss.android.ugc.aweme",
     "label": "抖音火山版",
     "contributors": "Lewis liu"
+  },
+  "com.sgcc.wsgw.cn": {
+    "label": "网上国网",
+    "format": "png",
+    "color": "#158E7D",
+    "overlay": false,
+    "contributors": "plplpmmmmh"
   }
 }
