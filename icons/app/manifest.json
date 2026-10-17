@@ -5083,5 +5083,14 @@
     "color": "#158E7D",
     "overlay": false,
     "contributors": "plplpmmmmh"
+  },
+  "com.tencent.qqlite": {
+    "target": "com.tencent.mobileqq",
+    "label": {
+      "en": "QQ Lite",
+      "zh-CN": "QQ轻聊版"
+    },
+    "overlay": true,
+    "contributors": "fankes, NekoMua"
   }
 }
