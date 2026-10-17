@@ -5092,5 +5092,14 @@
     },
     "overlay": true,
     "contributors": "fankes, NekoMua"
+  },
+  "com.tencent.wechatkids": {
+    "target": "com.tencent.mm",
+    "label": {
+      "en": "WeChat Kids",
+      "zh-CN": "微信手表版"
+    },
+    "color": "#02A7F0",
+    "contributors": "NekoMua"
   }
 }
