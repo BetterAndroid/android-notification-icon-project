@@ -5101,5 +5101,12 @@
     },
     "color": "#02A7F0",
     "contributors": "NekoMua"
+  },
+  "com.yek.android.kfc.activityss": {
+    "label": "肯德基",
+    "format": "png",
+    "color": "#FF0024",
+    "overlay": false,
+    "contributors": "rd0293"
   }
 }
