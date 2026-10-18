@@ -24,10 +24,10 @@
     "contributors": "fankes"
   },
   "com.coolapk.market": {
-    "label": "酷安",
+    "label": "酷嘎",
     "format": "png",
     "color": "#5DA261",
-    "overlay": false,
+    "overlay": true,
     "contributors": "fankes"
   },
   "com.eg.android.AlipayGphone": {
