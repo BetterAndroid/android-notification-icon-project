@@ -6,9 +6,16 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please do not fill out this form manually. Make sure to create this issue through [here](https://betterandroid.github.io/android-notification-icon-project/en/contribute/submit) and paste the complete content with the prefix "ANIP_RESOURCE" in the "Icon Resource" field below (if any).
+        Please do not fill out this form manually. Make sure to create this issue through [here](https://betterandroid.github.io/android-notification-icon-project/en/contribute/submit) and paste the complete content with the prefix "ANIP_RESOURCE" in the "Icon Resource" field below (if any). Leave it empty when a modification keeps the current icon.
 
-        请不要手动填写这份表单，确保通过 [这里](https://betterandroid.github.io/android-notification-icon-project/zh-cn/contribute/submit) 创建此 Issue，并在下方的 “图标资源” 字段中粘贴前缀为 “ANIP_RESOURCE” 的完整内容 (如果有)。
+        请不要手动填写这份表单，确保通过 [这里](https://betterandroid.github.io/android-notification-icon-project/zh-cn/contribute/submit) 创建此 Issue，并在下方的 “图标资源” 字段中粘贴前缀为 “ANIP_RESOURCE” 的完整内容 (如果有)，修改模式下未更换图标时请留空。
+  - type: input
+    id: anip-type
+    attributes:
+      label: "Type / 类型"
+      description: "0: First Submission / 首次提交; 1: Modification / 修改"
+    validations:
+      required: true
   - type: input
     id: anip-category
     attributes:
@@ -68,7 +75,7 @@ body:
     id: anip-icon-resource
     attributes:
       label: "Icon Resource / 图标资源"
-      description: 'Please paste the complete content with the prefix "ANIP_RESOURCE" copied from the document (Optional) / 请粘贴从文档中复制的前缀为 “ANIP_RESOURCE” 的完整内容 (可选)'
+      description: 'Please paste the complete content with the prefix "ANIP_RESOURCE" copied from the document, leave it empty when a modification keeps the current icon (Optional) / 请粘贴从文档中复制的前缀为 “ANIP_RESOURCE” 的完整内容，修改模式下未更换图标时留空 (可选)'
       placeholder: "ANIP_RESOURCE:..."
     validations:
       required: false
@@ -76,6 +83,6 @@ body:
     id: anip-remark
     attributes:
       label: "Remarks / 备注"
-      description: "Additional information, maximum 300 characters (Optional) / 补充信息，最多 300 字 (可选)"
+      description: "Additional information, maximum 300 characters, required for a modification (Optional) / 补充信息，最多 300 字，修改时必填 (可选)"
     validations:
       required: false

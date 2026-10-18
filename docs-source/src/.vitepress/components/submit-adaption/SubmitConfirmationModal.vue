@@ -8,6 +8,7 @@ if (!context) throw new Error('SubmitAdaption context is unavailable');
 const {
     confirmSubmission,
     continueOverlaySubmission,
+    dependentEntries,
     locale,
     modalOpen,
     overlayWarningOpen,
@@ -41,6 +42,12 @@ const {
                     :aria-labelledby="`submit-modal-title-${locale}`">
                     <h2 :id="`submit-modal-title-${locale}`">{{ text.confirmTitle }}</h2>
                     <p>{{ pendingPayload ? text.confirmDescription : text.targetConfirmDescription }}</p>
+                    <template v-if="dependentEntries.length">
+                        <p>{{ text.dependentsNotice }}</p>
+                        <ul class="dependent-list">
+                            <li v-for="entry in dependentEntries" :key="entry.key"><code>{{ entry.key }}</code></li>
+                        </ul>
+                    </template>
                     <textarea v-if="pendingPayload" :value="pendingPayload" readonly aria-label="ANIP_RESOURCE"
                         @focus="($event.target as HTMLTextAreaElement).select()" />
                     <div class="modal-actions">
@@ -102,6 +109,17 @@ const {
         margin: 14px 0;
         color: var(--vp-c-text-2);
         line-height: 1.65;
+    }
+
+    .dependent-list {
+        max-height: 140px;
+        overflow: auto;
+        margin: 0 0 14px;
+        padding: 0;
+        list-style: none;
+        color: var(--vp-c-text-2);
+        font-size: 14px;
+        line-height: 1.7;
     }
 
     textarea {

@@ -4,7 +4,8 @@ import {
     CheckOutlined,
     CloseOutlined,
     ExclamationOutlined,
-    RollbackOutlined
+    RollbackOutlined,
+    SwapOutlined
 } from '@ant-design/icons-vue';
 import { submitAdaptionContextKey } from './utils/context';
 
@@ -12,7 +13,7 @@ const context = inject(submitAdaptionContextKey);
 if (!context) throw new Error('SubmitAdaption context is unavailable');
 
 const {
-    clearSelectedIcon,
+    editingEntry,
     fileInput,
     handleFileDrop,
     handleFileSelection,
@@ -20,11 +21,14 @@ const {
     handleIconDragLeave,
     handleIconDragOver,
     iconDragActive,
+    iconResetDisabled,
     iconValidating,
     openFilePicker,
+    originalIcon,
     previewColorizableOnHover,
     previewColorized,
     previewSource,
+    resetSelectedIcon,
     selectedTarget,
     text,
     validationStatus
@@ -49,10 +53,18 @@ const bindFileInput = (element: unknown) =>
                     <img :src="previewSource" alt="">
                 </span>
             </div>
-            <button v-if="!selectedTarget" type="button" class="compact-icon-button" :title="text.clearIcon"
-                :aria-label="text.clearIcon" @click="clearSelectedIcon">
-                <RollbackOutlined aria-hidden="true" />
-            </button>
+            <div v-if="!selectedTarget" class="icon-actions">
+                <button v-if="editingEntry" type="button" class="compact-icon-button" :title="text.replaceIcon"
+                    :aria-label="text.replaceIcon" @click="openFilePicker">
+                    <SwapOutlined aria-hidden="true" />
+                </button>
+                <button type="button" class="compact-icon-button"
+                    :title="originalIcon ? text.restoreIcon : text.clearIcon"
+                    :aria-label="originalIcon ? text.restoreIcon : text.clearIcon" :disabled="iconResetDisabled"
+                    @click="resetSelectedIcon">
+                    <RollbackOutlined aria-hidden="true" />
+                </button>
+            </div>
         </template>
         <button v-else type="button" class="icon-button select-empty" :title="text.selectIcon"
             :aria-label="text.selectIcon" @click="openFilePicker">
@@ -249,6 +261,11 @@ const bindFileInput = (element: unknown) =>
     }
 }
 
+.icon-actions {
+    display: flex;
+    gap: 6px;
+}
+
 .compact-icon-button {
     display: grid;
     width: 28px;
@@ -266,6 +283,13 @@ const bindFileInput = (element: unknown) =>
     &:hover {
         border-color: var(--vp-c-brand-1);
         color: var(--vp-c-brand-1);
+    }
+
+    &:disabled {
+        border-color: var(--vp-c-divider);
+        color: var(--vp-c-text-2);
+        opacity: 0.4;
+        cursor: not-allowed;
     }
 }
 

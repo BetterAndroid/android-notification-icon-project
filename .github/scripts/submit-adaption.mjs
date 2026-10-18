@@ -1,4 +1,4 @@
-import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
@@ -8,7 +8,7 @@ import { createHash } from 'node:crypto';
 const repositoryRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const packageNamePattern = /^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+$/;
 // Preserve the existing Android framework resource while applying applicationId rules to new entries.
-const legacyTargetPackageNames = new Set(['android']);
+const legacyPackageNames = new Set(['android']);
 const localeCodePattern = /^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$/;
 const colorPattern = /^#[0-9A-F]{6}$/;
 const resourcePrefix = 'ANIP_RESOURCE:';
@@ -16,6 +16,7 @@ const maxIconDimension = 150;
 const maxResourceSize = 24 * 1024;
 const categoryPaths = ['app', 'game', 'system/common', 'system/mios', 'system/coloros'];
 const fieldNames = {
+    type: 'Type / 类型',
     category: 'Category / 类别',
     packageName: 'App Package Name / 应用包名',
     target: 'Target App Package Name / 目标应用包名',
@@ -371,14 +372,18 @@ const validateAndApply = (event, applyChanges) => {
     const issue = event.issue;
     if (!issue || typeof issue.body !== 'string') fail('GitHub issue event data is missing.');
     const fields = parseIssueFields(issue.body);
+    const typeValue = normalizeOptional(fields[fieldNames.type]);
+    if (!['0', '1'].includes(typeValue)) fail('Type must be 0 or 1.');
+    const modification = typeValue === '1';
     const categoryValue = normalizeOptional(fields[fieldNames.category]);
     const categoryIndex = /^\d+$/.test(categoryValue) ? Number(categoryValue) : -1;
     const categoryPath = categoryPaths[categoryIndex];
     if (!categoryPath) fail('Category is invalid.');
     const packageName = normalizeOptional(fields[fieldNames.packageName]);
-    if (!packageNamePattern.test(packageName)) fail('App Package Name is invalid.');
+    if (!packageNamePattern.test(packageName) && !legacyPackageNames.has(packageName))
+        fail('App Package Name is invalid.');
     const target = normalizeOptional(fields[fieldNames.target]);
-    if (target && !packageNamePattern.test(target) && !legacyTargetPackageNames.has(target))
+    if (target && !packageNamePattern.test(target) && !legacyPackageNames.has(target))
         fail('Target App Package Name is invalid.');
     if (target === packageName) fail('Target App Package Name and App Package Name cannot be the same.');
     const label = parseLabel(fields[fieldNames.label]);
@@ -393,12 +398,22 @@ const validateAndApply = (event, applyChanges) => {
     const contributors = contributorsText.split(',').map((value) => value.trim());
     if (!contributorsText || contributors.some((value) => !value) || contributorsText !== contributors.join(', '))
         fail('Contributors must be non-empty and separated by a comma and a space.');
+    // GitHub user names are case-insensitive.
+    if (new Set(contributors.map((value) => value.toLocaleLowerCase())).size !== contributors.length)
+        fail('Contributors must not be duplicated.');
+    if (modification && !normalizeOptional(fields[fieldNames.remark])) fail('Remarks are required in a modification.');
     const manifestPath = join(repositoryRoot, 'icons', categoryPath, 'manifest.json');
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-    if (Object.hasOwn(manifest, packageName)) fail('App Package Name already exists in the selected manifest.');
     const resourceDirectory = join(repositoryRoot, 'icons', categoryPath, 'res');
-    if (['png', 'svg'].some((extension) => existsSync(join(resourceDirectory, `${packageName}.${extension}`))))
-        fail('App Package Name already has an icon resource in the selected category.');
+    const existingRule = modification ? manifest[packageName] : undefined;
+    if (modification) {
+        if (!Object.hasOwn(manifest, packageName)) fail('App Package Name does not exist in the selected manifest.');
+        if (target !== (existingRule.target ?? '')) fail('Target App Package Name cannot be changed in a modification.');
+    } else {
+        if (Object.hasOwn(manifest, packageName)) fail('App Package Name already exists in the selected manifest.');
+        if (['png', 'svg'].some((extension) => existsSync(join(resourceDirectory, `${packageName}.${extension}`))))
+            fail('App Package Name already has an icon resource in the selected category.');
+    }
     let resourceBytes;
     let targetRule;
     if (target) {
@@ -407,13 +422,25 @@ const validateAndApply = (event, applyChanges) => {
         if (targetFormat !== format) fail('Icon Type does not match the target resource format.');
     } else {
         const iconResource = normalizeIconResource(fields[fieldNames.iconResource]);
-        if (!iconResource) fail('Icon Resource is required when Target App Package Name is empty.');
-        const payload = decodeIconPayload(iconResource);
-        if (!hasExactKeys(payload, ['data', 'format', 'mimeType', 'schemaVersion', 'sha256', 'size']))
-            fail('Icon Resource payload fields do not match the direct resource schema.');
-        resourceBytes = decodeResourceData(payload, format);
-        if (format === 'png') validatePng(resourceBytes);
-        else validateSvg(resourceBytes);
+        // A modification without Icon Resource keeps the current icon resource.
+        if (!iconResource && existingRule) {
+            if (format !== existingRule.format?.toLocaleLowerCase())
+                fail('Icon Type does not match the current icon resource, provide Icon Resource to change it.');
+        } else {
+            if (!iconResource) fail('Icon Resource is required when Target App Package Name is empty.');
+            const payload = decodeIconPayload(iconResource);
+            if (!hasExactKeys(payload, ['data', 'format', 'mimeType', 'schemaVersion', 'sha256', 'size']))
+                fail('Icon Resource payload fields do not match the direct resource schema.');
+            resourceBytes = decodeResourceData(payload, format);
+            if (format === 'png') validatePng(resourceBytes);
+            else validateSvg(resourceBytes);
+        }
+    }
+    if (existingRule) {
+        // Contributors inherited from the target count as existing contributors as well.
+        const existingContributors = (existingRule.contributors ?? targetRule?.contributors ?? '').split(', ').filter(Boolean);
+        if (existingContributors.some((value, index) => contributors[index] !== value))
+            fail('Existing contributors cannot be removed or reordered, only new contributors can be appended.');
     }
     const rule = {};
     if (target) rule.target = target;
@@ -423,21 +450,33 @@ const validateAndApply = (event, applyChanges) => {
     if (!targetRule || overlay !== targetRule.overlay) rule.overlay = overlay;
     const contributorNames = contributors.join(', ');
     if (!targetRule || contributorNames !== targetRule.contributors) rule.contributors = contributorNames;
+    const existingResourcePath = existingRule?.format
+        ? join(resourceDirectory, `${packageName}.${existingRule.format.toLocaleLowerCase()}`)
+        : undefined;
+    // Appending contributors or editing remarks alone is not a modification of the resource.
+    const withoutContributors = ({ contributors: _, ...value }) => value;
+    if (existingRule && isDeepStrictEqual(withoutContributors(rule), withoutContributors(existingRule)) &&
+        (!resourceBytes || (existsSync(existingResourcePath) && resourceBytes.equals(readFileSync(existingResourcePath)))))
+        fail('The modification does not change the icon resource, changes to contributors or remarks alone are not accepted.');
     if (applyChanges) {
         manifest[packageName] = rule;
         writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
         if (resourceBytes) {
-            const resourcePath = join(repositoryRoot, 'icons', categoryPath, 'res', `${packageName}.${format}`);
+            const resourcePath = join(resourceDirectory, `${packageName}.${format}`);
+            // A modification may switch the icon type, so the resource with the old extension is removed.
+            if (existingResourcePath && existingResourcePath !== resourcePath) rmSync(existingResourcePath, { force: true });
             writeFileSync(resourcePath, resourceBytes);
         }
     }
+    const actionName = modification ? 'Update' : 'Add';
     return {
+        action: actionName.toLocaleLowerCase(),
         appLabel: typeof label === 'string' ? label : Object.values(label)[0],
         branch: `anip/submit-${issue.number}`,
         packageName,
         summary: target
-            ? `Add \`${packageName}\` targeting \`${target}\` in ${categoryPath}.`
-            : `Add \`${packageName}\` in ${categoryPath}.`
+            ? `${actionName} \`${packageName}\` targeting \`${target}\` in ${categoryPath}.`
+            : `${actionName} \`${packageName}\` in ${categoryPath}.`
     };
 };
 
@@ -453,6 +492,7 @@ const main = () => {
         if (bodyFormatted && process.env.ANIP_FORMATTED_ISSUE_BODY_PATH)
             writeFileSync(process.env.ANIP_FORMATTED_ISSUE_BODY_PATH, formattedBody);
         writeOutput('valid', 'true');
+        writeOutput('action', result.action);
         writeOutput('app_label', result.appLabel);
         writeOutput('body_formatted', String(bodyFormatted));
         writeOutput('branch', result.branch);

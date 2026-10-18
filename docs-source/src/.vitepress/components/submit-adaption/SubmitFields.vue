@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { defineAsyncComponent, inject } from 'vue';
+import { computed, defineAsyncComponent, inject } from 'vue';
+import { useData } from 'vitepress';
 import {
     CloseOutlined,
     DeleteOutlined,
@@ -7,6 +8,17 @@ import {
     PlusOutlined,
     RollbackOutlined
 } from '@ant-design/icons-vue';
+import {
+    AutoComplete,
+    Checkbox,
+    ConfigProvider,
+    Form,
+    FormItem,
+    Input,
+    Select,
+    Textarea,
+    theme
+} from 'ant-design-vue';
 import 'vue3-colorpicker/style.css';
 import { commonLocaleOptions } from '../../configs/i18n';
 import { categorySpecs } from '../../data/icon-resources';
@@ -21,27 +33,28 @@ const {
     addContributor,
     addLabelRow,
     category,
-    closeContributorMenuSoon,
-    closeTargetMenuSoon,
+    changeTarget,
     color,
     colorControl,
     colorMenuOpen,
-    contributorMenuIndex,
     contributorSuggestions,
     contributors,
+    duplicateContributorIndexes,
+    editingEntry,
+    fieldErrors,
     format,
+    filteredPackages,
     filteredTargets,
     handlePickerColorChange,
-    handleTargetInput,
     isLocaleSelected,
     label,
     labelRows,
     localizedLabel,
     localizedResourceLabel,
+    lockedContributorCount,
     maxRemarkLength,
     normalizeColor,
     normalizePickerFormatLabel,
-    openContributorMenu,
     overlay,
     packageName,
     pickerColor,
@@ -54,11 +67,9 @@ const {
     resetLocalizedLabel,
     resourcesError,
     resourcesLoading,
-    selectContributor,
-    selectTarget,
     selectedFormat,
     selectedTarget,
-    targetMenuOpen,
+    submitDisabled,
     targetQuery,
     text
 } = context;
@@ -66,176 +77,206 @@ const {
 const ColorPicker = defineAsyncComponent(() =>
     import('vue3-colorpicker').then(({ ColorPicker: component }) => component)
 );
+
+const { isDark } = useData();
+// Ant Design computes its colors in JavaScript, so the VitePress palette is passed as tokens.
+const antTheme = computed(() => ({
+    algorithm: isDark.value ? theme.darkAlgorithm : theme.defaultAlgorithm,
+    token: {
+        borderRadius: 6,
+        // Matches the 16px text and 42px fields of the VitePress document body.
+        controlHeight: 42,
+        // The checkbox size is derived from controlHeight and would grow with it, so the original 17px is kept.
+        controlInteractiveSize: 17,
+        fontSize: 16,
+        colorPrimary: isDark.value ? '#91A6D2' : '#596A8D',
+        fontFamily: 'var(--vp-font-family-base)',
+        ...(isDark.value ? { colorBgContainer: '#1B1B1F', colorBgElevated: '#202127' } : {})
+    },
+    components: {
+        // Selected options use the hover fill (colorFillTertiary of each algorithm) instead of the primary tint.
+        Select: { controlItemBgActive: isDark.value ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)' }
+    }
+}));
+const errorStatus = (message: string | undefined) => message ? 'error' : '';
+const categoryOptions = computed(() => categorySpecs.map((categorySpec) => ({
+    label: text.value.categoryNames[categorySpec.id],
+    value: categorySpec.id
+})));
+const resourceOption = (entry: { key: string; effectiveRule: { label?: unknown } }) => ({
+    description: localizedResourceLabel(entry.effectiveRule.label),
+    value: entry.key
+});
+const packageOptions = computed(() =>
+    resourcesLoading.value || resourcesError.value ? [] : filteredPackages.value.map(resourceOption)
+);
+const targetOptions = computed(() => filteredTargets.value.map(resourceOption));
+const formatOptions = [{ label: 'SVG', value: 'svg' }, { label: 'PNG', value: 'png' }];
+const localeOptions = (rowId: number) => commonLocaleOptions.map((option) => ({
+    disabled: isLocaleSelected(option.code, rowId),
+    label: option.name,
+    value: option.code
+}));
+const contributorOptions = (index: number) => contributorSuggestions(index).map((value: string) => ({ value }));
 </script>
 <template>
-    <form class="submit-form" novalidate @submit.prevent="prepareSubmission">
-        <SubmitIconChecker />
+    <ConfigProvider :theme="antTheme">
+        <Form class="submit-form" layout="vertical" @submit="prepareSubmission">
+            <SubmitIconChecker />
 
-        <div class="form-grid">
-            <label class="field">
-                <span class="field-label"><b>*</b>{{ text.category }}</span>
-                <div class="select-control">
-                    <select id="submit-category" v-model="category">
-                        <option v-for="categorySpec in categorySpecs" :key="categorySpec.id" :value="categorySpec.id">
-                            {{ text.categoryNames[categorySpec.id] }}
-                        </option>
-                    </select>
-                    <span class="vpi-chevron-down select-chevron" aria-hidden="true" />
-                </div>
-            </label>
+            <div class="form-grid">
+                <FormItem :label="text.category" html-for="submit-category" required>
+                    <Select id="submit-category" v-model:value="category" :options="categoryOptions"
+                        :disabled="Boolean(editingEntry)" />
+                </FormItem>
 
-            <label class="field">
-                <span class="field-label"><b>*</b>{{ text.packageName }}</span>
-                <input id="submit-package" v-model="packageName" type="text" autocomplete="off"
-                    :placeholder="text.packagePlaceholder">
-            </label>
-
-            <div class="field target-field">
-                <div class="target-input-control">
-                    <label for="submit-target" class="field-label">{{ text.target }}</label>
-                    <input id="submit-target" v-model="targetQuery" type="search" autocomplete="off"
-                        :placeholder="resourcesError || (resourcesLoading ? text.iconValidating : text.targetPlaceholder)"
-                        :disabled="resourcesLoading || Boolean(resourcesError)" @input="handleTargetInput"
-                        @focus="targetMenuOpen = true" @blur="closeTargetMenuSoon">
-                    <div v-if="targetMenuOpen && !resourcesLoading && !resourcesError" class="target-menu"
-                        role="listbox">
-                        <button v-for="entry in filteredTargets" :key="entry.key" type="button" role="option"
-                            :aria-selected="selectedTarget?.key === entry.key" @mousedown.prevent
-                            @click="selectTarget(entry)">
-                            <strong>{{ entry.key }}</strong>
-                            <span>{{ localizedResourceLabel(entry.effectiveRule.label) }}</span>
-                        </button>
-                        <p v-if="!filteredTargets.length">{{ text.targetEmpty }}</p>
-                    </div>
-                </div>
-                <small class="field-description">{{ text.targetDescription }}</small>
-            </div>
-
-            <div class="field full-width label-field">
-                <div class="field-label-row">
-                    <label :for="localizedLabel ? 'submit-label-i18n' : 'submit-label'" class="field-label">
-                        <b>*</b>{{ text.label }}
-                    </label>
-                    <button v-if="!localizedLabel" type="button" class="compact-icon-button" :title="text.addLocale"
-                        :aria-label="text.addLocale" @click="activateLocalizedLabel">
-                        <GlobalOutlined aria-hidden="true" />
-                    </button>
-                    <button v-else type="button" class="compact-icon-button" :title="text.resetLabel"
-                        :aria-label="text.resetLabel" @click="resetLocalizedLabel">
-                        <RollbackOutlined aria-hidden="true" />
-                    </button>
-                </div>
-                <input v-if="!localizedLabel" id="submit-label" v-model="label" type="text"
-                    :placeholder="text.labelPlaceholder">
-                <div v-else id="submit-label-i18n" class="repeatable-list" tabindex="-1">
-                    <div v-for="row in labelRows" :key="row.id" class="i18n-row">
-                        <div class="select-control">
-                            <select v-model="row.code" :aria-label="text.i18nCode">
-                                <option value="" disabled>{{ text.selectLocale }}</option>
-                                <option v-for="option in commonLocaleOptions" :key="option.code" :value="option.code"
-                                    :disabled="isLocaleSelected(option.code, row.id)">
-                                    {{ option.name }}
-                                </option>
-                            </select>
-                            <span class="vpi-chevron-down select-chevron" aria-hidden="true" />
-                        </div>
-                        <input v-model="row.value" type="text" :aria-label="text.i18nValue"
-                            :placeholder="text.i18nValue">
-                        <button type="button" :title="text.removeLocale" :aria-label="text.removeLocale"
-                            :disabled="labelRows.length === 1 && !row.value.trim()" @click="removeLabelRow(row.id)">
-                            <DeleteOutlined aria-hidden="true" />
-                        </button>
-                    </div>
-                    <button type="button" class="add-row-button" :title="text.addLocale" :aria-label="text.addLocale"
-                        @click="addLabelRow">
-                        <PlusOutlined aria-hidden="true" />
-                    </button>
-                </div>
-            </div>
-
-            <div ref="colorControl" class="field color-field">
-                <label for="submit-color" class="field-label">{{ text.color }}</label>
-                <div class="color-control">
-                    <input id="submit-color" v-model="color" type="text" autocomplete="off"
-                        :placeholder="text.colorPlaceholder" @blur="normalizeColor">
-                    <button type="button" class="color-preview" :style="{ backgroundColor: color || 'transparent' }"
-                        :aria-label="text.color" :title="text.color" @click.stop="colorMenuOpen = !colorMenuOpen" />
-                </div>
-                <div v-if="colorMenuOpen" class="color-menu" @click="normalizePickerFormatLabel">
-                    <ClientOnly>
-                        <ColorPicker v-model:pureColor="pickerColor" :lang="pickerLanguage" picker-type="chrome"
-                            format="hex6" :disable-alpha="true" :disable-history="true" :is-widget="true"
-                            @pure-color-change="handlePickerColorChange" />
-                    </ClientOnly>
-                </div>
-            </div>
-
-            <label class="field">
-                <span class="field-label"><b>*</b>{{ text.format }}</span>
-                <div class="select-control">
-                    <select id="submit-format" v-model="format" :disabled="Boolean(selectedTarget || selectedFormat)">
-                        <option value="svg">SVG</option>
-                        <option value="png">PNG</option>
-                    </select>
-                    <span class="vpi-chevron-down select-chevron" aria-hidden="true" />
-                </div>
-            </label>
-
-            <div class="field full-width overlay-field">
-                <label class="checkbox-row">
-                    <input v-model="overlay" type="checkbox">
-                    <strong>{{ text.overlay }}</strong>
-                </label>
-                <small class="field-description">{{ text.overlayDescription }}</small>
-            </div>
-
-            <div class="field full-width">
-                <div class="field-label-row">
-                    <label for="submit-contributor-0" class="field-label"><b>*</b>{{ text.contributors }}</label>
-                </div>
-                <div class="repeatable-list">
-                    <div v-for="(_, index) in contributors" :key="index" class="contributor-row">
-                        <input :id="`submit-contributor-${index}`" v-model="contributors[index]" type="text"
-                            autocomplete="off" @focus="openContributorMenu(index)" @input="openContributorMenu(index)"
-                            @blur="closeContributorMenuSoon" @keydown.escape="contributorMenuIndex = undefined">
-                        <button type="button" :title="text.removeContributor" :aria-label="text.removeContributor"
-                            :disabled="contributors.length === 1 && !contributors[index].trim()"
-                            @click="removeContributor(index)">
-                            <DeleteOutlined aria-hidden="true" />
-                        </button>
-                        <div v-if="contributorMenuIndex === index && contributorSuggestions.length"
-                            class="contributor-menu" role="listbox">
-                            <div v-for="candidate in contributorSuggestions" :key="candidate"
-                                class="contributor-option">
-                                <button type="button" class="contributor-value" role="option" @mousedown.prevent
-                                    @click="selectContributor(index, candidate)">
-                                    {{ candidate }}
-                                </button>
-                                <button type="button" class="contributor-remove" :title="text.removeSavedContributor"
-                                    :aria-label="text.removeSavedContributor" @mousedown.prevent
-                                    @click="removeSavedContributor(candidate)">
-                                    <CloseOutlined aria-hidden="true" />
-                                </button>
+                <FormItem :label="text.packageName" html-for="submit-package" required
+                    :validate-status="errorStatus(fieldErrors.packageName)" :help="fieldErrors.packageName">
+                    <!-- Clearing reports an undefined value, while the package name is always a string. -->
+                    <AutoComplete id="submit-package" :value="packageName" :options="packageOptions" allow-clear
+                        :filter-option="false" :placeholder="text.packagePlaceholder" popup-class-name="submit-popup"
+                        @update:value="packageName = $event ?? ''">
+                        <template #option="{ value, description }">
+                            <div class="resource-option">
+                                <strong>{{ value }}</strong>
+                                <span>{{ description }}</span>
                             </div>
+                        </template>
+                    </AutoComplete>
+                </FormItem>
+
+                <FormItem class="target-field" :label="text.target" html-for="submit-target"
+                    :extra="text.targetDescription" :validate-status="errorStatus(fieldErrors.target)"
+                    :help="fieldErrors.target">
+                    <Select id="submit-target" :value="selectedTarget?.key" show-search allow-clear
+                        :filter-option="false" :options="targetOptions" :search-value="targetQuery"
+                        :placeholder="resourcesError || (resourcesLoading ? text.iconValidating : text.targetPlaceholder)"
+                        :not-found-content="text.targetEmpty" :loading="resourcesLoading"
+                        :disabled="resourcesLoading || Boolean(resourcesError) || Boolean(editingEntry)"
+                        popup-class-name="submit-popup" @search="targetQuery = $event" @change="changeTarget"
+                        @dropdown-visible-change="targetQuery = ''">
+                        <template #option="{ value, description }">
+                            <div class="resource-option">
+                                <strong>{{ value }}</strong>
+                                <span>{{ description }}</span>
+                            </div>
+                        </template>
+                    </Select>
+                </FormItem>
+
+                <FormItem class="full-width label-field" :html-for="localizedLabel ? undefined : 'submit-label'"
+                    required :validate-status="errorStatus(fieldErrors.label)" :help="fieldErrors.label">
+                    <template #label>
+                        <span class="label-row">
+                            <span>{{ text.label }}</span>
+                            <button v-if="!localizedLabel" type="button" class="compact-icon-button"
+                                :title="text.addLocale" :aria-label="text.addLocale" @click="activateLocalizedLabel">
+                                <GlobalOutlined aria-hidden="true" />
+                            </button>
+                            <button v-else type="button" class="compact-icon-button" :title="text.resetLabel"
+                                :aria-label="text.resetLabel" @click="resetLocalizedLabel">
+                                <RollbackOutlined aria-hidden="true" />
+                            </button>
+                        </span>
+                    </template>
+                    <Input v-if="!localizedLabel" id="submit-label" v-model:value="label"
+                        :placeholder="text.labelPlaceholder" />
+                    <div v-else id="submit-label-i18n" class="repeatable-list">
+                        <div v-for="row in labelRows" :key="row.id" class="i18n-row">
+                            <Select v-model:value="row.code" :options="localeOptions(row.id)"
+                                :placeholder="text.selectLocale" :aria-label="text.i18nCode"
+                                popup-class-name="submit-popup" />
+                            <Input v-model:value="row.value" :aria-label="text.i18nValue"
+                                :placeholder="text.i18nValue" />
+                            <button type="button" :title="text.removeLocale" :aria-label="text.removeLocale"
+                                :disabled="labelRows.length === 1 && !row.value.trim()" @click="removeLabelRow(row.id)">
+                                <DeleteOutlined aria-hidden="true" />
+                            </button>
+                        </div>
+                        <button type="button" class="add-row-button" :title="text.addLocale"
+                            :aria-label="text.addLocale" @click="addLabelRow">
+                            <PlusOutlined aria-hidden="true" />
+                        </button>
+                    </div>
+                </FormItem>
+
+                <FormItem :label="text.color" html-for="submit-color" :validate-status="errorStatus(fieldErrors.color)"
+                    :help="fieldErrors.color">
+                    <div ref="colorControl" class="color-control">
+                        <Input id="submit-color" v-model:value="color" autocomplete="off"
+                            :placeholder="text.colorPlaceholder" @blur="normalizeColor">
+                            <template #suffix>
+                                <button type="button" class="color-preview"
+                                    :style="{ backgroundColor: color || 'transparent' }" :aria-label="text.color"
+                                    :title="text.color" @click.stop="colorMenuOpen = !colorMenuOpen" />
+                            </template>
+                        </Input>
+                        <div v-if="colorMenuOpen" class="color-menu" @click="normalizePickerFormatLabel">
+                            <ClientOnly>
+                                <ColorPicker v-model:pureColor="pickerColor" :lang="pickerLanguage" picker-type="chrome"
+                                    format="hex6" :disable-alpha="true" :disable-history="true" :is-widget="true"
+                                    @pure-color-change="handlePickerColorChange" />
+                            </ClientOnly>
                         </div>
                     </div>
-                </div>
-                <button type="button" class="add-row-button" :title="text.addContributor"
-                    :aria-label="text.addContributor" @click="addContributor">
-                    <PlusOutlined aria-hidden="true" />
-                </button>
+                </FormItem>
+
+                <FormItem :label="text.format" html-for="submit-format" required
+                    :validate-status="errorStatus(fieldErrors.format)" :help="fieldErrors.format">
+                    <Select id="submit-format" v-model:value="format" :options="formatOptions"
+                        :disabled="Boolean(selectedTarget || selectedFormat)" />
+                </FormItem>
+
+                <FormItem class="full-width overlay-field" :extra="text.overlayDescription">
+                    <Checkbox v-model:checked="overlay"><strong>{{ text.overlay }}</strong></Checkbox>
+                </FormItem>
+
+                <FormItem class="full-width" :label="text.contributors" html-for="submit-contributor-0" required>
+                    <div class="repeatable-list">
+                        <div v-for="(_, index) in contributors" :key="index" class="contributor-row">
+                            <FormItem class="contributor-item"
+                                :validate-status="duplicateContributorIndexes.includes(index) ? 'error' : ''"
+                                :help="duplicateContributorIndexes.includes(index) ? fieldErrors.contributors : undefined">
+                                <AutoComplete :id="`submit-contributor-${index}`" v-model:value="contributors[index]"
+                                    :options="contributorOptions(index)" :filter-option="false"
+                                    :disabled="index < lockedContributorCount" popup-class-name="submit-popup">
+                                    <template #option="{ value }">
+                                        <div class="contributor-option">
+                                            <span>{{ value }}</span>
+                                            <button type="button" class="contributor-remove"
+                                                :title="text.removeSavedContributor"
+                                                :aria-label="text.removeSavedContributor" @mousedown.prevent.stop
+                                                @click.stop="removeSavedContributor(value)">
+                                                <CloseOutlined aria-hidden="true" />
+                                            </button>
+                                        </div>
+                                    </template>
+                                </AutoComplete>
+                            </FormItem>
+                            <button type="button" class="contributor-remove-button" :title="text.removeContributor"
+                                :aria-label="text.removeContributor"
+                                :disabled="index < lockedContributorCount || (contributors.length === 1 && !contributors[index].trim())"
+                                @click="removeContributor(index)">
+                                <DeleteOutlined aria-hidden="true" />
+                            </button>
+                        </div>
+                        <button type="button" class="add-row-button" :title="text.addContributor"
+                            :aria-label="text.addContributor" @click="addContributor">
+                            <PlusOutlined aria-hidden="true" />
+                        </button>
+                    </div>
+                </FormItem>
+
+                <FormItem class="full-width" :label="text.remark" html-for="submit-remark"
+                    :required="Boolean(editingEntry)">
+                    <Textarea id="submit-remark" v-model:value="remark" :rows="5" :maxlength="maxRemarkLength"
+                        :placeholder="editingEntry ? text.remarkRequiredPlaceholder : text.remarkPlaceholder" />
+                </FormItem>
             </div>
 
-            <label class="field full-width">
-                <span class="field-label">{{ text.remark }}</span>
-                <textarea id="submit-remark" v-model="remark" rows="5" :maxlength="maxRemarkLength"
-                    :placeholder="text.remarkPlaceholder" />
-            </label>
-        </div>
-
-        <button type="submit" class="submit-button">{{ text.createIssue }}</button>
-    </form>
-
+            <button type="submit" class="submit-button" :disabled="submitDisabled">{{ text.createIssue }}</button>
+        </Form>
+    </ConfigProvider>
 </template>
 <style scoped lang="scss">
 .submit-form {
@@ -247,52 +288,32 @@ const ColorPicker = defineAsyncComponent(() =>
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 22px 28px;
     padding: 28px 0;
-}
 
-.field {
-    position: relative;
-    display: flex;
-    min-width: 0;
-    flex-direction: column;
-    gap: 8px;
-
-    input[type='text'],
-    input[type='search'],
-    select,
-    textarea {
-        width: 100%;
-        border: 1px solid var(--vp-c-divider);
-        border-radius: 6px;
-        outline: 0;
-        background: var(--vp-c-bg);
-        color: var(--vp-c-text-1);
-        font: inherit;
-
-        &:focus {
-            border-color: var(--vp-c-brand-1);
-            box-shadow: 0 0 0 2px var(--vp-c-brand-soft);
-        }
-
-        &:disabled {
-            background: var(--vp-c-bg-soft);
-            color: var(--vp-c-text-3);
-            cursor: not-allowed;
-        }
+    :deep(.ant-form-item) {
+        min-width: 0;
+        margin-bottom: 0;
     }
 
-    input[type='text'],
-    input[type='search'],
-    select {
-        height: 42px;
-        padding: 0 12px;
+    :deep(.ant-form-item-label > label) {
+        font-weight: 600;
     }
 
-    textarea {
-        height: 115px;
-        min-height: 115px;
-        padding: 10px 12px;
+    // Descriptions and error messages keep the size of the former <small> hints.
+    :deep(.ant-form-item-extra),
+    :deep(.ant-form-item-explain) {
+        font-size: smaller;
         line-height: 1.55;
-        resize: vertical;
+    }
+
+    // The former descriptions sat 5px below their fields.
+    :deep(.ant-form-item-extra) {
+        margin-top: 5px;
+        color: var(--vp-c-text-3);
+    }
+
+    // Ant Design leaves the search input of Select and AutoComplete at the browser default input size.
+    :deep(.ant-select-selection-search-input) {
+        font-size: inherit;
     }
 }
 
@@ -300,49 +321,54 @@ const ColorPicker = defineAsyncComponent(() =>
     grid-column: 1 / -1;
 }
 
-.select-control {
-    position: relative;
-
-    select {
-        padding-right: 40px;
-    }
-
-    .select-chevron {
-        position: absolute;
-        top: 50%;
-        right: 13px;
-        width: 16px;
-        height: 16px;
-        color: var(--vp-c-text-2);
-        pointer-events: none;
-        transform: translateY(-50%) rotate(90deg);
-    }
-
-    select:disabled+.select-chevron {
-        color: var(--vp-c-text-3);
-    }
+.label-field :deep(.ant-form-item-label > label) {
+    width: 100%;
 }
 
-.field-label,
-.field-label-row {
-    min-height: 24px;
-}
-
-.field-label {
-    color: var(--vp-c-text-1);
-    font-weight: 600;
-
-    b {
-        margin-right: 3px;
-        color: var(--vp-c-danger-1);
-    }
-}
-
-.field-label-row {
+.label-row {
     display: flex;
+    flex: 1;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+}
+
+.target-field :deep(.ant-form-item-extra) {
+    width: calc(200% + 28px);
+}
+
+// The checkbox row only needs its own height, not the height reserved for text fields.
+.overlay-field :deep(.ant-form-item-control-input) {
+    min-height: 0;
+}
+
+.resource-option {
+    display: grid;
+    gap: 2px;
+
+    strong,
+    span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    span {
+        color: var(--vp-c-text-3);
+        font-size: 12px;
+    }
+}
+
+.repeatable-list {
+    display: grid;
+    gap: 9px;
+}
+
+.i18n-row {
+    display: grid;
+    grid-template-columns: minmax(96px, 0.3fr) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 9px;
 }
 
 .compact-icon-button,
@@ -372,177 +398,65 @@ const ColorPicker = defineAsyncComponent(() =>
     }
 }
 
-.color-control {
-    position: relative;
-    display: flex;
-    align-items: center;
-
-    input {
-        padding-right: 46px !important;
-    }
-
-    >button {
-        position: absolute;
-        right: 7px;
-    }
-}
-
-#submit-target::-webkit-search-cancel-button {
-    width: 12px;
-    height: 12px;
-    margin: 0;
-    -webkit-appearance: none;
-    appearance: none;
-    background:
-        linear-gradient(45deg, transparent 44%, var(--vp-c-text-3) 44% 56%, transparent 56%),
-        linear-gradient(-45deg, transparent 44%, var(--vp-c-text-3) 44% 56%, transparent 56%);
-    cursor: pointer;
-}
-
-.target-menu,
-.color-menu {
-    position: absolute;
-    z-index: 30;
-    top: calc(100% + 8px);
-    right: 0;
-    left: 0;
-    padding: 7px;
-    border: 1px solid var(--vp-c-divider);
-    border-radius: 8px;
-    background: var(--vp-c-bg-elv);
-    box-shadow: var(--vp-shadow-3);
-}
-
-.target-input-control {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.target-menu {
-    max-height: 320px;
-    overflow: auto;
-
-    >button {
-        display: grid;
-        width: 100%;
-        gap: 2px;
-        padding: 8px 10px;
-        border: 0;
-        border-radius: 5px;
-        background: transparent;
-        color: var(--vp-c-text-1);
-        font: inherit;
-        text-align: left;
-        cursor: pointer;
-
-        strong,
-        span {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        span {
-            color: var(--vp-c-text-3);
-            font-size: 12px;
-        }
-
-        &:hover,
-        &[aria-selected='true'] {
-            background: var(--vp-c-brand-soft);
-        }
-    }
-
-    p {
-        margin: 8px 10px;
-        color: var(--vp-c-text-3);
-    }
-}
-
-.repeatable-list {
-    display: grid;
-    gap: 9px;
-}
-
-.i18n-row {
-    display: grid;
-    grid-template-columns: minmax(96px, 0.3fr) minmax(0, 1fr) 28px;
-    align-items: center;
-    gap: 9px;
-}
-
 .add-row-button {
     justify-self: start;
 }
 
 .contributor-row {
-    position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 9px;
-}
 
-.contributor-menu {
-    position: absolute;
-    z-index: 30;
-    top: calc(100% + 5px);
-    right: 37px;
-    left: 0;
-    padding: 5px;
-    border: 1px solid var(--vp-c-divider);
-    border-radius: 8px;
-    background: var(--vp-c-bg-elv);
-    box-shadow: var(--vp-shadow-3);
+    .contributor-item {
+        flex: 1;
+        min-width: 0;
+    }
+
+    // Rows grow when an error message shows, so the button stays centered on the input instead.
+    .contributor-remove-button {
+        margin-top: 7px;
+    }
 }
 
 .contributor-option {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 4px;
 
-    button {
-        min-width: 0;
-        border: 0;
-        background: transparent;
-        color: var(--vp-c-text-1);
-        font: inherit;
-        cursor: pointer;
-    }
-
-    .contributor-value {
-        display: block;
-        width: auto;
-        height: auto;
-        flex: 1 1 auto;
+    span {
         overflow: hidden;
-        padding: 7px 8px;
-        border-radius: 5px;
-        line-height: 1.45;
-        text-align: left;
         text-overflow: ellipsis;
         white-space: nowrap;
-
-        &:hover {
-            background: var(--vp-c-brand-soft);
-        }
     }
+}
 
-    .contributor-remove {
-        display: grid;
-        width: 28px;
-        height: 28px;
-        flex: 0 0 28px;
-        place-items: center;
-        padding: 0;
-        border-radius: 5px;
-        color: var(--vp-c-text-3);
+.contributor-remove {
+    display: grid;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    place-items: center;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--vp-c-text-3);
+    cursor: pointer;
 
-        &:hover {
-            background: var(--vp-c-brand-soft);
-            color: var(--vp-c-brand-1);
-        }
+    &:hover {
+        background: var(--vp-c-brand-soft);
+        color: var(--vp-c-brand-1);
+    }
+}
+
+.color-control {
+    position: relative;
+
+    // The 28px swatch is taller than the text line, so the padding shrinks to keep the 42px field height.
+    :deep(.ant-input-affix-wrapper) {
+        padding-block: 6px;
+        // The former swatch sat 7px from the right edge of the field, including its 1px border.
+        padding-inline-end: 6px;
     }
 }
 
@@ -556,10 +470,15 @@ const ColorPicker = defineAsyncComponent(() =>
 }
 
 .color-menu {
+    position: absolute;
+    z-index: 30;
     top: calc(100% + 6px);
-    left: auto;
+    right: 0;
     width: min(292px, calc(100vw - 32px));
-    padding: 0;
+    border: 1px solid var(--vp-c-divider);
+    border-radius: 8px;
+    background: var(--vp-c-bg-elv);
+    box-shadow: var(--vp-shadow-3);
 
     :deep(.vc-colorpicker) {
         width: 100%;
@@ -578,36 +497,6 @@ const ColorPicker = defineAsyncComponent(() =>
     :deep(.vc-display .vc-color-input:nth-child(4)) {
         display: none;
     }
-
-}
-
-.target-field,
-.overlay-field {
-    gap: 5px;
-}
-
-.field-description {
-    display: block;
-    color: var(--vp-c-text-3);
-    line-height: 1.55;
-}
-
-.target-field .field-description {
-    width: calc(200% + 28px);
-}
-
-.checkbox-row {
-    display: flex;
-    width: fit-content;
-    align-items: center;
-    align-self: flex-start;
-    gap: 9px;
-
-    input {
-        width: 17px;
-        height: 17px;
-        accent-color: var(--vp-c-brand-1);
-    }
 }
 
 .submit-button {
@@ -621,8 +510,13 @@ const ColorPicker = defineAsyncComponent(() =>
     font-weight: 600;
     cursor: pointer;
 
-    &:hover {
+    &:hover:not(:disabled) {
         background: var(--vp-c-brand-2);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
     }
 }
 
@@ -636,12 +530,12 @@ const ColorPicker = defineAsyncComponent(() =>
         grid-column: auto;
     }
 
-    .target-field .field-description {
+    .target-field :deep(.ant-form-item-extra) {
         width: 100%;
     }
 
     .i18n-row {
-        grid-template-columns: minmax(78px, 0.34fr) minmax(0, 1fr) 28px;
+        grid-template-columns: minmax(78px, 0.34fr) minmax(0, 1fr) auto;
     }
 
     .submit-button {

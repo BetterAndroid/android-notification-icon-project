@@ -171,6 +171,7 @@ jobs:
       - name: Force Refresh Signed Submission Commit
         if: steps.submission.outputs.valid == 'true'
         env:
+          ACTION: ${{ steps.submission.outputs.action }}
           BRANCH: ${{ steps.submission.outputs.branch }}
           PACKAGE_NAME: ${{ steps.submission.outputs.package_name }}
         run: |
@@ -194,25 +195,35 @@ jobs:
             exit 1
           fi
           additions_file="$RUNNER_TEMP/submit-adaption-additions.jsonl"
+          deletions_file="$RUNNER_TEMP/submit-adaption-deletions.jsonl"
           content_file="$RUNNER_TEMP/submit-adaption-content.base64"
           : > "$additions_file"
+          : > "$deletions_file"
           while IFS= read -r -d '' path; do
+            # Modified files also include deleted ones, such as an icon replaced by another icon type.
+            if [[ ! -f "$path" ]]; then
+              jq -cn --arg path "$path" '{ path: $path }' >> "$deletions_file"
+              continue
+            fi
             base64 -w 0 "$path" > "$content_file"
             jq -cn --arg path "$path" --rawfile contents "$content_file" \
               '{ path: $path, contents: $contents }' >> "$additions_file"
           done < <(git ls-files --modified --others --exclude-standard -z -- icons)
-          if [[ ! -s "$additions_file" ]]; then
+          if [[ ! -s "$additions_file" && ! -s "$deletions_file" ]]; then
             echo 'No icon resource changes were prepared.' >&2
             exit 1
           fi
+          commit_type=feat
+          [[ "$ACTION" == 'update' ]] && commit_type=refactor
           query='mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid } } }'
           jq -n \
             --arg query "$query" \
             --arg repository "$GITHUB_REPOSITORY" \
             --arg branch "$BRANCH" \
             --arg expectedHeadOid "$base_oid" \
-            --arg headline "feat(icons): add $PACKAGE_NAME by @$SUBMITTER" \
+            --arg headline "$commit_type(icons): $ACTION $PACKAGE_NAME by @$SUBMITTER" \
             --slurpfile additions "$additions_file" \
+            --slurpfile deletions "$deletions_file" \
             '{
               query: $query,
               variables: {
@@ -220,7 +231,7 @@ jobs:
                   branch: { repositoryNameWithOwner: $repository, branchName: $branch },
                   expectedHeadOid: $expectedHeadOid,
                   message: { headline: $headline },
-                  fileChanges: { additions: $additions }
+                  fileChanges: { additions: $additions, deletions: $deletions }
                 }
               }
             }' > "$RUNNER_TEMP/submit-adaption-commit.json"

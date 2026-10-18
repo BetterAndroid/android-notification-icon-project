@@ -32,6 +32,8 @@ const route = useRoute();
 const mountedRoutePath = route.path;
 const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10];
 const packageNamePattern = /^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+$/;
+// The existing Android framework resource is named android, which has no dot like an applicationId.
+const legacyPackageNames = new Set(['android']);
 const localeCodePattern = /^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$/;
 const colorPattern = /^#[0-9A-F]{6}$/;
 const maxIconDimension = 150;
@@ -47,12 +49,14 @@ const {
     category,
     color,
     contributors,
+    editingKey,
     format,
     iconValidation,
     label,
     labelRows,
     localizedLabel,
     nextLabelRowId,
+    originalIcon,
     overlay,
     packageName,
     pickerColor,
@@ -63,16 +67,15 @@ const {
     selectedTarget,
     targetQuery
 } = submitAdaptionState;
-const targetMenuOpen = ref(false);
 const colorMenuOpen = ref(false);
 const colorControl = ref<HTMLElement>();
 const savedContributors = ref<string[]>([]);
-const contributorMenuIndex = ref<number>();
 const fileInput = ref<HTMLInputElement>();
 const iconDragActive = ref(false);
 const iconValidating = ref(false);
 const modalOpen = ref(false);
 const overlayWarningOpen = ref(false);
+const iconChanged = ref(true);
 const pendingPayload = ref('');
 const pendingIssueUrl = ref('');
 let iconDragDepth = 0;
@@ -82,16 +85,34 @@ const selectedCategory = computed(() =>
 );
 const packageNameExists = (value: string) =>
     selectedCategory.value?.entries.some((entry) => entry.key === value) ?? false;
-const targetEntries = computed(() => (selectedCategory.value?.entries ?? [])
-    .filter((entry) => !entry.rule.target && !entry.errors.length && entry.iconUrls.length));
-const filteredTargets = computed(() => {
-    const query = targetQuery.value.trim().toLocaleLowerCase();
-    if (!query) return targetEntries.value.slice(0, 12);
-    return targetEntries.value.filter((entry) => [
+const packageEntries = computed(() => (selectedCategory.value?.entries ?? [])
+    .filter((entry) => !entry.errors.length && entry.iconUrls.length));
+const targetEntries = computed(() => packageEntries.value.filter((entry) => !entry.rule.target));
+const filterEntries = (entries: ResolvedIconEntry[], value: string) => {
+    const query = value.trim().toLocaleLowerCase();
+    if (!query) return entries.slice(0, 12);
+    return entries.filter((entry) => [
         entry.key,
         ...labelSearchValues(entry.effectiveRule.label)
-    ].some((value) => value.toLocaleLowerCase().includes(query))).slice(0, 12);
+    ].some((candidate) => candidate.toLocaleLowerCase().includes(query))).slice(0, 12);
+};
+const filteredPackages = computed(() => filterEntries(packageEntries.value, packageName.value));
+const filteredTargets = computed(() => filterEntries(targetEntries.value, targetQuery.value));
+/** The adapted entry being modified, matched by the exact package name. */
+const editingEntry = computed(() =>
+    packageEntries.value.find((entry) => entry.key === packageName.value.trim())
+);
+const lockedContributorCount = computed(() =>
+    editingEntry.value?.effectiveRule.contributors?.split(', ').length ?? 0
+);
+const dependentEntries = computed(() => {
+    const entry = editingEntry.value;
+    if (!entry || entry.rule.target) return [];
+    return packageEntries.value.filter((candidate) => candidate.rule.target === entry.key);
 });
+const iconResetDisabled = computed(() =>
+    Boolean(originalIcon.value) && selectedFile.value === originalIcon.value
+);
 const previewSources = computed(() => {
     if (selectedTarget.value) return selectedTarget.value.iconUrls;
     if (!selectedData.value || !selectedFormat.value) return [];
@@ -119,13 +140,12 @@ const serializedLabel = computed(() => {
     return Object.fromEntries(labelRows.value.map((row) => [row.code.trim(), row.value.trim()]));
 });
 const serializedContributors = computed(() => contributors.value.map((value) => value.trim()).join(', '));
-const contributorSuggestions = computed(() => {
-    if (contributorMenuIndex.value === undefined) return [];
-    const query = contributors.value[contributorMenuIndex.value]?.trim().toLocaleLowerCase() ?? '';
+const contributorSuggestions = (index: number) => {
+    const query = contributors.value[index]?.trim().toLocaleLowerCase() ?? '';
     return savedContributors.value.filter((value) =>
         !query || value.toLocaleLowerCase().includes(query)
     ).slice(0, 12);
-});
+};
 
 const labelSearchValues = (value: ManifestLabel | undefined) =>
     typeof value === 'string' ? [value] : Object.values(value ?? {});
@@ -135,12 +155,6 @@ const pickerLanguage = computed(() =>
     locale.value.toLocaleLowerCase().startsWith('zh') ? 'ZH-cn' : 'En'
 );
 const showToast = (message: string) => antMessage.error(message);
-const focusField = (id: string) => nextTick(() => document.getElementById(id)?.focus());
-const failValidation = (message: string, id: string) => {
-    showToast(message);
-    focusField(id);
-    return false;
-};
 const openFilePicker = () => fileInput.value?.click();
 const resetFileInput = () => {
     if (fileInput.value) fileInput.value.value = '';
@@ -152,29 +166,24 @@ const clearSelectedIcon = () => {
     iconValidation.value = undefined;
     resetFileInput();
 };
+const resetSelectedIcon = () => originalIcon.value
+    ? processSelectedFile(originalIcon.value)
+    : clearSelectedIcon();
 const clearTarget = () => {
     selectedTarget.value = undefined;
     targetQuery.value = '';
-    targetMenuOpen.value = false;
 };
-const handleTargetInput = () => {
-    const query = targetQuery.value.trim();
-    const exactTarget = targetEntries.value.find((entry) => entry.key === query);
-    if (exactTarget) {
-        selectTarget(exactTarget);
-        return;
-    }
-    if (selectedTarget.value?.key !== query) selectedTarget.value = undefined;
-    targetMenuOpen.value = true;
-};
-const closeTargetMenuSoon = () => window.setTimeout(() => targetMenuOpen.value = false, 160);
 const selectTarget = (entry: ResolvedIconEntry) => {
     selectedTarget.value = entry;
-    targetQuery.value = entry.key;
-    targetMenuOpen.value = false;
+    targetQuery.value = '';
     clearSelectedIcon();
     const inheritedFormat = entry.effectiveRule.format?.toLocaleLowerCase();
     if (inheritedFormat === 'png' || inheritedFormat === 'svg') format.value = inheritedFormat;
+};
+const changeTarget = (key: unknown) => {
+    const entry = targetEntries.value.find((candidate) => candidate.key === key);
+    if (entry) selectTarget(entry);
+    else clearTarget();
 };
 const activateLocalizedLabel = () => {
     localizedLabel.value = true;
@@ -207,7 +216,6 @@ const addContributor = () => contributors.value.push('');
 const removeContributor = (index: number) => {
     if (contributors.value.length > 1) contributors.value.splice(index, 1);
     else contributors.value[index] = '';
-    contributorMenuIndex.value = undefined;
 };
 const readSavedContributors = () => {
     const cookie = document.cookie.split('; ').find((value) => value.startsWith(`${contributorCookieName}=`));
@@ -230,16 +238,9 @@ const rememberContributors = () => {
     savedContributors.value = [...new Set([...current, ...savedContributors.value])];
     writeSavedContributors();
 };
-const openContributorMenu = (index: number) => contributorMenuIndex.value = index;
-const closeContributorMenuSoon = () => window.setTimeout(() => contributorMenuIndex.value = undefined, 160);
-const selectContributor = (index: number, value: string) => {
-    contributors.value[index] = value;
-    contributorMenuIndex.value = undefined;
-};
 const removeSavedContributor = (value: string) => {
     savedContributors.value = savedContributors.value.filter((candidate) => candidate !== value);
     writeSavedContributors();
-    if (!contributorSuggestions.value.length) contributorMenuIndex.value = undefined;
 };
 const syncPickerColor = () => {
     const normalized = color.value.trim().toLocaleUpperCase();
@@ -263,7 +264,6 @@ const closeFloatingControls = (event: MouseEvent) => {
 };
 const closeOnEscape = (event: KeyboardEvent) => {
     if (event.key !== 'Escape') return;
-    targetMenuOpen.value = false;
     colorMenuOpen.value = false;
     modalOpen.value = false;
     overlayWarningOpen.value = false;
@@ -489,52 +489,153 @@ const handleFileDrop = (event: DragEvent) => {
     return processSelectedFile(event.dataTransfer?.files[0]);
 };
 
-const validateForm = () => {
-    if (!selectedTarget.value && !selectedFile.value)
-        return failValidation(text.value.validation.iconMissing, 'submit-icon');
-    if (!selectedTarget.value && iconValidation.value && !iconValidation.value.valid) {
-        showToast(text.value.validation.iconInvalid);
-        focusField('submit-icon');
-        return false;
+const fetchOriginalIcon = async (entry: ResolvedIconEntry) => {
+    const extension = entry.effectiveRule.format!.toLocaleLowerCase();
+    for (const url of entry.iconUrls) {
+        try {
+            const response = await fetch(url, {
+                cache: import.meta.env.DEV ? 'no-store' : 'default',
+                credentials: 'omit',
+                mode: 'cors'
+            });
+            if (!response.ok) continue;
+            return new File([await response.blob()], `${entry.key}.${extension}`, {
+                type: extension === 'png' ? 'image/png' : 'image/svg+xml'
+            });
+        } catch {
+            continue;
+        }
     }
-    if (!category.value) return failValidation(text.value.validation.category, 'submit-category');
+    showToast(text.value.errors.originalIcon);
+};
+const fillFromEntry = async (entry: ResolvedIconEntry, key: string) => {
+    editingKey.value = key;
+    originalIcon.value = undefined;
+    const rule = entry.effectiveRule;
+    if (rule.label && typeof rule.label === 'object') {
+        localizedLabel.value = true;
+        labelRows.value = Object.entries(rule.label).map(([code, value]) => ({
+            code,
+            id: nextLabelRowId.value++,
+            value
+        }));
+        label.value = '';
+    } else {
+        localizedLabel.value = false;
+        labelRows.value = [];
+        label.value = rule.label ?? '';
+    }
+    color.value = rule.color?.toLocaleUpperCase() ?? '';
+    overlay.value = rule.overlay ?? false;
+    contributors.value = rule.contributors?.split(', ') ?? [''];
+    remark.value = '';
+    const target = targetEntries.value.find((candidate) => candidate.key === entry.rule.target);
+    if (target) {
+        selectTarget(target);
+        return;
+    }
+    clearTarget();
+    clearSelectedIcon();
+    const inheritedFormat = rule.format?.toLocaleLowerCase();
+    if (inheritedFormat === 'png' || inheritedFormat === 'svg') format.value = inheritedFormat;
+    const file = await fetchOriginalIcon(entry);
+    // The visitor may have switched to another package while the icon was loading.
+    if (!file || editingKey.value !== key) return;
+    originalIcon.value = file;
+    await processSelectedFile(file);
+};
+const resetEditedFields = () => {
+    editingKey.value = '';
+    originalIcon.value = undefined;
+    color.value = '';
+    contributors.value = [''];
+    format.value = 'png';
+    label.value = '';
+    labelRows.value = [];
+    localizedLabel.value = false;
+    overlay.value = false;
+    remark.value = '';
+    clearTarget();
+    clearSelectedIcon();
+};
+
+/** Indexes of contributors that repeat an earlier one, GitHub user names are case-insensitive. */
+const duplicateContributorIndexes = computed(() => {
+    const names = contributors.value.map((value) => value.trim().toLocaleLowerCase());
+    return names.flatMap((value, index) => value && names.indexOf(value) !== index ? [index] : []);
+});
+/** Messages for filled fields with invalid values, empty fields only keep the submit button disabled. */
+const fieldErrors = computed(() => {
+    const validation = text.value.validation;
+    const errors: Partial<Record<'color' | 'contributors' | 'format' | 'label' | 'packageName' | 'target', string>> = {};
     const normalizedPackage = packageName.value.trim();
-    if (!packageNamePattern.test(normalizedPackage))
-        return failValidation(text.value.validation.packageName, 'submit-package');
-    if (resourcesError.value || selectedCategory.value?.errors.length)
-        return failValidation(text.value.validation.packageRegistryUnavailable, 'submit-package');
-    if (resourcesLoading.value || !selectedCategory.value)
-        return failValidation(text.value.validation.packageRegistryLoading, 'submit-package');
-    if (packageNameExists(normalizedPackage))
-        return failValidation(text.value.validation.packageNameExists, 'submit-package');
-    const targetValue = targetQuery.value.trim();
-    if (targetValue && selectedTarget.value?.key !== targetValue)
-        return failValidation(text.value.validation.target, 'submit-target');
-    if (targetValue === normalizedPackage)
-        return failValidation(text.value.validation.targetSame, 'submit-target');
-    if (!localizedLabel.value && !label.value.trim())
-        return failValidation(text.value.validation.label, 'submit-label');
-    if (localizedLabel.value) {
-        const codes = labelRows.value.map((row) => row.code.trim());
-        const normalizedCodes = codes.map((code) => code.toLocaleLowerCase());
-        const rowsValid = labelRows.value.every((row) =>
-            localeCodePattern.test(row.code.trim()) && commonLocaleCodes.has(row.code.trim().toLocaleLowerCase()) &&
-            row.value.trim()
-        );
-        if (!labelRows.value.length || !rowsValid || new Set(normalizedCodes).size !== normalizedCodes.length)
-            return failValidation(text.value.validation.labelI18n, 'submit-label-i18n');
+    if (normalizedPackage) {
+        if (!packageNamePattern.test(normalizedPackage) && !legacyPackageNames.has(normalizedPackage))
+            errors.packageName = validation.packageName;
+        else if (resourcesError.value || selectedCategory.value?.errors.length)
+            errors.packageName = validation.packageRegistryUnavailable;
+        else if (!editingEntry.value && packageNameExists(normalizedPackage))
+            errors.packageName = validation.packageNameExists;
     }
-    normalizeColor();
-    if (color.value && !colorPattern.test(color.value))
-        return failValidation(text.value.validation.color, 'submit-color');
-    if (!format.value) return failValidation(text.value.validation.format, 'submit-format');
-    if (selectedFormat.value && selectedFormat.value !== format.value)
-        return failValidation(text.value.validation.formatMismatch, 'submit-format');
-    if (!contributors.value.length || contributors.value.some((value) => !value.trim()))
-        return failValidation(text.value.validation.contributors, 'submit-contributor-0');
+    if (normalizedPackage && selectedTarget.value?.key === normalizedPackage) errors.target = validation.targetSame;
+    const labelRowsFilled = labelRows.value.every((row) => row.code.trim() && row.value.trim());
+    if (localizedLabel.value && labelRows.value.length && labelRowsFilled) {
+        const normalizedCodes = labelRows.value.map((row) => row.code.trim().toLocaleLowerCase());
+        const codesValid = labelRows.value.every((row) =>
+            localeCodePattern.test(row.code.trim()) && commonLocaleCodes.has(row.code.trim().toLocaleLowerCase())
+        );
+        if (!codesValid || new Set(normalizedCodes).size !== normalizedCodes.length) errors.label = validation.labelI18n;
+    }
+    const normalizedColor = color.value.trim().toLocaleUpperCase();
+    if (normalizedColor && !colorPattern.test(normalizedColor)) errors.color = validation.color;
+    if (selectedFormat.value && format.value && selectedFormat.value !== format.value)
+        errors.format = validation.formatMismatch;
+    if (duplicateContributorIndexes.value.length) errors.contributors = validation.contributorsDuplicate;
+    return errors;
+});
+const validateForm = () => {
+    if (Object.keys(fieldErrors.value).length || iconValidating.value) return false;
+    if (!selectedTarget.value && !selectedFile.value) return false;
+    if (!selectedTarget.value && iconValidation.value && !iconValidation.value.valid) return false;
+    if (!category.value || !packageName.value.trim()) return false;
+    if (resourcesLoading.value || !selectedCategory.value) return false;
+    if (localizedLabel.value
+        ? !labelRows.value.length || labelRows.value.some((row) => !row.code.trim() || !row.value.trim())
+        : !label.value.trim()) return false;
+    if (!format.value) return false;
+    if (!contributors.value.length || contributors.value.some((value) => !value.trim())) return false;
+    if (editingEntry.value && !remark.value.trim()) return false;
     return true;
 };
 
+const isSameLabel = (value: ManifestLabel | undefined, current: ManifestLabel) => {
+    if (typeof value !== 'object' || typeof current !== 'object') return value === current;
+    const entries = Object.entries(current);
+    return entries.length === Object.keys(value).length && entries.every(([code, text]) => value[code] === text);
+};
+const isSameFile = async (first: File, second: File) => {
+    if (first === second) return true;
+    if (first.size !== second.size) return false;
+    const [firstBytes, secondBytes] = await Promise.all([first.arrayBuffer(), second.arrayBuffer()]
+        .map(async (bytes) => new Uint8Array(await bytes)));
+    return firstBytes.every((value, index) => value === secondBytes[index]);
+};
+// Appending contributors or editing remarks alone is not a modification of the resource.
+const hasIconChanges = async () => {
+    if (selectedTarget.value) return false;
+    if (!originalIcon.value || !selectedFile.value) return true;
+    return !await isSameFile(selectedFile.value, originalIcon.value);
+};
+const hasResourceChanges = (entry: ResolvedIconEntry, iconChanged: boolean) => {
+    const rule = entry.effectiveRule;
+    return iconChanged || !isSameLabel(rule.label, serializedLabel.value) ||
+        color.value.trim().toLocaleUpperCase() !== (rule.color?.toLocaleUpperCase() ?? '') ||
+        overlay.value !== (rule.overlay ?? false);
+};
+// The submit button stays disabled until the form is valid and a modification changes the resource.
+const submitDisabled = computed(() => !validateForm() ||
+    Boolean(editingEntry.value) && !hasResourceChanges(editingEntry.value!, iconChanged.value)
+);
 const createIconPayload = async () => {
     const bytes = new Uint8Array(await selectedFile.value!.arrayBuffer());
     return {
@@ -553,6 +654,7 @@ const createIssueUrl = () => {
     const parameters = new URLSearchParams({
         template: 'submit_adaption.yml',
         title: `[Submission] ${titleLabel}`,
+        'anip-type': editingEntry.value ? '1' : '0',
         'anip-category': String(categorySpecs.findIndex(({ id }) => id === category.value)),
         'anip-package-name': packageName.value.trim(),
         'anip-target': selectedTarget.value?.key ?? '',
@@ -568,9 +670,11 @@ const createIssueUrl = () => {
     return `${configs.github.repo}/issues/new?${parameters}`;
 };
 const prepareSubmission = async () => {
-    if (!validateForm()) return;
+    if (submitDisabled.value) return;
+    normalizeColor();
     pendingPayload.value = '';
-    if (!selectedTarget.value) {
+    // A modification that keeps the current icon does not need to carry the icon resource.
+    if (await hasIconChanges()) {
         const iconPayload = await createIconPayload();
         pendingPayload.value = `ANIP_RESOURCE:${textToBase64Url(JSON.stringify(iconPayload))}`;
     }
@@ -621,18 +725,20 @@ provide(submitAdaptionContextKey, {
     addContributor,
     addLabelRow,
     category,
-    clearSelectedIcon,
-    closeContributorMenuSoon,
-    closeTargetMenuSoon,
+    changeTarget,
     color,
     colorControl,
     colorMenuOpen,
     confirmSubmission,
     continueOverlaySubmission,
-    contributorMenuIndex,
     contributorSuggestions,
     contributors,
+    dependentEntries,
+    duplicateContributorIndexes,
+    editingEntry,
+    fieldErrors,
     fileInput,
+    filteredPackages,
     filteredTargets,
     format,
     handleFileDrop,
@@ -641,8 +747,8 @@ provide(submitAdaptionContextKey, {
     handleIconDragLeave,
     handleIconDragOver,
     handlePickerColorChange,
-    handleTargetInput,
     iconDragActive,
+    iconResetDisabled,
     iconValidating,
     isLocaleSelected,
     label,
@@ -650,12 +756,13 @@ provide(submitAdaptionContextKey, {
     locale,
     localizedLabel,
     localizedResourceLabel,
+    lockedContributorCount,
     maxRemarkLength,
     modalOpen,
     normalizeColor,
     normalizePickerFormatLabel,
-    openContributorMenu,
     openFilePicker,
+    originalIcon,
     overlay,
     overlayWarningOpen,
     packageName,
@@ -671,19 +778,30 @@ provide(submitAdaptionContextKey, {
     removeLabelRow,
     removeSavedContributor,
     resetLocalizedLabel,
+    resetSelectedIcon,
     resourcesError,
     resourcesLoading,
-    selectContributor,
-    selectTarget,
     selectedTarget,
     selectedFormat,
-    targetMenuOpen,
+    submitDisabled,
     targetQuery,
     text,
     validationStatus
 });
 
 watch(category, () => clearTarget());
+watch([selectedFile, originalIcon, selectedTarget], async ([file]) => {
+    const changed = await hasIconChanges();
+    // Another icon may have been selected while the bytes were compared.
+    if (selectedFile.value === file) iconChanged.value = changed;
+}, { immediate: true });
+watch(editingEntry, (entry) => {
+    const key = entry ? `${entry.category.id}:${entry.key}` : '';
+    // Reloaded manifests after a locale switch resolve to the same key and must keep the edited draft.
+    if (key === editingKey.value) return;
+    if (entry) fillFromEntry(entry, key);
+    else resetEditedFields();
+});
 onMounted(async () => {
     antMessage.config({ top: '80px', duration: 3.6, maxCount: 5 });
     savedContributors.value = readSavedContributors();

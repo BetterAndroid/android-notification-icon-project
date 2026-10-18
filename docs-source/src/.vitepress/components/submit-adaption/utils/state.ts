@@ -30,12 +30,14 @@ export const submitAdaptionState = {
     category: ref<CategoryId>('app'),
     color: ref(''),
     contributors: ref(['']),
+    editingKey: ref(''),
     format: ref<'png' | 'svg'>('png'),
     iconValidation: ref<IconValidation>(),
     label: ref(''),
     labelRows: ref<LabelRow[]>([]),
     localizedLabel: ref(false),
     nextLabelRowId: ref(0),
+    originalIcon: ref<File>(),
     overlay: ref(false),
     packageName: ref(''),
     pickerColor: ref('transparent'),
@@ -52,12 +54,14 @@ export const resetSubmitAdaptionState = () => {
     submitAdaptionState.category.value = 'app';
     submitAdaptionState.color.value = '';
     submitAdaptionState.contributors.value = [''];
+    submitAdaptionState.editingKey.value = '';
     submitAdaptionState.format.value = 'png';
     submitAdaptionState.iconValidation.value = undefined;
     submitAdaptionState.label.value = '';
     submitAdaptionState.labelRows.value = [];
     submitAdaptionState.localizedLabel.value = false;
     submitAdaptionState.nextLabelRowId.value = 0;
+    submitAdaptionState.originalIcon.value = undefined;
     submitAdaptionState.overlay.value = false;
     submitAdaptionState.packageName.value = '';
     submitAdaptionState.pickerColor.value = 'transparent';
