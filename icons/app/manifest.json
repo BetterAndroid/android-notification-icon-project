@@ -5101,5 +5101,12 @@
     },
     "color": "#02A7F0",
     "contributors": "NekoMua"
+  },
+  "cn.bolz.mobilebank.liuzhou": {
+    "label": "柳州银行",
+    "format": "png",
+    "color": "#CE010C",
+    "overlay": false,
+    "contributors": "rd0293"
   }
 }
