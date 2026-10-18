@@ -5108,5 +5108,12 @@
     "color": "#CE010C",
     "overlay": false,
     "contributors": "rd0293"
+  },
+  "com.uu898.uuhavequality": {
+    "label": "悠悠有品",
+    "format": "png",
+    "color": "#FFCC00",
+    "overlay": false,
+    "contributors": "rd0293"
   }
 }
