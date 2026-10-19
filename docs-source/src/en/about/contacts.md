@@ -2,8 +2,9 @@
 
 > If you have any questions during usage, or have any constructive suggestions, you can contact us.
 
-Join our developers group.
+Join our user or developer groups.
 
+- [Click to join Telegram group (User)](https://t.me/XiaofangInternet)
 - [Click to join Telegram group (Developer)](https://t.me/BetterAndroid_Dev)
 
 ## Key Contributors

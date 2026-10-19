@@ -2,8 +2,9 @@
 
 > 如在使用中有任何问题，或有任何建设性的建议，都可以联系我们。
 
-加入我们的开发者群组。
+加入我们的用户或开发者群组。
 
+- [点击加入 Telegram 群组 (用户)](https://t.me/XiaofangInternet)
 - [点击加入 Telegram 群组 (开发者)](https://t.me/BetterAndroid_Dev)
 - [点击加入 QQ 群 (开发者)](https://qm.qq.com/cgi-bin/qm/qr?k=Pnsc5RY6N2mBKFjOLPiYldbAbprAU3V7&jump_from=webapi&authKey=X5EsOVzLXt1dRunge8ryTxDRrh9/IiW1Pua75eDLh9RE3KXE+bwXIYF5cWri/9lf)
 
