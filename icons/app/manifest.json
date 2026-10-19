@@ -5127,5 +5127,15 @@
     "label": "WearQQ",
     "overlay": true,
     "contributors": "fankes, NekoMua"
+  },
+  "org.zywx.wbpalmstar.widgetone.uex11296876": {
+    "label": {
+      "en": "Juneyao Air",
+      "zh-CN": "吉祥航空"
+    },
+    "format": "png",
+    "color": "#B4916C",
+    "overlay": false,
+    "contributors": "rd0293"
   }
 }
