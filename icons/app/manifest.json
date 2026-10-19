@@ -5115,5 +5115,11 @@
     "color": "#FFCC00",
     "overlay": false,
     "contributors": "rd0293"
+  },
+  "com.vanke.activity": {
+    "label": "住这儿",
+    "format": "png",
+    "overlay": false,
+    "contributors": "Misutesu"
   }
 }
