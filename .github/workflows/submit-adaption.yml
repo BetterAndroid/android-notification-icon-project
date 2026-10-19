@@ -268,7 +268,6 @@ jobs:
       startsWith(github.event.pull_request.head.ref, 'anip/submit-')
     runs-on: ubuntu-latest
     outputs:
-      contributor: ${{ steps.submission-context.outputs.contributor }}
       issue_number: ${{ steps.submission-context.outputs.issue_number }}
     concurrency:
       group: submit-adaption-merge-${{ github.event.pull_request.number }}
@@ -290,13 +289,7 @@ jobs:
             echo 'Referenced issue is not an active automated submission.' >&2
             exit 1
           fi
-          contributor=$(gh issue view "$issue_number" --repo "$GITHUB_REPOSITORY" --json author --jq '.author.login')
-          if [[ -z "$contributor" || "$contributor" == 'null' ]]; then
-            echo 'Unable to resolve the submission issue author.' >&2
-            exit 1
-          fi
           echo "issue_number=$issue_number" >> "$GITHUB_OUTPUT"
-          echo "contributor=$contributor" >> "$GITHUB_OUTPUT"
 
       - name: Delete Temporary Branch
         run: |
@@ -304,15 +297,37 @@ jobs:
             gh api --method DELETE "repos/$GITHUB_REPOSITORY/git/refs/heads/$HEAD_REF"
           fi
 
-  release-merged-submission:
-    needs: finish-merged-submission
+  check-pending-submissions:
+    if: >-
+      github.event_name == 'pull_request_target' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      startsWith(github.event.pull_request.head.ref, 'anip/submit-')
+    runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.pending.outputs.release }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Check Open Submission Pull Requests
+        id: pending
+        run: |
+          pending=$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --limit 1000 --json headRefName,isCrossRepository \
+            --jq '[.[] | select((.isCrossRepository | not) and (.headRefName | startswith("anip/submit-")))] | length')
+          if [[ "$pending" -gt 0 ]]; then
+            echo "$pending submission pull requests are still open; the release waits for the last one."
+            echo 'release=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'release=true' >> "$GITHUB_OUTPUT"
+          fi
+
+  release-submissions:
+    needs: check-pending-submissions
+    if: needs.check-pending-submissions.outputs.release == 'true'
     uses: ./.github/workflows/release-icon-resources.yml
-    with:
-      sha: ${{ github.event.pull_request.merge_commit_sha }}
-      contributor: ${{ needs.finish-merged-submission.outputs.contributor }}
 
   complete-merged-submission:
-    needs: [finish-merged-submission, release-merged-submission]
+    needs: finish-merged-submission
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
