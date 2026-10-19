@@ -549,5 +549,12 @@
     "color": "#2E8FFF",
     "overlay": false,
     "contributors": "oosl"
+  },
+  "com.tick.service": {
+    "label": "股市",
+    "format": "png",
+    "color": "#F43A0C",
+    "overlay": false,
+    "contributors": "oosl"
   }
 }
