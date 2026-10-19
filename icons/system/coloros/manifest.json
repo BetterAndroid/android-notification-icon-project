@@ -549,5 +549,15 @@
     "color": "#2E8FFF",
     "overlay": false,
     "contributors": "oosl"
+  },
+  "com.oplus.aiunit": {
+    "label": {
+      "en": "AI Service Engine",
+      "zh-CN": "AI服务引擎"
+    },
+    "format": "png",
+    "color": "#3AD67D",
+    "overlay": false,
+    "contributors": "plplpmmmmh"
   }
 }
