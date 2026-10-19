@@ -5121,5 +5121,12 @@
     "format": "png",
     "overlay": false,
     "contributors": "Misutesu"
+  },
+  "com.twitter.android": {
+    "label": "x",
+    "format": "png",
+    "color": "#000000",
+    "overlay": false,
+    "contributors": "plplpmmmmh"
   }
 }
