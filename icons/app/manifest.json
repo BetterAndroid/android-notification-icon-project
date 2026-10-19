@@ -5121,5 +5121,11 @@
     "format": "png",
     "overlay": false,
     "contributors": "Misutesu"
+  },
+  "moye.wearqq.ce": {
+    "target": "com.tencent.mobileqq",
+    "label": "WearQQ",
+    "overlay": true,
+    "contributors": "fankes, NekoMua"
   }
 }
