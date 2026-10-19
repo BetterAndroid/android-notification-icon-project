@@ -165,11 +165,14 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
                     </Select>
                 </FormItem>
 
-                <FormItem class="full-width label-field" html-for="submit-label"
-                    required :validate-status="errorStatus(fieldErrors.label)" :help="fieldErrors.label">
+                <!-- The label holds the mode buttons, and a label linked to an input passes hover and clicks on them
+                     to that input, while a label without a target clicks the first button. Pointing it at its own text
+                     links it to nothing. -->
+                <FormItem class="full-width label-field" html-for="submit-label-title" required
+                    :validate-status="errorStatus(fieldErrors.label)" :help="fieldErrors.label">
                     <template #label>
                         <span class="label-row">
-                            <span>{{ text.label }}</span>
+                            <span id="submit-label-title">{{ text.label }}</span>
                             <button v-if="!localizedLabel" type="button" class="compact-icon-button"
                                 :title="text.addLocale" :aria-label="text.addLocale" @click="activateLocalizedLabel">
                                 <GlobalOutlined aria-hidden="true" />
@@ -187,16 +190,14 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
                             </span>
                         </span>
                     </template>
-                    <Input v-if="!localizedLabel" id="submit-label" v-model:value="label"
+                    <Input v-if="!localizedLabel" id="submit-label" v-model:value="label" :aria-label="text.label"
                         :placeholder="text.labelPlaceholder" />
                     <div v-else id="submit-label-i18n" class="repeatable-list">
-                        <div v-for="(row, index) in labelRows" :key="row.id" class="i18n-row">
+                        <div v-for="row in labelRows" :key="row.id" class="i18n-row">
                             <Select v-model:value="row.code" :options="localeOptions(row.id)"
                                 :placeholder="text.selectLocale" :aria-label="text.i18nCode"
                                 popup-class-name="submit-popup" />
-                            <!-- The label element needs a target, otherwise a click on it activates the mode button inside. -->
-                            <Input :id="index === 0 ? 'submit-label' : undefined" v-model:value="row.value"
-                                :aria-label="text.i18nValue"
+                            <Input v-model:value="row.value" :aria-label="text.i18nValue"
                                 :placeholder="text.i18nValue" />
                             <button type="button" :title="text.removeLocale" :aria-label="text.removeLocale"
                                 :disabled="labelRows.length === 1 && !row.value.trim()" @click="removeLabelRow(row.id)">
@@ -243,7 +244,8 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
 
                 <FormItem class="full-width" :label="text.contributors" html-for="submit-contributor-0" required>
                     <div class="repeatable-list">
-                        <div v-for="(_, index) in contributors" :key="index" class="contributor-row">
+                        <!-- The shared context is untyped, so the list type is given here to keep the index a number. -->
+                        <div v-for="(_, index) in (contributors as string[])" :key="index" class="contributor-row">
                             <FormItem class="contributor-item"
                                 :validate-status="duplicateContributorIndexes.includes(index) ? 'error' : ''"
                                 :help="duplicateContributorIndexes.includes(index) ? fieldErrors.contributors : undefined">
@@ -291,6 +293,14 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
 <style scoped lang="scss">
 .submit-form {
     margin-top: 28px;
+    // The form is a control panel, so only the fields themselves take a text selection.
+    user-select: none;
+
+    // Fields inherit the setting above, so their text selection is turned back on.
+    :deep(input),
+    :deep(textarea) {
+        user-select: text;
+    }
 }
 
 .form-grid {
