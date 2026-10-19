@@ -65,6 +65,7 @@ const {
     selectedFile,
     selectedFormat,
     selectedTarget,
+    skipLocalizedLabelVisible,
     targetQuery
 } = submitAdaptionState;
 const colorMenuOpen = ref(false);
@@ -185,13 +186,19 @@ const changeTarget = (key: unknown) => {
     if (entry) selectTarget(entry);
     else clearTarget();
 };
+// Localized labels start with English and the language of the current page.
+const createDefaultLabelRows = (englishLabel = '') => {
+    const pageCode = canonicalizeLocaleCode(locale.value);
+    const codes = pageCode.toLocaleLowerCase() === 'en' ? ['en'] : ['en', pageCode];
+    return codes.map((code, index) => ({
+        code,
+        id: nextLabelRowId.value++,
+        value: index === 0 ? englishLabel : ''
+    }));
+};
 const activateLocalizedLabel = () => {
     localizedLabel.value = true;
-    labelRows.value = [{
-        code: 'en',
-        id: nextLabelRowId.value++,
-        value: label.value
-    }];
+    labelRows.value = createDefaultLabelRows(label.value);
 };
 const resetLocalizedLabel = () => {
     const preferredCode = canonicalizeLocaleCode(locale.value).toLocaleLowerCase();
@@ -199,6 +206,8 @@ const resetLocalizedLabel = () => {
         labelRows.value.find((row) => row.value.trim())?.value ?? '';
     localizedLabel.value = false;
     labelRows.value = [];
+    // Leaving the default localized mode by the link or the button hides the link while the visitor stays on this page.
+    if (!editingEntry.value) skipLocalizedLabelVisible.value = false;
 };
 const addLabelRow = () => labelRows.value.push({ code: '', id: nextLabelRowId.value++, value: '' });
 const removeLabelRow = (id: number) => {
@@ -551,8 +560,8 @@ const resetEditedFields = () => {
     contributors.value = [''];
     format.value = 'png';
     label.value = '';
-    labelRows.value = [];
-    localizedLabel.value = false;
+    labelRows.value = createDefaultLabelRows();
+    localizedLabel.value = true;
     overlay.value = false;
     remark.value = '';
     clearTarget();
@@ -783,6 +792,7 @@ provide(submitAdaptionContextKey, {
     resourcesLoading,
     selectedTarget,
     selectedFormat,
+    skipLocalizedLabelVisible,
     submitDisabled,
     targetQuery,
     text,
@@ -795,6 +805,8 @@ watch([selectedFile, originalIcon, selectedTarget], async ([file]) => {
     // Another icon may have been selected while the bytes were compared.
     if (selectedFile.value === file) iconChanged.value = changed;
 }, { immediate: true });
+// The page starts in localized label mode, and the state only knows the page language here.
+if (localizedLabel.value && !labelRows.value.length) labelRows.value = createDefaultLabelRows();
 watch(editingEntry, (entry) => {
     const key = entry ? `${entry.category.id}:${entry.key}` : '';
     // Reloaded manifests after a locale switch resolve to the same key and must keep the edited draft.

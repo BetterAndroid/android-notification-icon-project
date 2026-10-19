@@ -69,6 +69,7 @@ const {
     resourcesLoading,
     selectedFormat,
     selectedTarget,
+    skipLocalizedLabelVisible,
     submitDisabled,
     targetQuery,
     text
@@ -164,7 +165,7 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
                     </Select>
                 </FormItem>
 
-                <FormItem class="full-width label-field" :html-for="localizedLabel ? undefined : 'submit-label'"
+                <FormItem class="full-width label-field" html-for="submit-label"
                     required :validate-status="errorStatus(fieldErrors.label)" :help="fieldErrors.label">
                     <template #label>
                         <span class="label-row">
@@ -173,20 +174,29 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
                                 :title="text.addLocale" :aria-label="text.addLocale" @click="activateLocalizedLabel">
                                 <GlobalOutlined aria-hidden="true" />
                             </button>
-                            <button v-else type="button" class="compact-icon-button" :title="text.resetLabel"
-                                :aria-label="text.resetLabel" @click="resetLocalizedLabel">
-                                <RollbackOutlined aria-hidden="true" />
-                            </button>
+                            <span v-else class="label-actions">
+                                <!-- A modification follows the current resource, so the link is not offered there. -->
+                                <button v-if="skipLocalizedLabelVisible && !editingEntry" type="button"
+                                    class="link-button" @click="resetLocalizedLabel">
+                                    {{ text.skipLocalizedLabel }}
+                                </button>
+                                <button type="button" class="compact-icon-button" :title="text.resetLabel"
+                                    :aria-label="text.resetLabel" @click="resetLocalizedLabel">
+                                    <RollbackOutlined aria-hidden="true" />
+                                </button>
+                            </span>
                         </span>
                     </template>
                     <Input v-if="!localizedLabel" id="submit-label" v-model:value="label"
                         :placeholder="text.labelPlaceholder" />
                     <div v-else id="submit-label-i18n" class="repeatable-list">
-                        <div v-for="row in labelRows" :key="row.id" class="i18n-row">
+                        <div v-for="(row, index) in labelRows" :key="row.id" class="i18n-row">
                             <Select v-model:value="row.code" :options="localeOptions(row.id)"
                                 :placeholder="text.selectLocale" :aria-label="text.i18nCode"
                                 popup-class-name="submit-popup" />
-                            <Input v-model:value="row.value" :aria-label="text.i18nValue"
+                            <!-- The label element needs a target, otherwise a click on it activates the mode button inside. -->
+                            <Input :id="index === 0 ? 'submit-label' : undefined" v-model:value="row.value"
+                                :aria-label="text.i18nValue"
                                 :placeholder="text.i18nValue" />
                             <button type="button" :title="text.removeLocale" :aria-label="text.removeLocale"
                                 :disabled="labelRows.length === 1 && !row.value.trim()" @click="removeLabelRow(row.id)">
@@ -331,6 +341,28 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+}
+
+.label-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.link-button {
+    border: 0;
+    padding: 0;
+    background: none;
+    color: var(--vp-c-brand-1);
+    font-size: smaller;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.25s;
+}
+
+.link-button:hover {
+    color: var(--vp-c-brand-2);
+    text-decoration: underline;
 }
 
 .target-field :deep(.ant-form-item-extra) {

@@ -35,7 +35,7 @@ export const submitAdaptionState = {
     iconValidation: ref<IconValidation>(),
     label: ref(''),
     labelRows: ref<LabelRow[]>([]),
-    localizedLabel: ref(false),
+    localizedLabel: ref(true),
     nextLabelRowId: ref(0),
     originalIcon: ref<File>(),
     overlay: ref(false),
@@ -46,6 +46,7 @@ export const submitAdaptionState = {
     selectedFile: ref<File>(),
     selectedFormat: ref<'png' | 'svg'>(),
     selectedTarget: ref<ResolvedIconEntry>(),
+    skipLocalizedLabelVisible: ref(true),
     targetQuery: ref('')
 };
 
@@ -59,7 +60,7 @@ export const resetSubmitAdaptionState = () => {
     submitAdaptionState.iconValidation.value = undefined;
     submitAdaptionState.label.value = '';
     submitAdaptionState.labelRows.value = [];
-    submitAdaptionState.localizedLabel.value = false;
+    submitAdaptionState.localizedLabel.value = true;
     submitAdaptionState.nextLabelRowId.value = 0;
     submitAdaptionState.originalIcon.value = undefined;
     submitAdaptionState.overlay.value = false;
@@ -70,5 +71,6 @@ export const resetSubmitAdaptionState = () => {
     submitAdaptionState.selectedFile.value = undefined;
     submitAdaptionState.selectedFormat.value = undefined;
     submitAdaptionState.selectedTarget.value = undefined;
+    submitAdaptionState.skipLocalizedLabelVisible.value = true;
     submitAdaptionState.targetQuery.value = '';
 };
