@@ -559,5 +559,15 @@
     "color": "#3AD67D",
     "overlay": false,
     "contributors": "plplpmmmmh"
+  },
+  "com.oplus.sos": {
+    "label": {
+      "en": "Emergency SOS",
+      "zh-CN": "SOS紧急联络"
+    },
+    "format": "png",
+    "color": "#EB564F",
+    "overlay": false,
+    "contributors": "plplpmmmmh"
   }
 }
