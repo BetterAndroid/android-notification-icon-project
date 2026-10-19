@@ -50,5 +50,15 @@
       "zh-CN": "一加天气"
     },
     "contributors": "DdogezD"
+  },
+  "com.tick.service": {
+    "label": {
+      "en": "ColorOS Stock Market",
+      "zh-CN": "ColorOS 股市"
+    },
+    "format": "png",
+    "color": "#F43A0C",
+    "overlay": false,
+    "contributors": "oosl"
   }
 }
