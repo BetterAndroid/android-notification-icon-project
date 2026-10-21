@@ -5144,5 +5144,12 @@
     "color": "#079565",
     "overlay": false,
     "contributors": "plplpmmmmh"
+  },
+  "com.chinatower.tthd": {
+    "label": "铁塔换电",
+    "format": "png",
+    "color": "#1EB8A2",
+    "overlay": false,
+    "contributors": "plplpmmmmh"
   }
 }
