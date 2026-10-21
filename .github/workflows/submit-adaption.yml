@@ -298,11 +298,14 @@ jobs:
           fi
 
   check-pending-submissions:
+    needs: close-submission-pull-request
     if: >-
-      github.event_name == 'pull_request_target' &&
+      ((github.event_name == 'pull_request_target' &&
       github.event.action == 'closed' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      startsWith(github.event.pull_request.head.ref, 'anip/submit-')
+      startsWith(github.event.pull_request.head.ref, 'anip/submit-')) ||
+      needs.close-submission-pull-request.result == 'success') &&
+      !cancelled()
     runs-on: ubuntu-latest
     outputs:
       release: ${{ steps.pending.outputs.release }}

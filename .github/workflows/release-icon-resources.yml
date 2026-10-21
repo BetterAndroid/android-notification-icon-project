@@ -118,7 +118,7 @@ jobs:
               echo "**Contributor**: ${contributors[0]}"
               echo
             fi
-            echo "**Full Changelog**: https://github.com/$GITHUB_REPOSITORY/compare/$before_tag...$TAG"
+            echo "**Full Changelog**: https://github.com/$GITHUB_REPOSITORY/compare/$BEFORE_TAG...$TAG"
           } > "$RUNNER_TEMP/anip-release-notes.md"
           echo "archive=$archive" >> "$GITHUB_OUTPUT"
           echo "manifest=$manifest" >> "$GITHUB_OUTPUT"
