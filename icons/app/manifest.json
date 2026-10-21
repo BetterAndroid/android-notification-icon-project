@@ -5137,5 +5137,12 @@
     "color": "#B4916C",
     "overlay": false,
     "contributors": "rd0293"
+  },
+  "com.pupumall.assistantx": {
+    "label": "朴朴骑手",
+    "format": "png",
+    "color": "#079565",
+    "overlay": false,
+    "contributors": "plplpmmmmh"
   }
 }
