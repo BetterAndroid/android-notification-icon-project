@@ -5158,5 +5158,10 @@
     "color": "#08A677",
     "overlay": false,
     "contributors": "rskdenkai"
+  },
+  "app.dsh.mobile": {
+    "target": "com.deepseek.chat",
+    "label": "DSH Mobile",
+    "contributors": "zweidyx"
   }
 }
