@@ -326,7 +326,7 @@ jobs:
 
   release-submissions:
     needs: check-pending-submissions
-    if: needs.check-pending-submissions.outputs.release == 'true'
+    if: needs.check-pending-submissions.outputs.release == 'true' && !cancelled()
     uses: ./.github/workflows/release-icon-resources.yml
 
   complete-merged-submission:
