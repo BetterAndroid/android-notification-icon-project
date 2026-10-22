@@ -5151,5 +5151,12 @@
     "color": "#1EB8A2",
     "overlay": false,
     "contributors": "plplpmmmmh"
+  },
+  "com.jiuwu": {
+    "label": "95分",
+    "format": "png",
+    "color": "#08A677",
+    "overlay": false,
+    "contributors": "rskdenkai"
   }
 }
