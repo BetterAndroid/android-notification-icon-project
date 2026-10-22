@@ -18,11 +18,11 @@ This project has been changed from the original **AGPL-3.0** license to **Apache
 
 ## Usage
 
-ANIP currently uses community-supported Xposed modules to adapt the System UI and provides community-maintained monochrome notification icon resources and rules for third-party apps, games, and system apps.
+ANIP provides community-maintained monochrome notification icon resources and rules for third-party apps, games, and system apps, but does not provide specific implementation details itself, offering only the companion [ANIP SDK](../sdk/quick-start.md).
 
-The following are the current support paths of ANIP. In the future, these Xposed modules will be consolidated into a unified aggregate module maintained by the [BetterAndroid](https://github.com/BetterAndroid) organization.
+ANIP recommends pairing with community-provided Xposed module solutions to adapt the System UI.
 
-1. Ready-to-use Xposed modules
+1. Recommended Xposed modules
 
 - For HyperOS/MIUI, see [MIUINativeNotifyIcon](https://github.com/fankes/MIUINativeNotifyIcon)
 - For ColorOS, Realme UI, or OxygenOS (>= 12), see [ColorOSNotifyIcon](https://github.com/fankes/ColorOSNotifyIcon)
@@ -33,9 +33,7 @@ The following are the current support paths of ANIP. In the future, these Xposed
 - For Flyme, see [this issue](repo://issues/201)
 - For OneUI, see [this issue](repo://issues/475)
 
-ANIP provides icon resource downloads and application through the [Official SDK](../sdk/quick-start.md), allowing you to use this SDK to build your own Xposed module or notification adaptation solution.
-
-If you are a user, you can download and experience the [ANIP Demo](branch://sdk/samples/demo/release).
+You can download and try the [ANIP Demo](branch://sdk/samples/demo/release) app we provide.
 
 ## Noncompliant Systems
 
