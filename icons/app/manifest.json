@@ -5163,5 +5163,12 @@
     "target": "com.deepseek.chat",
     "label": "DSH Mobile",
     "contributors": "zweidyx"
+  },
+  "com.paypal.android.p2pmobile": {
+    "label": "PayPal",
+    "format": "png",
+    "color": "#002991",
+    "overlay": false,
+    "contributors": "rskdenkai"
   }
 }
