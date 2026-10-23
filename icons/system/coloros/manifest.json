@@ -569,5 +569,14 @@
     "color": "#EB564F",
     "overlay": false,
     "contributors": "plplpmmmmh"
+  },
+  "com.android.systemui": {
+    "label": {
+      "en": "systemui",
+      "zh-CN": "系统界面"
+    },
+    "format": "png",
+    "overlay": false,
+    "contributors": "hongyf183"
   }
 }
