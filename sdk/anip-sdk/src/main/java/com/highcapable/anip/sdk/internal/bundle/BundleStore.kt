@@ -21,261 +21,176 @@
  */
 package com.highcapable.anip.sdk.internal.bundle
 
+import android.os.ParcelFileDescriptor
+import com.highcapable.anip.sdk.internal.bundle.dto.BundleHeader
 import com.highcapable.anip.sdk.internal.exception.BundleException
 import com.highcapable.anip.sdk.internal.icon.IconCatalog
 import com.highcapable.anip.sdk.internal.manifest.ResourceManifestParser
-import com.highcapable.anip.sdk.internal.utils.copyToLimited
+import com.highcapable.anip.sdk.internal.utils.readLimited
+import com.highcapable.anip.sdk.internal.utils.sha256
 import com.highcapable.anip.sdk.type.SystemVariant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
+import kotlinx.serialization.json.Json
+import java.io.DataInputStream
+import java.io.DataOutputStream
 
 /**
- * Owns persistent ANIP bundle installation, validation, fallback, and cache retention.
- * @param cacheDirectory cache directory shared by one logical resource source at a time.
+ * Owns the single ANIP cache file: `MAGIC`, format version, header size, JSON [BundleHeader], then the original
+ * bundle archive.
+ *
+ * Writes replace the content in place and are not atomic. A partly written file fails the SHA-256 check on the
+ * next read and is treated as missing.
  * @param sourceIdentity stable identity of the configured resource source.
- * @param resourceManifestParser the parser used to validate installed and cached bundles.
+ * @param resourceManifestParser the parser used to validate cached and downloaded bundles.
+ * @param maxBundleSizeBytes the maximum bundle archive size.
  * @param maxExtractedSizeBytes the maximum total uncompressed bundle size.
  * @param maxArchiveEntries the maximum number of ZIP entries accepted from a bundle.
- * @param retainedReleaseCount the number of recently used release directories to retain.
+ * @param openForRead opens a readable descriptor of the cache file.
+ * @param openForWrite opens a writable descriptor of the cache file, or null when the cache is read-only.
  */
 internal class BundleStore(
-    private val cacheDirectory: File,
     private val sourceIdentity: String,
     private val resourceManifestParser: ResourceManifestParser,
+    private val maxBundleSizeBytes: Long,
     private val maxExtractedSizeBytes: Long,
     private val maxArchiveEntries: Int,
-    private val retainedReleaseCount: Int
+    private val openForRead: () -> ParcelFileDescriptor,
+    private val openForWrite: (() -> ParcelFileDescriptor)?
 ) {
 
     private companion object {
-        const val SOURCE_FILE_NAME = "source"
-        const val TIMESTAMP_FILE_NAME = "timestamp"
+
+        /** `ANIP` in ASCII. */
+        const val MAGIC = 0x414E4950
+
+        const val FORMAT_VERSION = 1
+        const val MAX_HEADER_SIZE_BYTES = 64 * 1024
     }
 
+    private val json = Json { ignoreUnknownKeys = true }
+
+    private class CachedBundle(
+        val header: BundleHeader,
+        val archive: ByteArray
+    )
+
     /**
-     * Source commit timestamp of the last successfully installed release.
+     * Source commit timestamp of the cached release.
      *
-     * The value is stored as decimal text in the source-bound cache and resolves to `0L` when absent or invalid.
+     * Only the cache header is read, so a damaged archive still reports its timestamp. The value resolves to `0L`
+     * when the cache is absent, invalid, or bound to another source.
      */
-    var timestamp: Long
-        get() = if (!isCurrentSource()) 0L else cacheDirectory.resolve(TIMESTAMP_FILE_NAME).runCatching {
-            readText().trim().toLong()
-        }.getOrDefault(0L)
-        set(value) {
-            prepareSource()
-
-            val timestampFile = cacheDirectory.resolve(TIMESTAMP_FILE_NAME)
-            val temporaryFile = File.createTempFile("timestamp-", ".tmp", cacheDirectory)
-            try {
-                temporaryFile.writeText(value.toString())
-
-                if (timestampFile.exists() && !timestampFile.delete())
-                    throw BundleException("Failed to replace the ANIP timestamp file.")
-                if (!temporaryFile.renameTo(timestampFile))
-                    throw BundleException("Failed to install the ANIP timestamp file.")
-            } finally {
-                temporaryFile.delete()
-            }
-        }
+    val timestamp
+        get() = runCatching {
+            ParcelFileDescriptor.AutoCloseInputStream(openForRead()).use { stream ->
+                readHeader(DataInputStream(stream.buffered()))
+            }.takeIf { it.sourceIdentity == sourceIdentity }?.timestamp
+        }.getOrNull() ?: 0L
 
     /**
-     * Returns a validated catalog for [bundleRelease], downloading and replacing its cache when required.
+     * Returns the writable descriptor opener.
+     * @return opener of a writable descriptor.
+     * @throws BundleException when the cache is read-only.
+     */
+    fun requireWritable() = openForWrite ?: throw BundleException("The ANIP cache is read-only.")
+
+    /**
+     * Returns a validated catalog for [bundleRelease], downloading and replacing the cache file when required.
      *
-     * Installation occurs through a staging directory. An existing release directory is restored if parsing the
-     * replacement fails, so callers never observe a partially extracted bundle.
+     * A downloaded bundle is parsed before it is written, so an invalid release never replaces the cache.
      * @param bundleRelease the validated release metadata.
      * @param systemVariant system resources to include during validation and parsing, or null to exclude them.
-     * @param forceRefresh whether an existing directory for the same tag must be replaced.
-     * @param downloadBundle the callback that streams the release archive into the provided file.
+     * @param forceRefresh whether the cached bundle must be replaced even if it matches [bundleRelease].
+     * @param downloadBundle the callback that returns the verified release archive.
      * @return [IconCatalog]
      */
     suspend fun obtain(
         bundleRelease: BundleRelease,
         systemVariant: SystemVariant?,
         forceRefresh: Boolean,
-        downloadBundle: suspend (File) -> Unit
+        downloadBundle: suspend () -> ByteArray
     ) = withContext(Dispatchers.IO) {
-        prepareSource()
+        val openForWrite = requireWritable()
 
-        val releasesDirectory = cacheDirectory.resolve("releases").apply {
-            if (!isDirectory && !mkdirs()) throw BundleException("Failed to create release cache directory: $absolutePath")
-        }
-
-        val releaseDirectory = releasesDirectory.resolve(bundleRelease.tag)
-        if (releaseDirectory.exists() && !releaseDirectory.isDirectory && !releaseDirectory.delete())
-            throw BundleException("Release cache path is not a directory: ${bundleRelease.tag}")
-
-        if (!forceRefresh && releaseDirectory.isDirectory) {
-            val cachedIconCatalog = runCatching {
-                resourceManifestParser.parse(releaseDirectory, systemVariant)
-            }.getOrNull()
-            if (cachedIconCatalog != null) {
-                releaseDirectory.setLastModified(System.currentTimeMillis())
-                pruneReleases(releasesDirectory, releaseDirectory)
-
-                return@withContext cachedIconCatalog
-            }
-
-            releaseDirectory.deleteRecursively()
-        }
-
-        val stagingDirectory = createStagingDirectory()
-        try {
-            val archiveFile = stagingDirectory.resolve(bundleRelease.assetName)
-            val extractedDirectory = stagingDirectory.resolve("bundle").apply {
-                if (!mkdirs()) throw BundleException("Failed to create extraction directory: $absolutePath")
-            }
-
-            downloadBundle(archiveFile)
-            extract(archiveFile, extractedDirectory)
-            resourceManifestParser.parse(extractedDirectory, systemVariant)
-
-            val previousDirectory = stagingDirectory.resolve("previous")
-            if (releaseDirectory.isDirectory && !releaseDirectory.renameTo(previousDirectory))
-                throw BundleException("Failed to stage the previous release cache: ${bundleRelease.tag}")
-            if (!extractedDirectory.renameTo(releaseDirectory)) {
-                previousDirectory.renameTo(releaseDirectory)
-                throw BundleException("Failed to install release cache: ${bundleRelease.tag}")
-            }
-
-            runCatching {
-                resourceManifestParser.parse(releaseDirectory, systemVariant).also {
-                    releaseDirectory.setLastModified(System.currentTimeMillis())
-                    pruneReleases(releasesDirectory, releaseDirectory)
+        if (!forceRefresh) {
+            val cachedCatalog = runCatching {
+                readCache()?.takeIf { it.header.sha256.equals(bundleRelease.sha256, ignoreCase = true) }?.let {
+                    parse(it.archive, systemVariant)
                 }
-            }.getOrElse {
-                releaseDirectory.deleteRecursively()
-                previousDirectory.renameTo(releaseDirectory)
-
-                throw it
-            }
-        } finally {
-            stagingDirectory.deleteRecursively()
+            }.getOrNull()
+            if (cachedCatalog != null) return@withContext cachedCatalog
         }
+
+        val archive = downloadBundle()
+        val iconCatalog = parse(archive, systemVariant)
+        val header = BundleHeader(
+            sourceIdentity = sourceIdentity,
+            tag = bundleRelease.tag,
+            timestamp = bundleRelease.timestamp,
+            size = archive.size.toLong(),
+            sha256 = bundleRelease.sha256.lowercase()
+        )
+        writeCache(openForWrite, header, archive)
+
+        iconCatalog
     }
 
     /**
-     * Loads the most recently used valid cached catalog without performing network access.
-     * @return [IconCatalog] or null.
+     * Loads the cached catalog without performing network access.
+     * @param systemVariant system resources to include, or null to exclude them.
+     * @return [IconCatalog] or null when the cache belongs to another source.
+     * @throws Exception when the cache is missing, damaged, or cannot be parsed.
      */
-    fun loadCached(systemVariant: SystemVariant?): IconCatalog? {
-        if (!isCurrentSource()) return null
+    fun loadCached(systemVariant: SystemVariant?) = readCache()?.let { parse(it.archive, systemVariant) }
 
-        val releasesDirectory = cacheDirectory.resolve("releases")
-        val candidates = releasesDirectory.listFiles { file -> file.isDirectory }
-            ?.sortedByDescending(File::lastModified)
-            .orEmpty()
+    private fun readCache() = ParcelFileDescriptor.AutoCloseInputStream(openForRead()).use { stream ->
+        val input = DataInputStream(stream.buffered())
+        val header = readHeader(input)
+        if (header.sourceIdentity != sourceIdentity) return@use null
 
-        return candidates.firstNotNullOfOrNull { directory ->
-            runCatching { resourceManifestParser.parse(directory, systemVariant) }.getOrNull()
+        val archive = input.readLimited(maxBundleSizeBytes)
+        if (archive.size.toLong() != header.size || archive.sha256() != header.sha256)
+            throw BundleException("ANIP cache verification failed.")
+
+        CachedBundle(header, archive)
+    }
+
+    private fun readHeader(input: DataInputStream): BundleHeader {
+        if (input.readInt() != MAGIC) throw BundleException("Invalid ANIP cache file.")
+
+        val formatVersion = input.readInt()
+        if (formatVersion != FORMAT_VERSION) throw BundleException("Unsupported ANIP cache format: $formatVersion")
+
+        val headerSize = input.readInt()
+        if (headerSize !in 1..MAX_HEADER_SIZE_BYTES) throw BundleException("Invalid ANIP cache header size: $headerSize")
+
+        val content = ByteArray(headerSize).also(input::readFully).toString(Charsets.UTF_8)
+        return runCatching {
+            json.decodeFromString<BundleHeader>(content)
+        }.getOrElse {
+            throw BundleException("Invalid ANIP cache header.", it)
         }
     }
 
-    /** Ensures the configured cache path exists as a directory before writing bundle state. */
-    private fun ensureCacheDirectory() {
-        if (cacheDirectory.isFile)
-            throw BundleException("Cache path is a file: ${cacheDirectory.absolutePath}")
-        if (!cacheDirectory.isDirectory && !cacheDirectory.mkdirs())
-            throw BundleException("Failed to create cache directory: ${cacheDirectory.absolutePath}")
-    }
+    private fun writeCache(openForWrite: () -> ParcelFileDescriptor, header: BundleHeader, archive: ByteArray) {
+        val headerContent = json.encodeToString(header).toByteArray()
 
-    /** Rebinds persistent cache state when the configured resource source changes. */
-    private fun prepareSource() {
-        ensureCacheDirectory()
-        if (isCurrentSource()) return
-
-        val releasesDirectory = cacheDirectory.resolve("releases")
-        if (releasesDirectory.exists() && !releasesDirectory.deleteRecursively())
-            throw BundleException("Failed to clear releases from the previous ANIP source.")
-
-        val timestampFile = cacheDirectory.resolve(TIMESTAMP_FILE_NAME)
-        if (timestampFile.exists() && !timestampFile.delete())
-            throw BundleException("Failed to clear the timestamp from the previous ANIP source.")
-
-        val sourceFile = cacheDirectory.resolve(SOURCE_FILE_NAME)
-        val temporaryFile = File.createTempFile("source-", ".tmp", cacheDirectory)
-        try {
-            temporaryFile.writeText(sourceIdentity)
-
-            if (sourceFile.exists() && !sourceFile.delete())
-                throw BundleException("Failed to replace the ANIP source file.")
-            if (!temporaryFile.renameTo(sourceFile))
-                throw BundleException("Failed to install the ANIP source file.")
-        } finally {
-            temporaryFile.delete()
+        ParcelFileDescriptor.AutoCloseOutputStream(openForWrite()).use { stream ->
+            // A caller-provided descriptor does not truncate on open, and leftover bytes would fail the size check.
+            stream.channel.truncate(0)
+            DataOutputStream(stream.buffered()).apply {
+                writeInt(MAGIC)
+                writeInt(FORMAT_VERSION)
+                writeInt(headerContent.size)
+                write(headerContent)
+                write(archive)
+            }.flush()
         }
     }
 
-    /** Returns whether persistent cache state belongs to the configured resource source. */
-    private fun isCurrentSource() = cacheDirectory.resolve(SOURCE_FILE_NAME).runCatching {
-        readText().trim() == sourceIdentity
-    }.getOrDefault(false)
-
-    /** Creates a unique staging directory inside the cache for same-filesystem replacement. */
-    private fun createStagingDirectory(): File {
-        val temporaryFile = File.createTempFile("staging-", ".tmp", cacheDirectory)
-        if (!temporaryFile.delete() || !temporaryFile.mkdir())
-            throw BundleException("Failed to create staging directory: ${temporaryFile.absolutePath}")
-
-        return temporaryFile
+    private fun parse(archive: ByteArray, systemVariant: SystemVariant?): IconCatalog {
+        val bundle = InMemoryBundle.read(archive, maxExtractedSizeBytes, maxArchiveEntries)
+        return resourceManifestParser.parse(bundle, systemVariant)
     }
-
-    /** Extracts an archive while enforcing entry-count and total uncompressed-size limits. */
-    private fun extract(archiveFile: File, targetDirectory: File) {
-        val canonicalTarget = targetDirectory.canonicalFile
-        var extractedSize = 0L
-
-        ZipInputStream(archiveFile.inputStream().buffered()).use { archive ->
-            generateSequence { archive.nextEntry }.forEachIndexed { index, entry ->
-                if (index >= maxArchiveEntries) throw BundleException("Release archive contains too many entries.")
-
-                val remainingSize = maxExtractedSizeBytes - extractedSize
-                if (entry.size > remainingSize) throw BundleException("Release extracted content exceeds the size limit.")
-
-                extractedSize += extractEntry(archive, entry, canonicalTarget, remainingSize)
-                archive.closeEntry()
-            }
-        }
-    }
-
-    /**
-     * Extracts one ZIP [entry] after rejecting malformed names and paths outside [targetDirectory].
-     * @return [Long] the number of bytes written to disk for this entry.
-     */
-    private fun extractEntry(archive: ZipInputStream, entry: ZipEntry, targetDirectory: File, remainingSize: Long): Long {
-        if (entry.name.isBlank() || entry.name.contains('\\')) throw BundleException("Invalid release archive entry: ${entry.name}")
-
-        val outputFile = targetDirectory.resolve(entry.name).canonicalFile
-        if (!outputFile.isInside(targetDirectory)) throw BundleException("Release archive entry escapes the target directory: ${entry.name}")
-
-        if (entry.isDirectory) {
-            if (!outputFile.isDirectory && !outputFile.mkdirs()) throw BundleException("Failed to create extracted directory: ${entry.name}")
-            return 0
-        }
-
-        outputFile.parentFile?.let { parent ->
-            if (!parent.isDirectory && !parent.mkdirs()) throw BundleException("Failed to create icon directory: ${entry.name}")
-        }
-
-        return outputFile.outputStream().buffered().use { output ->
-            archive.copyToLimited(output, remainingSize)
-        }
-    }
-
-    /** Removes old release directories while always retaining the currently selected release first. */
-    private fun pruneReleases(releasesDirectory: File, currentReleaseDirectory: File) {
-        val releaseOrder = compareByDescending<File> { it == currentReleaseDirectory }
-            .thenByDescending(File::lastModified)
-
-        releasesDirectory.listFiles { file -> file.isDirectory }
-            ?.sortedWith(releaseOrder)
-            ?.drop(retainedReleaseCount)
-            ?.forEach(File::deleteRecursively)
-    }
-
-    /** Returns whether this canonical path is [directory] itself or one of its descendants. */
-    private fun File.isInside(directory: File) = path == directory.path || path.startsWith(directory.path + File.separator)
 }

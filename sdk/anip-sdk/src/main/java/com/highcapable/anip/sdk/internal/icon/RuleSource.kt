@@ -21,10 +21,13 @@
  */
 package com.highcapable.anip.sdk.internal.icon
 
+import com.highcapable.anip.sdk.internal.bundle.BundlePath
+
 /**
  * Manifest and resource directories that contribute icons to a catalog.
+ * @param path the directory path inside a bundle.
  */
-internal enum class RuleSource(val relativePath: String) {
+internal enum class RuleSource(path: String) {
     /** Third-party app rules. */
     APP("app"),
 
@@ -38,5 +41,8 @@ internal enum class RuleSource(val relativePath: String) {
     SYSTEM_MIOS("system/mios"),
 
     /** ColorOS system rules. */
-    SYSTEM_COLOROS("system/coloros")
+    SYSTEM_COLOROS("system/coloros");
+
+    /** Directory of this source inside a bundle. */
+    val relativePath = BundlePath.parse(path)
 }

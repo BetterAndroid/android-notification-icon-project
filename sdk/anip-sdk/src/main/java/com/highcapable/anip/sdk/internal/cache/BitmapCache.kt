@@ -28,10 +28,11 @@ import android.util.LruCache
 import androidx.core.graphics.createBitmap
 import com.caverock.androidsvg.SVG
 import com.highcapable.anip.sdk.Anip
+import com.highcapable.anip.sdk.internal.bundle.BundlePath
 import com.highcapable.anip.sdk.internal.exception.BundleException
 import com.highcapable.anip.sdk.internal.icon.IconFormat
 import com.highcapable.betterandroid.ui.extension.graphics.decodeToBitmapOrNull
-import java.io.File
+import java.util.zip.CRC32
 
 /**
  * Per-[Anip] LRU cache that lazily decodes PNG and SVG icon files into bitmaps.
@@ -48,18 +49,25 @@ internal class BitmapCache(maxSizeBytes: Int) {
     }
 
     /**
-     * Loads [file] in [format], reusing a cached bitmap when its file metadata is unchanged.
+     * Decodes [content] of the bundle file at [path] in [format].
+     *
+     * Cached bitmaps are keyed by path, size and CRC32, so an unchanged icon keeps its bitmap across reloads
+     * of a new bundle.
+     * @param path the path of the icon inside the bundle.
+     * @param content the icon file content.
+     * @param format the icon file format.
      * @return [Bitmap] or null.
      */
     @Synchronized
-    fun load(file: File, format: IconFormat): Bitmap? {
-        val key = "${file.absolutePath}:${file.length()}:${file.lastModified()}"
+    fun load(path: BundlePath, content: ByteArray, format: IconFormat): Bitmap? {
+        val checksum = CRC32().apply { update(content) }.value
+        val key = "$path:${content.size}:$checksum"
         cache.get(key)?.let { return it }
 
         return runCatching {
             when (format) {
-                IconFormat.PNG -> decodePng(file)
-                IconFormat.SVG -> decodeSvg(file)
+                IconFormat.PNG -> decodePng(path, content)
+                IconFormat.SVG -> decodeSvg(path, content)
             }
         }.getOrNull()?.also { cache.put(key, it) }
     }
@@ -68,22 +76,22 @@ internal class BitmapCache(maxSizeBytes: Int) {
     @Synchronized
     fun clear() = cache.evictAll()
 
-    /** Decodes a dimension-checked PNG file into a bitmap. */
-    private fun decodePng(file: File): Bitmap {
+    /** Decodes dimension-checked PNG [content] into a bitmap. */
+    private fun decodePng(path: BundlePath, content: ByteArray): Bitmap {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        file.decodeToBitmapOrNull(bounds)
+        content.inputStream().decodeToBitmapOrNull(opts = bounds)
 
         if (bounds.outWidth !in 1..MAX_ICON_DIMENSION || bounds.outHeight !in 1..MAX_ICON_DIMENSION)
-            throw BundleException("Invalid PNG icon dimensions: ${file.name}")
+            throw BundleException("Invalid PNG icon dimensions: $path")
 
-        return file.decodeToBitmapOrNull() ?: throw BundleException("Failed to decode PNG icon: ${file.name}")
+        return content.decodeToBitmapOrNull() ?: throw BundleException("Failed to decode PNG icon: $path")
     }
 
-    /** Parses and renders a dimension-checked SVG file into a bitmap. */
-    private fun decodeSvg(file: File): Bitmap {
-        val picture = file.inputStream().buffered().use(SVG::getFromInputStream).renderToPicture()
+    /** Parses and renders dimension-checked SVG [content] into a bitmap. */
+    private fun decodeSvg(path: BundlePath, content: ByteArray): Bitmap {
+        val picture = content.inputStream().use(SVG::getFromInputStream).renderToPicture()
         if (picture.width !in 1..MAX_ICON_DIMENSION || picture.height !in 1..MAX_ICON_DIMENSION)
-            throw BundleException("Invalid SVG icon dimensions: ${file.name}")
+            throw BundleException("Invalid SVG icon dimensions: $path")
 
         return createBitmap(picture.width, picture.height).apply {
             Canvas(this).drawPicture(picture)

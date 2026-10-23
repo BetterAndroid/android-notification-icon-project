@@ -23,13 +23,17 @@ package com.highcapable.anip.sdk.internal.repository
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.ParcelFileDescriptor
 import com.highcapable.anip.sdk.Anip
 import com.highcapable.anip.sdk.config.AnipConfig
+import com.highcapable.anip.sdk.config.CacheDescriptor
 import com.highcapable.anip.sdk.config.RemoteSource
 import com.highcapable.anip.sdk.entity.NotificationIcon
 import com.highcapable.anip.sdk.entity.NotificationIconSnapshot
+import com.highcapable.anip.sdk.internal.bundle.BundlePath
 import com.highcapable.anip.sdk.internal.bundle.BundleStore
 import com.highcapable.anip.sdk.internal.cache.BitmapCache
+import com.highcapable.anip.sdk.internal.exception.BundleException
 import com.highcapable.anip.sdk.internal.icon.IconCatalog
 import com.highcapable.anip.sdk.internal.manifest.ResourceManifestParser
 import com.highcapable.anip.sdk.internal.source.ResourceReleaseClient
@@ -53,13 +57,12 @@ internal class IconResourceRepository(context: Context, private val config: Anip
     private companion object {
 
         const val DEFAULT_CACHE_DIR_NAME = "anip-icon-resources"
+        const val CACHE_FILE_NAME = "anip-bundle"
 
         const val MEMORY_CACHE_SIZE_BYTES = 16 * 1024 * 1024
         const val MAX_BUNDLE_SIZE_BYTES = 32L * 1024 * 1024
         const val MAX_EXTRACTED_SIZE_BYTES = 64L * 1024 * 1024
         const val MAX_ARCHIVE_ENTRIES = 10_000
-
-        const val RETAINED_RELEASE_COUNT = 2
     }
 
     private val appContext = context.applicationContext
@@ -75,13 +78,13 @@ internal class IconResourceRepository(context: Context, private val config: Anip
     private data class CatalogState(val manifestUrl: String, val catalog: IconCatalog)
 
     /** Timestamp persisted for the latest release of the currently configured resource repository. */
-    val timestamp get() = createBundleStore(config.source, config.cacheDirectory).timestamp
+    val timestamp get() = createBundleStore(config.source, config.cacheDirectory, config.cacheDescriptor).timestamp
 
     /**
      * Synchronizes the latest resource release and replaces the in-memory catalog after validation.
      *
-     * An unchanged release reuses its extracted bundle. A failed refresh restores the latest valid disk catalog while
-     * preserving the failure in the returned result.
+     * An unchanged release reuses its cached bundle. A failed refresh, including one on a read-only cache, restores the
+     * cached catalog while preserving the failure in the returned result.
      * @return [Anip.FetchResult]
      */
     suspend fun fetch() = withContext(Dispatchers.IO) {
@@ -89,21 +92,23 @@ internal class IconResourceRepository(context: Context, private val config: Anip
             val source = config.source.also(RemoteSource::validate)
             val systemVariant = config.systemVariant
             val cacheDirectory = config.cacheDirectory
+            val cacheDescriptor = config.cacheDescriptor
             val releaseClient = createReleaseClient(source)
-            val bundleStore = createBundleStore(source, cacheDirectory)
+            val bundleStore = createBundleStore(source, cacheDirectory, cacheDescriptor)
             val previousTimestamp = bundleStore.timestamp
 
             runCatching {
+                bundleStore.requireWritable()
+
                 val bundleRelease = releaseClient.fetchLatest()
                 val iconCatalog = bundleStore.obtain(
                     bundleRelease = bundleRelease,
                     systemVariant = systemVariant,
                     forceRefresh = bundleRelease.timestamp != previousTimestamp
-                ) { bundleFile ->
-                    releaseClient.download(bundleRelease, bundleFile)
+                ) {
+                    releaseClient.download(bundleRelease)
                 }
                 updateCatalog(source, iconCatalog)
-                bundleStore.timestamp = bundleRelease.timestamp
 
                 val isUpToDate = bundleRelease.timestamp == previousTimestamp
                 val message = if (isUpToDate)
@@ -136,7 +141,8 @@ internal class IconResourceRepository(context: Context, private val config: Anip
         operationMutex.withLock {
             val source = config.source.also(RemoteSource::validate)
             val cacheDirectory = config.cacheDirectory
-            val cachedCatalog = loadCachedCatalog(createBundleStore(source, cacheDirectory), config.systemVariant)
+            val cacheDescriptor = config.cacheDescriptor
+            val cachedCatalog = loadCachedCatalog(createBundleStore(source, cacheDirectory, cacheDescriptor), config.systemVariant)
                 ?: return@withLock false
 
             updateCatalog(source, cachedCatalog)
@@ -171,19 +177,38 @@ internal class IconResourceRepository(context: Context, private val config: Anip
         maxBundleSizeBytes = MAX_BUNDLE_SIZE_BYTES
     )
 
-    /** Creates a bundle store scoped to [source] and the currently configured cache root. */
-    private fun createBundleStore(source: RemoteSource, cacheDirectory: File?) = run {
+    /** A file cache is only created on its first write, so [reload] never leaves an empty file behind. */
+    private fun createBundleStore(source: RemoteSource, cacheDirectory: File?, cacheDescriptor: CacheDescriptor?) = run {
         source.validate()
         require(cacheDirectory?.isFile != true) { "ANIP cache directory must not be a file." }
+        require(cacheDirectory == null || cacheDescriptor == null) {
+            "ANIP cache directory and cache descriptor must not be set at the same time."
+        }
 
-        val cacheRoot = cacheDirectory ?: createDefaultCacheDirectory()
+        val openForRead: () -> ParcelFileDescriptor
+        val openForWrite: (() -> ParcelFileDescriptor)?
+        if (cacheDescriptor != null) {
+            openForRead = cacheDescriptor::open
+            openForWrite = if (cacheDescriptor.isReadOnly) null else cacheDescriptor::open
+        } else {
+            val cacheRoot = cacheDirectory ?: createDefaultCacheDirectory()
+            val cacheFile = cacheRoot.resolve(CACHE_FILE_NAME)
+            openForRead = { ParcelFileDescriptor.open(cacheFile, ParcelFileDescriptor.MODE_READ_ONLY) }
+            openForWrite = {
+                if (!cacheRoot.isDirectory && !cacheRoot.mkdirs())
+                    throw BundleException("Failed to create cache directory: ${cacheRoot.absolutePath}")
+
+                ParcelFileDescriptor.open(cacheFile, ParcelFileDescriptor.MODE_WRITE_ONLY or ParcelFileDescriptor.MODE_CREATE)
+            }
+        }
         BundleStore(
-            cacheDirectory = cacheRoot,
             sourceIdentity = source.createIdentity(),
             resourceManifestParser = resourceManifestParser,
+            maxBundleSizeBytes = MAX_BUNDLE_SIZE_BYTES,
             maxExtractedSizeBytes = MAX_EXTRACTED_SIZE_BYTES,
             maxArchiveEntries = MAX_ARCHIVE_ENTRIES,
-            retainedReleaseCount = RETAINED_RELEASE_COUNT
+            openForRead = openForRead,
+            openForWrite = openForWrite
         )
     }
 
@@ -206,14 +231,14 @@ internal class IconResourceRepository(context: Context, private val config: Anip
         val loadedIcons = mutableListOf<NotificationIcon>()
         val iconsByPackage = mutableMapOf<String, NotificationIcon>()
         val bitmapsByPackage = mutableMapOf<String, Bitmap>()
-        val bitmapsByResource = mutableMapOf<File, Bitmap>()
+        val bitmapsByResource = mutableMapOf<BundlePath, Bitmap>()
         val uniqueBitmaps = IdentityHashMap<Bitmap, Unit>()
         var memorySizeBytes = 0L
 
         catalogIcons.forEach { icon ->
-            val resourceFile = icon.bitmapResourceFile
-            val bitmap = resourceFile?.let(bitmapsByResource::get) ?: icon.loadBitmap()?.also { loadedBitmap ->
-                resourceFile?.let { bitmapsByResource[it] = loadedBitmap }
+            val resourcePath = icon.bitmapResourcePath
+            val bitmap = resourcePath?.let(bitmapsByResource::get) ?: icon.loadBitmap()?.also { loadedBitmap ->
+                resourcePath?.let { bitmapsByResource[it] = loadedBitmap }
             } ?: return@forEach
 
             loadedIcons += icon

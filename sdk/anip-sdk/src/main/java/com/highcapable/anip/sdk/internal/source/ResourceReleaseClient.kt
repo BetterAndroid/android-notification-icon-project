@@ -25,7 +25,7 @@ import com.highcapable.anip.sdk.config.RemoteSource
 import com.highcapable.anip.sdk.internal.bundle.BundleRelease
 import com.highcapable.anip.sdk.internal.exception.BundleException
 import com.highcapable.anip.sdk.internal.source.dto.ReleaseManifest
-import com.highcapable.anip.sdk.internal.utils.copyToLimited
+import com.highcapable.anip.sdk.internal.utils.asHexString
 import com.highcapable.anip.sdk.internal.utils.readLimited
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +42,6 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import java.io.File
 import java.io.IOException
 import java.security.DigestInputStream
 import java.security.MessageDigest
@@ -114,11 +113,10 @@ internal class ResourceReleaseClient(private val source: RemoteSource, private v
     }
 
     /**
-     * Streams [bundleRelease] into [targetFile] while enforcing declared size, maximum size, and SHA-256.
-     *
-     * A partial target is deleted on failure.
+     * Downloads [bundleRelease] into memory while enforcing declared size, maximum size, and SHA-256.
+     * @return [ByteArray] the verified bundle archive.
      */
-    suspend fun download(bundleRelease: BundleRelease, targetFile: File) = withContext(Dispatchers.IO) {
+    suspend fun download(bundleRelease: BundleRelease): ByteArray = withContext(Dispatchers.IO) {
         runCatching {
             val expectedSize = bundleRelease.assetSize
             if (expectedSize !in 1..maxBundleSizeBytes)
@@ -142,26 +140,20 @@ internal class ResourceReleaseClient(private val source: RemoteSource, private v
                 val contentLength = body.contentLength()
                 if (contentLength > maxBundleSizeBytes) throw BundleException("Release response exceeds the size limit: $contentLength bytes.")
 
-                targetFile.parentFile?.let { parent ->
-                    if (!parent.isDirectory && !parent.mkdirs()) throw BundleException("Failed to create download directory: ${parent.absolutePath}")
-                }
-
                 val digest = MessageDigest.getInstance("SHA-256")
-                val input = DigestInputStream(body.byteStream(), digest).buffered()
-                val downloadedBytes = input.use { inputStream ->
-                    targetFile.outputStream().buffered().use { output ->
-                        inputStream.copyToLimited(output, maxBundleSizeBytes)
-                    }
+                val archive = DigestInputStream(body.byteStream(), digest).buffered().use { inputStream ->
+                    inputStream.readLimited(maxBundleSizeBytes)
                 }
 
+                val downloadedBytes = archive.size.toLong()
                 if (downloadedBytes != expectedSize) throw BundleException("Release size verification failed: $downloadedBytes/$expectedSize")
 
                 val actual = digest.digest().asHexString()
-                if (!actual.equals(bundleRelease.sha256, ignoreCase = true))
-                    throw BundleException("Release SHA-256 verification failed.")
+                if (!actual.equals(bundleRelease.sha256, ignoreCase = true)) throw BundleException("Release SHA-256 verification failed.")
+
+                archive
             }
         }.getOrElse {
-            targetFile.delete()
             currentCoroutineContext().ensureActive()
 
             if (it is CancellationException || it is BundleException) throw it
@@ -255,10 +247,5 @@ internal class ResourceReleaseClient(private val source: RemoteSource, private v
         } finally {
             cancellationHandle.dispose()
         }
-    }
-
-    /** Encodes digest bytes as a lowercase hexadecimal string. */
-    private fun ByteArray.asHexString() = joinToString(separator = "") { byte ->
-        (byte.toInt() and 0xFF).toString(16).padStart(2, '0')
     }
 }

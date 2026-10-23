@@ -28,11 +28,13 @@ import java.io.File
  * Configuration for ANIP.
  * @param systemVariant system resources to load, or null to exclude all system rules.
  * @param cacheDirectory optional cache root, defaults to `cacheDir/anip-icon-resources`.
+ * @param cacheDescriptor optional single-file cache used instead of [cacheDirectory].
  * @param source the remote resource source.
  */
 data class AnipConfig @JvmOverloads constructor(
     var systemVariant: SystemVariant? = null,
     var cacheDirectory: File? = null,
+    var cacheDescriptor: CacheDescriptor? = null,
     var source: RemoteSource = RemoteSource.GitHub()
 ) {
 
@@ -42,6 +44,12 @@ data class AnipConfig @JvmOverloads constructor(
 
     internal fun validate() {
         source.validate()
-        require(cacheDirectory?.isFile != true) { "ANIP cache directory must not be a file." }
+
+        require(cacheDirectory?.isFile != true) {
+            "ANIP cache directory must not be a file."
+        }
+        require(cacheDirectory == null || cacheDescriptor == null) {
+            "ANIP cache directory and cache descriptor must not be set at the same time."
+        }
     }
 }

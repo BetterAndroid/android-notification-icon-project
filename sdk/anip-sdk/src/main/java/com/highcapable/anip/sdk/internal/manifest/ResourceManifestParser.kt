@@ -23,6 +23,8 @@ package com.highcapable.anip.sdk.internal.manifest
 
 import androidx.core.graphics.toColorInt
 import com.highcapable.anip.sdk.entity.NotificationIcon
+import com.highcapable.anip.sdk.internal.bundle.BundlePath
+import com.highcapable.anip.sdk.internal.bundle.InMemoryBundle
 import com.highcapable.anip.sdk.internal.cache.BitmapCache
 import com.highcapable.anip.sdk.internal.exception.BundleException
 import com.highcapable.anip.sdk.internal.icon.IconCatalog
@@ -37,11 +39,10 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import java.io.File
 import java.util.Locale
 
 /**
- * Parses the manifests and icon files extracted from an ANIP bundle into an in-memory catalog.
+ * Parses the manifests and icon files of an ANIP bundle into an in-memory catalog.
  * @param bitmapCache instance-scoped cache shared by the icons created from this parser.
  */
 internal class ResourceManifestParser(private val bitmapCache: BitmapCache) {
@@ -57,34 +58,34 @@ internal class ResourceManifestParser(private val bitmapCache: BitmapCache) {
     private val json = Json { ignoreUnknownKeys = true }
 
     /**
-     * Parses application, game, and selected system resources from [bundleDirectory].
+     * Parses application, game, and selected system resources from [bundle].
+     * @param bundle the bundle content to parse.
      * @param systemVariant system resources to include, or null to exclude all system resources.
      * @return [IconCatalog]
      */
-    fun parse(bundleDirectory: File, systemVariant: SystemVariant?): IconCatalog {
+    fun parse(bundle: InMemoryBundle, systemVariant: SystemVariant?): IconCatalog {
         val ruleSources = buildList {
             add(RuleSource.APP)
             add(RuleSource.GAME)
             systemVariant?.ruleSources?.let(::addAll)
         }
-        return IconCatalog(ruleSources.flatMap { parseRuleSource(bundleDirectory, it) })
+        return IconCatalog(ruleSources.flatMap { parseRuleSource(bundle, it) })
     }
 
     /**
      * Parses one manifest category and resolves each rule against the resources stored beside it.
      * @throws BundleException when the category is missing, malformed, or references an invalid resource.
      */
-    private fun parseRuleSource(bundleDirectory: File, ruleSource: RuleSource) = runCatching {
-        val ruleSourceDirectory = bundleDirectory.resolve(ruleSource.relativePath).canonicalFile
-        val manifestFile = ruleSourceDirectory.resolve(MANIFEST_FILE_NAME)
-        val resourceDirectory = ruleSourceDirectory.resolve(ICON_RESOURCES_DIR_NAME).canonicalFile
+    private fun parseRuleSource(bundle: InMemoryBundle, ruleSource: RuleSource) = runCatching {
+        val manifestContent = bundle.read(ruleSource.relativePath.resolve(MANIFEST_FILE_NAME))
+            ?: throw BundleException("$MANIFEST_FILE_NAME does not exist in ${ruleSource.relativePath}")
+        val resourceDirectory = ruleSource.relativePath.resolve(ICON_RESOURCES_DIR_NAME)
+        if (!bundle.containsDirectory(resourceDirectory))
+            throw BundleException("Icon resources directory does not exist in ${ruleSource.relativePath}")
 
-        if (!manifestFile.isFile) throw BundleException("$MANIFEST_FILE_NAME does not exist in ${ruleSource.relativePath}")
-        if (!resourceDirectory.isDirectory) throw BundleException("Icon resources directory does not exist in ${ruleSource.relativePath}")
-
-        val manifestRules = json.decodeFromString<Map<String, ManifestRule>>(manifestFile.readText())
+        val manifestRules = json.decodeFromString<Map<String, ManifestRule>>(manifestContent.toString(Charsets.UTF_8))
         val rawRules = manifestRules.mapValues { (packageName, manifestRule) ->
-            if (packageName.isUnsafePackageName()) throw BundleException("Unsafe ANIP rule package name: $packageName")
+            if (!BundlePath.isValidSegment(packageName)) throw BundleException("Unsafe ANIP rule package name: $packageName")
 
             parseRule(packageName, manifestRule)
         }
@@ -103,6 +104,7 @@ internal class ResourceManifestParser(private val bitmapCache: BitmapCache) {
             createNotificationIcon(
                 packageName = packageName,
                 resolvedRule = resolvedRule,
+                bundle = bundle,
                 resourceDirectory = resourceDirectory,
                 ruleSource = ruleSource
             )
@@ -155,25 +157,23 @@ internal class ResourceManifestParser(private val bitmapCache: BitmapCache) {
         }.getOrThrow()
     }
 
-    /**
-     * Verifies the resolved resource path and creates the lazily decoded icon exposed by the catalog.
-     */
+    /** Verifies the resolved resource path and creates the lazily decoded icon exposed by the catalog. */
     private fun createNotificationIcon(
         packageName: String,
         resolvedRule: IconResolvedRule,
-        resourceDirectory: File,
+        bundle: InMemoryBundle,
+        resourceDirectory: BundlePath,
         ruleSource: RuleSource
     ): NotificationIcon {
-        val iconFile = resourceDirectory.resolve("${resolvedRule.resourcePackageName}.${resolvedRule.format.extension}").canonicalFile
-
-        val iconPath = "${ruleSource.relativePath}/$ICON_RESOURCES_DIR_NAME/${iconFile.name}"
-        if (!iconFile.isInside(resourceDirectory) || !iconFile.isFile) throw BundleException("Icon file does not exist: $iconPath")
+        val iconPath = resourceDirectory.resolve("${resolvedRule.resourcePackageName}.${resolvedRule.format.extension}")
+        if (!bundle.contains(iconPath)) throw BundleException("Icon file does not exist: $iconPath")
 
         return NotificationIcon.create(
             packageName = packageName,
             resolvedRule = resolvedRule,
             ruleSource = ruleSource,
-            iconFile = iconFile,
+            iconPath = iconPath,
+            bundle = bundle,
             bitmapCache = bitmapCache
         )
     }
@@ -195,9 +195,7 @@ internal class ResourceManifestParser(private val bitmapCache: BitmapCache) {
         )
     }
 
-    /**
-     * Parses either a plain label or a locale-to-label object and validates every localized entry.
-     */
+    /** Parses either a plain label or a locale-to-label object and validates every localized entry. */
     private fun parseLabel(packageName: String, value: JsonElement): LocalizedLabel = when (value) {
         is JsonPrimitive -> {
             if (!value.isString) throw BundleException("Invalid ANIP label: $packageName")
@@ -254,10 +252,4 @@ internal class ResourceManifestParser(private val bitmapCache: BitmapCache) {
         .also { contributors ->
             if (contributors.any(String::isEmpty)) throw BundleException("Invalid ANIP contributors: $packageName")
         }
-
-    /** Returns whether this package-name key could escape or ambiguously address a resource path. */
-    private fun String.isUnsafePackageName() = isBlank() || contains('/') || contains('\\') || this == "." || this == ".."
-
-    /** Returns whether this canonical file is [directory] itself or one of its descendants. */
-    private fun File.isInside(directory: File) = path == directory.path || path.startsWith(directory.path + File.separator)
 }
