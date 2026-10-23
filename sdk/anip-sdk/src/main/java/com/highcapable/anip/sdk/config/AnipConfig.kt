@@ -81,11 +81,11 @@ data class AnipConfig @JvmOverloads constructor(
     internal fun validate() {
         source.validate()
 
-        require(cacheDirectory?.isFile != true) {
-            "ANIP cache directory must not be a file."
-        }
         require(cacheDirectory == null || cacheDescriptor == null) {
             "ANIP cache directory and cache descriptor must not be set at the same time."
+        }
+        require(cacheDirectory?.isFile != true) {
+            "ANIP cache directory must not be a file."
         }
     }
 }
