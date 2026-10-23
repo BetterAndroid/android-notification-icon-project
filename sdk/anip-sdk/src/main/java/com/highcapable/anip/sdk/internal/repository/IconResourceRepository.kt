@@ -26,7 +26,6 @@ import android.graphics.Bitmap
 import android.os.ParcelFileDescriptor
 import com.highcapable.anip.sdk.Anip
 import com.highcapable.anip.sdk.config.AnipConfig
-import com.highcapable.anip.sdk.config.CacheDescriptor
 import com.highcapable.anip.sdk.config.RemoteSource
 import com.highcapable.anip.sdk.entity.NotificationIcon
 import com.highcapable.anip.sdk.entity.NotificationIconSnapshot
@@ -179,7 +178,7 @@ internal class IconResourceRepository(context: Context, private val config: Anip
     )
 
     /** A file cache is only created on its first write, so [reload] never leaves an empty file behind. */
-    private fun createBundleStore(source: RemoteSource, cacheDirectory: File?, cacheDescriptor: CacheDescriptor?) = run {
+    private fun createBundleStore(source: RemoteSource, cacheDirectory: File?, cacheDescriptor: AnipConfig.CacheDescriptor?) = run {
         source.validate()
         require(cacheDirectory?.isFile != true) { "ANIP cache directory must not be a file." }
         require(cacheDirectory == null || cacheDescriptor == null) {

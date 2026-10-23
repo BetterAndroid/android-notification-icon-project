@@ -25,7 +25,6 @@ import android.os.ParcelFileDescriptor
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.highcapable.anip.sdk.config.AnipConfig
-import com.highcapable.anip.sdk.config.CacheDescriptor
 import com.highcapable.anip.sdk.config.RemoteSource
 import com.highcapable.anip.sdk.internal.bundle.BundleRelease
 import com.highcapable.anip.sdk.internal.exception.BundleException
@@ -293,7 +292,7 @@ class AnipInstrumentedTest {
         Assert.assertThrows(IllegalArgumentException::class.java) {
             AnipConfig(
                 cacheDirectory = cacheFile.parentFile,
-                cacheDescriptor = CacheDescriptor { ParcelFileDescriptor.open(cacheFile, ParcelFileDescriptor.MODE_READ_ONLY) }
+                cacheDescriptor = AnipConfig.CacheDescriptor { ParcelFileDescriptor.open(cacheFile, ParcelFileDescriptor.MODE_READ_ONLY) }
             )
         }
         Assert.assertThrows(IllegalArgumentException::class.java) {
@@ -530,7 +529,7 @@ class AnipInstrumentedTest {
             val writer = createAnip(
                 config = AnipConfig(
                     source = source,
-                    cacheDescriptor = CacheDescriptor {
+                    cacheDescriptor = AnipConfig.CacheDescriptor {
                         ParcelFileDescriptor.open(sharedFile, ParcelFileDescriptor.MODE_READ_WRITE or ParcelFileDescriptor.MODE_CREATE)
                     }
                 )
@@ -538,7 +537,7 @@ class AnipInstrumentedTest {
             val reader = createAnip(
                 config = AnipConfig(
                     source = source,
-                    cacheDescriptor = CacheDescriptor(isReadOnly = true) {
+                    cacheDescriptor = AnipConfig.CacheDescriptor(isReadOnly = true) {
                         ParcelFileDescriptor.open(sharedFile, ParcelFileDescriptor.MODE_READ_ONLY)
                     }
                 )

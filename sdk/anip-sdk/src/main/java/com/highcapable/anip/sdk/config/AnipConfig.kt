@@ -21,6 +21,8 @@
  */
 package com.highcapable.anip.sdk.config
 
+import android.os.ParcelFileDescriptor
+import com.highcapable.anip.sdk.Anip
 import com.highcapable.anip.sdk.type.SystemVariant
 import java.io.File
 
@@ -37,6 +39,40 @@ data class AnipConfig @JvmOverloads constructor(
     var cacheDescriptor: CacheDescriptor? = null,
     var source: RemoteSource = RemoteSource.GitHub()
 ) {
+
+    /**
+     * Single-file ANIP cache backed by a [ParcelFileDescriptor].
+     *
+     * Use it when the cache cannot be addressed by a file path, such as a file shared by another process.
+     * @param isReadOnly whether the descriptor can only be read, [Anip.fetch] fails without network access when true.
+     * @param opener opens the cache file each time ANIP reads or writes it.
+     */
+    class CacheDescriptor @JvmOverloads constructor(
+        val isReadOnly: Boolean = false,
+        private val opener: Opener
+    ) {
+
+        /**
+         * Opens the descriptor of an ANIP cache file.
+         */
+        fun interface Opener {
+
+            /**
+             * Opens a new descriptor positioned at the start of the cache file.
+             *
+             * ANIP takes ownership of the returned descriptor and closes it after use.
+             * The descriptor must be writable unless [isReadOnly] is true.
+             * @return [ParcelFileDescriptor]
+             */
+            fun open(): ParcelFileDescriptor
+        }
+
+        /**
+         * Opens a new descriptor through [opener].
+         * @return [ParcelFileDescriptor]
+         */
+        internal fun open() = opener.open()
+    }
 
     init {
         validate()
