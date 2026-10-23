@@ -161,7 +161,6 @@ internal class ResourceReleaseClient(private val source: RemoteSource, private v
         }
     }
 
-    /** Validates the static manifest and converts its metadata into a [BundleRelease]. */
     private fun parseBundleRelease(releaseManifest: ReleaseManifest): BundleRelease {
         if (releaseManifest.schemaVersion != RELEASE_MANIFEST_SCHEMA_VERSION)
             throw BundleException("Unsupported release manifest schema: ${releaseManifest.schemaVersion}")
@@ -191,7 +190,6 @@ internal class ResourceReleaseClient(private val source: RemoteSource, private v
         return BundleRelease(tag, timestamp, expectedAssetName, parsedDownloadUrl.toString(), assetSize, sha256)
     }
 
-    /** Returns a required trimmed manifest value or fails with its field name. */
     private fun String?.required(fieldName: String) = this?.trim()?.takeIf(String::isNotEmpty)
         ?: throw BundleException("Release manifest field is missing: $fieldName")
 

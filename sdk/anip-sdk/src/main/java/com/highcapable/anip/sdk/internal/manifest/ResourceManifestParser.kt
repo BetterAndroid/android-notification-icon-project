@@ -178,7 +178,6 @@ internal class ResourceManifestParser(private val bitmapCache: BitmapCache) {
         )
     }
 
-    /** Converts one serialized manifest entry into a normalized raw rule. */
     private fun parseRule(packageName: String, manifestRule: ManifestRule): IconRawRule {
         val target = manifestRule.target.toOptionalString("target", packageName)
 
@@ -233,7 +232,6 @@ internal class ResourceManifestParser(private val bitmapCache: BitmapCache) {
         value.trim().takeIf(String::isNotEmpty) ?: throw BundleException("Invalid ANIP $name: $packageName")
     }
 
-    /** Converts a manifest format string into its supported [IconFormat] value. */
     private fun String.toIconFormat(packageName: String) = when (lowercase(Locale.ROOT)) {
         IconFormat.PNG.extension -> IconFormat.PNG
         IconFormat.SVG.extension -> IconFormat.SVG

@@ -74,8 +74,10 @@ internal class IconResourceRepository(context: Context, private val config: Anip
     @Volatile
     private var catalogState: CatalogState? = null
 
-    /** One loaded catalog and its canonical source manifest URL. */
-    private data class CatalogState(val manifestUrl: String, val catalog: IconCatalog)
+    private data class CatalogState(
+        val manifestUrl: String,
+        val catalog: IconCatalog
+    )
 
     /** Timestamp persisted for the latest release of the currently configured resource repository. */
     val timestamp get() = createBundleStore(config.source, config.cacheDirectory, config.cacheDescriptor).timestamp
@@ -171,7 +173,6 @@ internal class IconResourceRepository(context: Context, private val config: Anip
     /** Returns loaded icons matching [category], or an empty list before a catalog is available. */
     fun find(category: IconCategory) = currentCatalog()?.find(category).orEmpty()
 
-    /** Creates a release client from [source]. */
     private fun createReleaseClient(source: RemoteSource) = ResourceReleaseClient(
         source = source,
         maxBundleSizeBytes = MAX_BUNDLE_SIZE_BYTES
@@ -212,7 +213,6 @@ internal class IconResourceRepository(context: Context, private val config: Anip
         )
     }
 
-    /** Returns the application-private cache root used when no custom directory is configured. */
     private fun createDefaultCacheDirectory() = appContext.cacheDir.resolve(DEFAULT_CACHE_DIR_NAME)
 
     /** Returns the catalog only while the configured source still matches its origin. */

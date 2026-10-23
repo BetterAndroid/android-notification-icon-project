@@ -143,7 +143,6 @@ data class RemoteSource internal constructor(
             require(it.query == null && it.fragment == null) { "$name must not contain a query or fragment." }
         }
 
-        /** Parses and validates an HTTP URL. */
         private fun String.requireHttpUrl(name: String): HttpUrl {
             val normalizedValue = trim()
             require(normalizedValue.isNotEmpty()) { "$name must not be empty." }

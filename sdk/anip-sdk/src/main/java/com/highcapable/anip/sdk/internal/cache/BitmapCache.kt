@@ -76,7 +76,6 @@ internal class BitmapCache(maxSizeBytes: Int) {
     @Synchronized
     fun clear() = cache.evictAll()
 
-    /** Decodes dimension-checked PNG [content] into a bitmap. */
     private fun decodePng(path: BundlePath, content: ByteArray): Bitmap {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         content.inputStream().decodeToBitmapOrNull(opts = bounds)
@@ -87,7 +86,6 @@ internal class BitmapCache(maxSizeBytes: Int) {
         return content.decodeToBitmapOrNull() ?: throw BundleException("Failed to decode PNG icon: $path")
     }
 
-    /** Parses and renders dimension-checked SVG [content] into a bitmap. */
     private fun decodeSvg(path: BundlePath, content: ByteArray): Bitmap {
         val picture = content.inputStream().use(SVG::getFromInputStream).renderToPicture()
         if (picture.width !in 1..MAX_ICON_DIMENSION || picture.height !in 1..MAX_ICON_DIMENSION)
