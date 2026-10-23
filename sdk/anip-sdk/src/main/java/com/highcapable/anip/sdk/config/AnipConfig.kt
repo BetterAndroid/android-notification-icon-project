@@ -29,7 +29,7 @@ import java.io.File
 /**
  * Configuration for ANIP.
  * @param systemVariant system resources to load, or null to exclude all system rules.
- * @param cacheDirectory optional cache root, defaults to `cacheDir/anip-icon-resources`.
+ * @param cacheDirectory optional cache root, defaults to `cacheDir`.
  * @param cacheDescriptor optional single-file cache used instead of [cacheDirectory].
  * @param source the remote resource source.
  */

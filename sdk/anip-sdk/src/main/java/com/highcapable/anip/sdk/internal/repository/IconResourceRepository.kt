@@ -55,7 +55,6 @@ internal class IconResourceRepository(context: Context, private val config: Anip
 
     private companion object {
 
-        const val DEFAULT_CACHE_DIR_NAME = "anip-icon-resources"
         const val CACHE_FILE_NAME = "anip-bundle"
 
         const val MEMORY_CACHE_SIZE_BYTES = 16 * 1024 * 1024
@@ -191,7 +190,7 @@ internal class IconResourceRepository(context: Context, private val config: Anip
             openForRead = cacheDescriptor::open
             openForWrite = if (cacheDescriptor.isReadOnly) null else cacheDescriptor::open
         } else {
-            val cacheRoot = cacheDirectory ?: createDefaultCacheDirectory()
+            val cacheRoot = cacheDirectory ?: appContext.cacheDir
             val cacheFile = cacheRoot.resolve(CACHE_FILE_NAME)
             openForRead = { ParcelFileDescriptor.open(cacheFile, ParcelFileDescriptor.MODE_READ_ONLY) }
             openForWrite = {
@@ -211,8 +210,6 @@ internal class IconResourceRepository(context: Context, private val config: Anip
             openForWrite = openForWrite
         )
     }
-
-    private fun createDefaultCacheDirectory() = appContext.cacheDir.resolve(DEFAULT_CACHE_DIR_NAME)
 
     /** Returns the catalog only while the configured source still matches its origin. */
     private fun currentCatalog() = catalogState?.takeIf {
