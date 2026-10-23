@@ -21,9 +21,11 @@
  */
 package com.highcapable.anip.sdk
 
+import android.os.ParcelFileDescriptor
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.highcapable.anip.sdk.config.AnipConfig
+import com.highcapable.anip.sdk.config.CacheDescriptor
 import com.highcapable.anip.sdk.config.RemoteSource
 import com.highcapable.anip.sdk.internal.bundle.BundleRelease
 import com.highcapable.anip.sdk.internal.exception.BundleException
@@ -70,7 +72,6 @@ class AnipInstrumentedTest {
     @Test
     fun loadsCachedCatalogThroughPublicApi() = runBlocking {
         fixture.installValidRelease()
-        fixture.writeTimestamp()
 
         val anip = createAnip(SystemVariant.MIOS)
         Assert.assertTrue(anip.getIcons().isEmpty())
@@ -128,11 +129,10 @@ class AnipInstrumentedTest {
         Assert.assertNotNull(gameIcon.loadBitmap())
     }
 
-    /** Verifies that reload reads mutable configuration and replaces state only after successful parsing. */
+    /** Verifies that reload reads mutable configuration and keeps the loaded catalog when the cache file is damaged. */
     @Test
     fun reloadsCurrentCacheAndPreservesCatalogOnFailure() = runBlocking {
         fixture.installValidRelease()
-        fixture.writeTimestamp()
 
         val config = AnipConfig(cacheDirectory = cacheDirectory)
         val anip = createAnip(config = config)
@@ -162,12 +162,14 @@ class AnipInstrumentedTest {
             anip.getIcons(IconCategory.SYSTEM).map { it.packageName }
         )
 
-        fixture.writeInvalidAppManifest()
+        fixture.truncateCache()
         Assert.assertFalse(anip.reload())
         Assert.assertNotNull(anip.getIcon(TestBundleFixture.APP_PACKAGE))
         Assert.assertNotNull(anip.getIcon(TestBundleFixture.COLOROS_PACKAGE))
+        Assert.assertNotNull(anip.getIcon(TestBundleFixture.APP_PACKAGE)?.loadBitmap())
 
         fixture.writeAppManifest(TestBundleFixture.UPDATED_APP_LABEL_EN)
+        fixture.installCache()
         Assert.assertTrue(anip.reload())
         Assert.assertEquals(
             TestBundleFixture.UPDATED_APP_LABEL_EN,
@@ -195,7 +197,6 @@ class AnipInstrumentedTest {
     @Test
     fun isolatesLoadedResourcesBySource() = runBlocking {
         fixture.installValidRelease()
-        fixture.writeTimestamp()
         val config = AnipConfig(cacheDirectory = cacheDirectory)
         val anip = createAnip(config = config)
 
@@ -239,6 +240,7 @@ class AnipInstrumentedTest {
         Assert.assertNull(snapshot.getBitmap(TestBundleFixture.GAME_PACKAGE))
 
         fixture.writeAppManifest(TestBundleFixture.UPDATED_APP_LABEL_EN)
+        fixture.installCache()
         Assert.assertTrue(anip.reload())
         val updatedSnapshot = anip.createSnapshot(IconCategory.APP)
 
@@ -254,9 +256,10 @@ class AnipInstrumentedTest {
     @Test
     fun skipsDamagedIconWhenCreatingSnapshot() = runBlocking {
         fixture.installValidRelease()
+        fixture.corruptGameIcon()
+        fixture.installCache()
         val anip = createAnip(SystemVariant.COMMON)
         Assert.assertTrue(anip.reload())
-        fixture.corruptGameIcon()
 
         val snapshot = anip.createSnapshot()
 
@@ -273,6 +276,7 @@ class AnipInstrumentedTest {
 
         Assert.assertNull(defaultConfig.systemVariant)
         Assert.assertNull(defaultConfig.cacheDirectory)
+        Assert.assertNull(defaultConfig.cacheDescriptor)
         Assert.assertEquals(RemoteSource.GitHub(), defaultConfig.source)
         Assert.assertNull(defaultConfig.source.urlResolver)
 
@@ -285,6 +289,12 @@ class AnipInstrumentedTest {
         }
         Assert.assertThrows(IllegalArgumentException::class.java) {
             AnipConfig(cacheDirectory = cacheFile)
+        }
+        Assert.assertThrows(IllegalArgumentException::class.java) {
+            AnipConfig(
+                cacheDirectory = cacheFile.parentFile,
+                cacheDescriptor = CacheDescriptor { ParcelFileDescriptor.open(cacheFile, ParcelFileDescriptor.MODE_READ_ONLY) }
+            )
         }
         Assert.assertThrows(IllegalArgumentException::class.java) {
             RemoteSource.GitHub("invalid")
@@ -419,13 +429,12 @@ class AnipInstrumentedTest {
         }
     }
 
-    /** Verifies that a downloaded bundle with a mismatched manifest digest is removed and rejected. */
+    /** Verifies that a downloaded bundle with a mismatched manifest digest is rejected. */
     @Test
     fun rejectsMismatchedBundleDigest() = runBlocking {
         val bundleArchive = fixture.createBundleArchive()
 
         TestDownloadServer(bundleArchive).use { server ->
-            val targetFile = cacheDirectory.resolve("invalid-digest.zip")
             val client = ResourceReleaseClient(
                 source = RemoteSource.Custom(
                     TestDownloadServer.MANIFEST_SOURCE_URL,
@@ -441,11 +450,10 @@ class AnipInstrumentedTest {
                 assetSize = bundleArchive.size.toLong(),
                 sha256 = "0".repeat(64)
             )
-            val failure = runCatching { client.download(release, targetFile) }.exceptionOrNull()
+            val failure = runCatching { client.download(release) }.exceptionOrNull()
 
             Assert.assertTrue(failure is BundleException)
             Assert.assertEquals("Release SHA-256 verification failed.", failure?.message)
-            Assert.assertFalse(targetFile.exists())
             Assert.assertEquals(listOf(TestDownloadServer.DOWNLOAD_REQUEST_TARGET), server.awaitRequestTargets())
         }
     }
@@ -467,7 +475,7 @@ class AnipInstrumentedTest {
             "not-a-url" to "The URL resolver returned an invalid URL."
         )
 
-        invalidResults.forEachIndexed { index, (resolvedUrl, expectedMessage) ->
+        invalidResults.forEach { (resolvedUrl, expectedMessage) ->
             val client = ResourceReleaseClient(
                 source = RemoteSource.Custom(
                     TestDownloadServer.MANIFEST_SOURCE_URL,
@@ -475,12 +483,108 @@ class AnipInstrumentedTest {
                 ),
                 maxBundleSizeBytes = bundleArchive.size.toLong()
             )
-            val failure = runCatching {
-                client.download(release, cacheDirectory.resolve("invalid-resolver-$index.zip"))
-            }.exceptionOrNull()
+            val failure = runCatching { client.download(release) }.exceptionOrNull()
 
             Assert.assertTrue(failure is BundleException)
             Assert.assertEquals(expectedMessage, failure?.message)
+        }
+    }
+
+    /** Verifies that a bundle with an entry outside the bundle path rules fails to fetch and is never cached. */
+    @Test
+    fun rejectsBundleWithInvalidEntryName() = runBlocking {
+        val invalidEntryNames = listOf("../outside.png", "/app/absolute.png", "app\\backslash.png", "app/./dot.png", "app//empty.png")
+
+        invalidEntryNames.forEachIndexed { index, entryName ->
+            val bundleArchive = fixture.createBundleArchive(extraEntryName = entryName)
+            val releaseManifest = createReleaseManifest(bundleArchive, TestDownloadServer.ASSET_NAME)
+
+            TestDownloadServer(bundleArchive, releaseManifest).use { server ->
+                val anip = createAnip(
+                    config = AnipConfig(
+                        cacheDirectory = cacheDirectory.resolve("invalid-entry-$index"),
+                        source = RemoteSource.Custom(server.manifestUrl)
+                    )
+                )
+                val result = anip.fetch()
+
+                Assert.assertEquals(Anip.FetchResult.Status.FAILED, result.status)
+                // Android 14+ ZipInputStream rejects `..` and absolute names itself, with its own message.
+                Assert.assertTrue(result.message, result.message.contains(entryName))
+                Assert.assertTrue(anip.getIcons().isEmpty())
+                Assert.assertEquals(0L, anip.timestamp)
+                Assert.assertFalse(anip.reload())
+            }
+        }
+    }
+
+    /** Verifies that a writable descriptor stores a fetched bundle that a read-only descriptor can load but not fetch. */
+    @Test
+    fun sharesCacheThroughDescriptors() = runBlocking {
+        val bundleArchive = fixture.createBundleArchive()
+        val releaseManifest = createReleaseManifest(bundleArchive, TestDownloadServer.ASSET_NAME)
+        val sharedFile = cacheDirectory.apply { mkdirs() }.resolve("shared-bundle")
+
+        TestDownloadServer(bundleArchive, releaseManifest).use { server ->
+            val source = RemoteSource.Custom(server.manifestUrl)
+            val writer = createAnip(
+                config = AnipConfig(
+                    source = source,
+                    cacheDescriptor = CacheDescriptor {
+                        ParcelFileDescriptor.open(sharedFile, ParcelFileDescriptor.MODE_READ_WRITE or ParcelFileDescriptor.MODE_CREATE)
+                    }
+                )
+            )
+            val reader = createAnip(
+                config = AnipConfig(
+                    source = source,
+                    cacheDescriptor = CacheDescriptor(isReadOnly = true) {
+                        ParcelFileDescriptor.open(sharedFile, ParcelFileDescriptor.MODE_READ_ONLY)
+                    }
+                )
+            )
+
+            Assert.assertEquals(Anip.FetchResult.Status.SUCCESS, writer.fetch().status)
+            Assert.assertEquals(
+                listOf(TestDownloadServer.MANIFEST_REQUEST_TARGET, TestDownloadServer.RELATIVE_DOWNLOAD_REQUEST_TARGET),
+                server.awaitRequestTargets()
+            )
+
+            Assert.assertEquals(TestBundleFixture.TIMESTAMP, reader.timestamp)
+            Assert.assertTrue(reader.reload())
+            Assert.assertNotNull(reader.getIcon(TestBundleFixture.APP_PACKAGE)?.loadBitmap())
+
+            val readOnlyResult = reader.fetch()
+            Assert.assertEquals(Anip.FetchResult.Status.FAILED, readOnlyResult.status)
+            Assert.assertEquals("The ANIP cache is read-only.", readOnlyResult.message)
+            Assert.assertNotNull(reader.getIcon(TestBundleFixture.APP_PACKAGE))
+        }
+    }
+
+    /** Verifies that files in the cache directory left by older versions are neither read nor touched. */
+    @Test
+    fun ignoresLegacyCacheLayout() = runBlocking {
+        val bundleArchive = fixture.createBundleArchive()
+        val releaseManifest = createReleaseManifest(bundleArchive, TestDownloadServer.ASSET_NAME)
+        val legacyFiles = listOf(
+            cacheDirectory.resolve("releases/abc1234/app/manifest.json"),
+            cacheDirectory.resolve("source"),
+            cacheDirectory.resolve("timestamp"),
+            cacheDirectory.resolve("staging-1.tmp")
+        ).onEach {
+            it.parentFile?.mkdirs()
+            it.writeText("legacy")
+        }
+
+        TestDownloadServer(bundleArchive, releaseManifest).use { server ->
+            val anip = createAnip(config = AnipConfig(cacheDirectory = cacheDirectory, source = RemoteSource.Custom(server.manifestUrl)))
+
+            Assert.assertEquals(0L, anip.timestamp)
+            Assert.assertFalse(anip.reload())
+
+            Assert.assertEquals(Anip.FetchResult.Status.SUCCESS, anip.fetch().status)
+            Assert.assertEquals(TestBundleFixture.TIMESTAMP, anip.timestamp)
+            legacyFiles.forEach { Assert.assertEquals(it.path, "legacy", it.readText()) }
         }
     }
 

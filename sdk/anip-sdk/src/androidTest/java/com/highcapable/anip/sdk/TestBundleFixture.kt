@@ -23,16 +23,22 @@ package com.highcapable.anip.sdk
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.os.ParcelFileDescriptor
 import com.highcapable.anip.sdk.config.RemoteSource
+import com.highcapable.anip.sdk.internal.bundle.BundleRelease
+import com.highcapable.anip.sdk.internal.bundle.BundleStore
+import com.highcapable.anip.sdk.internal.cache.BitmapCache
+import com.highcapable.anip.sdk.internal.manifest.ResourceManifestParser
+import com.highcapable.anip.sdk.internal.utils.sha256
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 /**
- * Creates a minimal valid ANIP release inside an instrumentation-test cache directory.
+ * Creates a minimal valid ANIP release and installs it as the cache file of an instrumentation-test cache directory.
  */
-internal class TestBundleFixture(private val cacheDirectory: File) {
+internal class TestBundleFixture(cacheDirectory: File) {
 
     companion object {
 
@@ -50,15 +56,71 @@ internal class TestBundleFixture(private val cacheDirectory: File) {
         const val APP_LABEL_ZH_CN = "示例应用"
         const val TARGET_LABEL = "Example App Channel"
 
+        /** File name of the single cache file inside a cache directory. */
+        const val CACHE_FILE_NAME = "anip-bundle"
+
         private const val RELEASE_TAG = "abc1234"
         private const val ICON_SIZE = 24
     }
 
-    private val releaseDirectory = cacheDirectory.resolve("releases/$RELEASE_TAG")
+    private val releaseDirectory = cacheDirectory.resolve("fixture-release")
+
+    /** Cache file read by an SDK instance configured with the fixture cache directory. */
+    val cacheFile = cacheDirectory.resolve(CACHE_FILE_NAME)
+
+    /** Writes all categories and drawable formats needed by the SDK parser, then installs them into [targetFile]. */
+    suspend fun installValidRelease(source: RemoteSource = RemoteSource.GitHub(), targetFile: File = cacheFile) {
+        writeValidRelease()
+        installCache(source, targetFile)
+    }
+
+    /**
+     * Packs the current fixture release and writes it into [targetFile] through the SDK cache writer.
+     *
+     * The release must be valid, because the writer parses it before replacing the cache.
+     */
+    suspend fun installCache(source: RemoteSource = RemoteSource.GitHub(), targetFile: File = cacheFile) {
+        val archive = packArchive()
+        val bundleStore = BundleStore(
+            sourceIdentity = source.createIdentity(),
+            resourceManifestParser = ResourceManifestParser(BitmapCache(maxSizeBytes = 1)),
+            maxBundleSizeBytes = archive.size.toLong(),
+            maxExtractedSizeBytes = Long.MAX_VALUE,
+            maxArchiveEntries = Int.MAX_VALUE,
+            openForRead = { ParcelFileDescriptor.open(targetFile, ParcelFileDescriptor.MODE_READ_ONLY) },
+            openForWrite = {
+                targetFile.parentFile?.mkdirs()
+                ParcelFileDescriptor.open(targetFile, ParcelFileDescriptor.MODE_WRITE_ONLY or ParcelFileDescriptor.MODE_CREATE)
+            }
+        )
+        val release = BundleRelease(
+            tag = RELEASE_TAG,
+            timestamp = TIMESTAMP,
+            assetName = "anip-bundle-$RELEASE_TAG.zip",
+            downloadUrl = "",
+            assetSize = archive.size.toLong(),
+            sha256 = archive.sha256()
+        )
+        bundleStore.obtain(release, systemVariant = null, forceRefresh = true) { archive }
+    }
+
+    /** Cuts the installed cache file in half, as if a writer was interrupted. */
+    fun truncateCache() {
+        val content = cacheFile.readBytes()
+        cacheFile.writeBytes(content.copyOf(content.size / 2))
+    }
+
+    /** Creates a downloadable archive containing the valid fixture, plus a one-byte [extraEntryName] entry when set. */
+    fun createBundleArchive(extraEntryName: String? = null): ByteArray {
+        writeValidRelease()
+
+        val content = packArchive(extraEntryName)
+        releaseDirectory.deleteRecursively()
+        return content
+    }
 
     /** Writes all categories and drawable formats needed by the SDK parser. */
-    fun installValidRelease(source: RemoteSource = RemoteSource.GitHub()) {
-        writeSource(source)
+    private fun writeValidRelease() {
         writeAppManifest(APP_LABEL_EN)
         writeManifest(
             relativePath = "game/manifest.json",
@@ -116,25 +178,23 @@ internal class TestBundleFixture(private val cacheDirectory: File) {
         writePng("system/common/res/$COMMON_PACKAGE.png")
         writePng("system/mios/res/$MIOS_PACKAGE.png")
         writePng("system/coloros/res/$COLOROS_PACKAGE.png")
-        releaseDirectory.setLastModified(TIMESTAMP)
     }
 
-    /** Creates a downloadable archive containing the valid fixture and removes its unpacked cache copy. */
-    fun createBundleArchive(): ByteArray {
-        installValidRelease()
-
-        val content = ByteArrayOutputStream().use { output ->
-            ZipOutputStream(output).use { archive ->
-                releaseDirectory.walkTopDown().filter(File::isFile).forEach { file ->
-                    archive.putNextEntry(ZipEntry(file.relativeTo(releaseDirectory).invariantSeparatorsPath))
-                    file.inputStream().use { it.copyTo(archive) }
-                    archive.closeEntry()
-                }
+    /** Packs the current fixture release into a ZIP archive. */
+    private fun packArchive(extraEntryName: String? = null) = ByteArrayOutputStream().use { output ->
+        ZipOutputStream(output).use { archive ->
+            releaseDirectory.walkTopDown().filter(File::isFile).forEach { file ->
+                archive.putNextEntry(ZipEntry(file.relativeTo(releaseDirectory).invariantSeparatorsPath))
+                file.inputStream().use { it.copyTo(archive) }
+                archive.closeEntry()
             }
-            output.toByteArray()
+            extraEntryName?.let { name ->
+                archive.putNextEntry(ZipEntry(name))
+                archive.write(byteArrayOf(0))
+                archive.closeEntry()
+            }
         }
-        releaseDirectory.deleteRecursively()
-        return content
+        output.toByteArray()
     }
 
     /** Rewrites the application manifest with a caller-selected English label. */
@@ -162,38 +222,9 @@ internal class TestBundleFixture(private val cacheDirectory: File) {
         )
     }
 
-    /** Makes the cached release invalid without removing its drawable resources. */
-    fun writeInvalidAppManifest() {
-        writeManifest(
-            relativePath = "app/manifest.json",
-            content = """
-                {
-                  "$APP_PACKAGE": {
-                    "label": "Broken App",
-                    "format": "png"
-                  }
-                }
-            """
-        )
-    }
-
-    /** Replaces the game resource with malformed SVG data after its catalog entry has been parsed. */
+    /** Replaces the game resource with malformed SVG data that still passes catalog parsing. */
     fun corruptGameIcon() {
         releaseDirectory.resolve("game/res/$GAME_PACKAGE.svg").writeText("<svg")
-    }
-
-    /** Persists the fixture release timestamp in the SDK cache format. */
-    fun writeTimestamp() {
-        cacheDirectory.apply {
-            if (!isDirectory) mkdirs()
-        }.resolve("timestamp").writeText(TIMESTAMP.toString())
-    }
-
-    /** Binds the fixture cache to [source]. */
-    private fun writeSource(source: RemoteSource) {
-        cacheDirectory.apply {
-            if (!isDirectory) mkdirs()
-        }.resolve("source").writeText(source.createIdentity())
     }
 
     /** Writes a normalized JSON manifest under the fixture release. */

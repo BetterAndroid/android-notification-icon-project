@@ -21,8 +21,8 @@
  */
 package com.highcapable.anip.demo
 
-import org.junit.Test
 import org.junit.Assert
+import org.junit.Test
 
 class ExampleUnitTest {
     @Test
