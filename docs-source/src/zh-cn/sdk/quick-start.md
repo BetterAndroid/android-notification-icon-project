@@ -106,6 +106,8 @@ val anip = Anip(context, config)
 
 SDK 每次读写缓存时都会调用一次 `AnipConfig.CacheDescriptor` 打开新的文件描述符，并在使用后关闭。
 
+缓存不存在或无法打开时，请抛出 `IOException` (例如 `FileNotFoundException`)，SDK 会将其视为没有缓存，其他异常不会被 SDK 处理。
+
 可读写的文件描述符与 `cacheDirectory` 的用法相同。
 
 > 示例如下
@@ -114,7 +116,7 @@ SDK 每次读写缓存时都会调用一次 `AnipConfig.CacheDescriptor` 打开�
 val config = AnipConfig(
     cacheDescriptor = AnipConfig.CacheDescriptor {
         context.contentResolver.openFileDescriptor(uri, "rw")
-            ?: error("Failed to open the ANIP cache.")
+            ?: throw FileNotFoundException("Failed to open the ANIP cache.")
     }
 )
 val anip = Anip(context, config)
@@ -128,7 +130,7 @@ val anip = Anip(context, config)
 val config = AnipConfig(
     cacheDescriptor = AnipConfig.CacheDescriptor(isReadOnly = true) {
         context.contentResolver.openFileDescriptor(uri, "r")
-            ?: error("Failed to open the ANIP cache.")
+            ?: throw FileNotFoundException("Failed to open the ANIP cache.")
     }
 )
 val anip = Anip(context, config)

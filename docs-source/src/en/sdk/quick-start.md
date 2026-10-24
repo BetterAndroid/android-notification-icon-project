@@ -106,6 +106,8 @@ If the cache cannot be accessed through a file path in your scenario, you can pr
 
 Each time the SDK reads or writes the cache, it calls `AnipConfig.CacheDescriptor` once to open a new file descriptor and closes it after use.
 
+When the cache does not exist or cannot be opened, throw an `IOException` (such as `FileNotFoundException`). The SDK treats it as a missing cache, and does not handle any other exception.
+
 A readable and writable file descriptor works the same as `cacheDirectory`.
 
 > The following example
@@ -114,7 +116,7 @@ A readable and writable file descriptor works the same as `cacheDirectory`.
 val config = AnipConfig(
     cacheDescriptor = AnipConfig.CacheDescriptor {
         context.contentResolver.openFileDescriptor(uri, "rw")
-            ?: error("Failed to open the ANIP cache.")
+            ?: throw FileNotFoundException("Failed to open the ANIP cache.")
     }
 )
 val anip = Anip(context, config)
@@ -128,7 +130,7 @@ If you need to use a read-only file descriptor, you can set `isReadOnly = true`.
 val config = AnipConfig(
     cacheDescriptor = AnipConfig.CacheDescriptor(isReadOnly = true) {
         context.contentResolver.openFileDescriptor(uri, "r")
-            ?: error("Failed to open the ANIP cache.")
+            ?: throw FileNotFoundException("Failed to open the ANIP cache.")
     }
 )
 val anip = Anip(context, config)
