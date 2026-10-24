@@ -70,7 +70,7 @@ You can view the KDoc [click here](kdoc://anip-sdk), or [click here](branch://sd
 
 ### Create an Instance
 
-`Anip` is the unified entry point for creating the SDK. Each instance maintains one cache directory and one set of in-memory state. You can create a single instance when the app starts and reuse it throughout the app.
+`Anip` is the unified entry point for creating the SDK. Each instance maintains one cache and one set of in-memory state. You can create a single instance when the app starts and reuse it throughout the app.
 
 > The following example
 
@@ -78,7 +78,7 @@ You can view the KDoc [click here](kdoc://anip-sdk), or [click here](branch://sd
 val anip = Anip(context)
 ```
 
-If you need to specify a system variant, cache directory, or remote source, pass an `AnipConfig`.
+If you need to specify a system variant, cache, or remote source, pass an `AnipConfig`.
 
 > The following example
 
@@ -100,13 +100,47 @@ val anip = Anip(context, config)
 
 The current `Anip` instance keeps a reference to the configuration object. After modifying its properties, the latest configuration will be read directly during the next update. Icons already loaded into memory will not be automatically replaced when the configuration changes.
 
+#### Use a File Descriptor
+
+If the cache cannot be accessed through a file path in your scenario, you can provide a `ParcelFileDescriptor` through `cacheDescriptor`. It cannot be set together with `cacheDirectory`.
+
+Each time the SDK reads or writes the cache, it calls `AnipConfig.CacheDescriptor` once to open a new file descriptor and closes it after use.
+
+A readable and writable file descriptor works the same as `cacheDirectory`.
+
+> The following example
+
+```kotlin
+val config = AnipConfig(
+    cacheDescriptor = AnipConfig.CacheDescriptor {
+        context.contentResolver.openFileDescriptor(uri, "rw")
+            ?: error("Failed to open the ANIP cache.")
+    }
+)
+val anip = Anip(context, config)
+```
+
+If you need to use a read-only file descriptor, you can set `isReadOnly = true`. In this case resources can only be loaded from the cache and cannot be updated, and an update fails directly before any network request.
+
+> The following example
+
+```kotlin
+val config = AnipConfig(
+    cacheDescriptor = AnipConfig.CacheDescriptor(isReadOnly = true) {
+        context.contentResolver.openFileDescriptor(uri, "r")
+            ?: error("Failed to open the ANIP cache.")
+    }
+)
+val anip = Anip(context, config)
+```
+
 ### Load and Update Resources
 
 The following APIs are provided by the SDK for loading and updating resources.
 
 | API                    | Behavior                                                                                                                                |
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `reload`               | Loads only the latest valid resources from the cache directory without network requests, returning `true` on success.                   |
+| `reload`               | Loads only valid resources from the cache without network requests, returning `true` on success.                                        |
 | `fetch`                | Reads the remote release manifest, downloads and replaces the cache when resources have changed, then updates the in-memory icon rules. |
 | `getIcon` / `getIcons` | Queries only the current instance's in-memory state, returning `null` or an empty list.                                                 |
 
@@ -124,7 +158,7 @@ val latestIcons = anip.getIcons()
 
 These loading APIs are all marked as `suspend`, and file and network operations are dispatched by the SDK to the IO thread.
 
-`timestamp` represents the resource commit time of the most recent successful synchronization. It defaults to `0L` and is persisted as text in the `timestamp` file under the cache directory.
+`timestamp` represents the resource commit time of the most recent successful synchronization. It defaults to `0L` and is stored in the cache file together with the resources.
 
 #### Update Result
 
@@ -272,8 +306,14 @@ Returning a blank or invalid URL will cause failure directly.
 
 ### Cache and Multiple Processes
 
-When `cacheDirectory` is not specified, the SDK uses `anip-icon-resources` under the app cache directory.
+When no cache is specified, the SDK uses the `anip-bundle` file under the app cache directory. You can change its directory through `cacheDirectory`, or provide a file descriptor through `cacheDescriptor`.
 
 If you are using the SDK in an Xposed module and need to share resources between the module process and host process, the caller can configure one directory that both sides can access. The process responsible for networking executes `fetch`, while other processes execute `reload` after receiving a refresh notification. Or, if both processes have network access, each process can maintain its own cache directory and notify the other to update.
 
-The SDK does not include any directory permission handling functions. It only uses standard file APIs, and you need to handle directory authorization and cross-process synchronization yourself.
+The SDK does not include any permission handling functions. You need to handle file authorization and cross-process synchronization yourself.
+
+::: warning
+
+The extracted directories saved in the cache directory by SDK version `1.0.0` are no longer read. Execute `fetch` again after updating. The SDK does not delete old cache directories automatically. If needed, you can delete the whole `anip-icon-resources` directory under the app cache directory yourself. If you have set `cacheDirectory`, delete the `releases` directory and the `source` and `timestamp` files in it instead.
+
+:::
