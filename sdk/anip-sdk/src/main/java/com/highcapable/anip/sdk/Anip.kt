@@ -71,6 +71,9 @@ class Anip @JvmOverloads constructor(context: Context, val config: AnipConfig = 
      * Timestamp of the most recently synchronized icon resource bundle.
      *
      * The value is persisted and defaults to 0 before the first successful [fetch].
+     *
+     * Each access reads the cache header synchronously on the calling thread. The cache is rewritten in place, so
+     * reading it while [fetch] is writing the cache may briefly return 0.
      */
     val timestamp get() = repository.timestamp
 
