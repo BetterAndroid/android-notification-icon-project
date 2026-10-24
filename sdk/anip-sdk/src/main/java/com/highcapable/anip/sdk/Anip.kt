@@ -27,6 +27,7 @@ import com.highcapable.anip.sdk.entity.NotificationIcon
 import com.highcapable.anip.sdk.entity.NotificationIconSnapshot
 import com.highcapable.anip.sdk.internal.repository.IconResourceRepository
 import com.highcapable.anip.sdk.type.IconCategory
+import java.io.IOException
 
 /**
  * Entry point for Android Notification Icon Project (ANIP).
@@ -86,7 +87,8 @@ class Anip @JvmOverloads constructor(context: Context, val config: AnipConfig = 
     /**
      * Reloads icon resources from the current local cache without performing network access.
      *
-     * The currently loaded resources are preserved when no valid cached catalog is available.
+     * The currently loaded resources are preserved when no valid cached catalog is available. An exception thrown by
+     * [AnipConfig.CacheDescriptor.Opener] other than an [IOException] is rethrown unchanged.
      * @return [Boolean] whether cached icon resources were loaded successfully.
      */
     suspend fun reload() = repository.reload()

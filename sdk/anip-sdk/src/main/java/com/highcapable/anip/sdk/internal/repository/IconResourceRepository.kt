@@ -24,15 +24,18 @@ package com.highcapable.anip.sdk.internal.repository
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.ParcelFileDescriptor
+import android.util.Log
 import com.highcapable.anip.sdk.Anip
 import com.highcapable.anip.sdk.config.AnipConfig
 import com.highcapable.anip.sdk.config.RemoteSource
 import com.highcapable.anip.sdk.entity.NotificationIcon
 import com.highcapable.anip.sdk.entity.NotificationIconSnapshot
+import com.highcapable.anip.sdk.generated.SdkProperties
 import com.highcapable.anip.sdk.internal.bundle.BundlePath
 import com.highcapable.anip.sdk.internal.bundle.BundleStore
 import com.highcapable.anip.sdk.internal.cache.BitmapCache
 import com.highcapable.anip.sdk.internal.exception.BundleException
+import com.highcapable.anip.sdk.internal.exception.CallbackException
 import com.highcapable.anip.sdk.internal.icon.IconCatalog
 import com.highcapable.anip.sdk.internal.manifest.ResourceManifestParser
 import com.highcapable.anip.sdk.internal.source.ResourceReleaseClient
@@ -44,6 +47,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.IdentityHashMap
 
 /**
@@ -118,13 +122,21 @@ internal class IconResourceRepository(context: Context, private val config: Anip
                 else "ANIP resources are up to date."
                 val status = if (isDownloaded) Anip.FetchResult.Status.SUCCESS else Anip.FetchResult.Status.UP_TO_DATE
                 Anip.FetchResult(message, status)
-            }.getOrElse {
-                when (it) {
-                    is CancellationException -> throw it
+            }.getOrElse { throwable ->
+                when (throwable) {
+                    is CancellationException -> throw throwable
                     else -> {
-                        loadCachedCatalog(bundleStore, systemVariant)?.let { updateCatalog(source, it) }
+                        Log.w(SdkProperties.PROJECT_NAME, "Failed to fetch ANIP resources.", throwable)
+
+                        // The returned result already reports a failed descriptor opener, so it is not thrown again here.
+                        runCatching {
+                            loadCachedCatalog(bundleStore, systemVariant)
+                        }.onFailure { throwable ->
+                            if (throwable is CancellationException) throw throwable
+                        }.getOrNull()?.let { updateCatalog(source, it) }
+
                         Anip.FetchResult(
-                            it.message ?: "Failed to fetch ANIP resources.",
+                            throwable.message ?: "Failed to fetch ANIP resources.",
                             Anip.FetchResult.Status.FAILED
                         )
                     }
@@ -144,8 +156,12 @@ internal class IconResourceRepository(context: Context, private val config: Anip
             val source = config.source.also(RemoteSource::validate)
             val cacheDirectory = config.cacheDirectory
             val cacheDescriptor = config.cacheDescriptor
-            val cachedCatalog = loadCachedCatalog(createBundleStore(source, cacheDirectory, cacheDescriptor), config.systemVariant)
-                ?: return@withLock false
+            val cachedCatalog = runCatching {
+                loadCachedCatalog(createBundleStore(source, cacheDirectory, cacheDescriptor), config.systemVariant)
+            }.getOrElse {
+                if (it is CallbackException) throw it.cause
+                throw it
+            } ?: return@withLock false
 
             updateCatalog(source, cachedCatalog)
             true
@@ -253,13 +269,17 @@ internal class IconResourceRepository(context: Context, private val config: Anip
         )
     }
 
-    /** Loads the latest valid cached catalog while preserving coroutine cancellation. */
+    /** Returns null when the cache is missing or unusable, while cancellation and [CallbackException] are rethrown. */
     private suspend fun loadCachedCatalog(bundleStore: BundleStore, systemVariant: SystemVariant?) = runCatching {
         withContext(Dispatchers.IO) { bundleStore.loadCached(systemVariant) }
     }.getOrElse {
         when (it) {
-            is CancellationException -> throw it
-            else -> null
+            is CancellationException, is CallbackException -> throw it
+            is FileNotFoundException -> null
+            else -> {
+                Log.w(SdkProperties.PROJECT_NAME, "Ignored the unusable ANIP cache.", it)
+                null
+            }
         }
     }
 }

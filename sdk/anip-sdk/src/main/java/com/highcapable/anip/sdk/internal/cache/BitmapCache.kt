@@ -24,10 +24,12 @@ package com.highcapable.anip.sdk.internal.cache
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.util.Log
 import android.util.LruCache
 import androidx.core.graphics.createBitmap
 import com.caverock.androidsvg.SVG
 import com.highcapable.anip.sdk.Anip
+import com.highcapable.anip.sdk.generated.SdkProperties
 import com.highcapable.anip.sdk.internal.bundle.BundlePath
 import com.highcapable.anip.sdk.internal.exception.BundleException
 import com.highcapable.anip.sdk.internal.icon.IconFormat
@@ -69,6 +71,8 @@ internal class BitmapCache(maxSizeBytes: Int) {
                 IconFormat.PNG -> decodePng(path, content)
                 IconFormat.SVG -> decodeSvg(path, content)
             }
+        }.onFailure {
+            Log.w(SdkProperties.PROJECT_NAME, "Failed to decode the ANIP icon resource: $path", it)
         }.getOrNull()?.also { cache.put(key, it) }
     }
 

@@ -23,8 +23,11 @@ package com.highcapable.anip.sdk.config
 
 import android.os.ParcelFileDescriptor
 import com.highcapable.anip.sdk.Anip
+import com.highcapable.anip.sdk.internal.exception.CallbackException
 import com.highcapable.anip.sdk.type.SystemVariant
 import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
 
 /**
  * Configuration for ANIP.
@@ -62,6 +65,10 @@ data class AnipConfig @JvmOverloads constructor(
              *
              * ANIP takes ownership of the returned descriptor and closes it after use.
              * The descriptor must be writable unless [isReadOnly] is true.
+             *
+             * Throw an [IOException], such as [FileNotFoundException], when the cache cannot be opened, for example when
+             * it does not exist yet. ANIP treats it as a missing cache. Any other exception is rethrown by [Anip.reload]
+             * and reported as a failure by [Anip.fetch].
              * @return [ParcelFileDescriptor]
              */
             fun open(): ParcelFileDescriptor
@@ -71,7 +78,12 @@ data class AnipConfig @JvmOverloads constructor(
          * Opens a new descriptor through [opener].
          * @return [ParcelFileDescriptor]
          */
-        internal fun open() = opener.open()
+        internal fun open() = runCatching {
+            opener.open()
+        }.getOrElse {
+            if (it is IOException) throw it
+            throw CallbackException("The ANIP cache descriptor opener failed.", it)
+        }
     }
 
     init {

@@ -38,6 +38,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
+import java.io.FileNotFoundException
 import java.security.MessageDigest
 import java.util.Locale
 
@@ -596,6 +597,40 @@ class AnipInstrumentedTest {
         Assert.assertEquals(Anip.FetchResult.Status.FAILED, anip.fetch().status)
         Assert.assertNotNull(anip.getIcon(TestBundleFixture.APP_PACKAGE))
         Assert.assertNotNull(anip.getIcon(TestBundleFixture.APP_PACKAGE)?.loadBitmap())
+    }
+
+    /** Verifies that a missing descriptor reads as an empty cache while an opener's own exception is not swallowed. */
+    @Test
+    fun keepsDescriptorOpenerExceptions() = runBlocking {
+        val missing = createAnip(
+            config = AnipConfig(cacheDescriptor = AnipConfig.CacheDescriptor { throw FileNotFoundException("missing") })
+        )
+        Assert.assertEquals(0L, missing.timestamp)
+        Assert.assertFalse(missing.reload())
+
+        val openerFailure = IllegalStateException("broken opener")
+        val bundleArchive = fixture.createBundleArchive()
+        val releaseManifest = createReleaseManifest(bundleArchive, TestDownloadServer.ASSET_NAME)
+
+        TestDownloadServer(bundleArchive, releaseManifest).use { server ->
+            val broken = createAnip(
+                config = AnipConfig(
+                    source = RemoteSource.Custom(server.manifestUrl),
+                    cacheDescriptor = AnipConfig.CacheDescriptor { throw openerFailure }
+                )
+            )
+
+            Assert.assertEquals(0L, broken.timestamp)
+            Assert.assertSame(openerFailure, runCatching { broken.reload() }.exceptionOrNull())
+
+            val result = broken.fetch()
+            Assert.assertEquals(Anip.FetchResult.Status.FAILED, result.status)
+            Assert.assertEquals("The ANIP cache descriptor opener failed.", result.message)
+            Assert.assertEquals(
+                listOf(TestDownloadServer.MANIFEST_REQUEST_TARGET, TestDownloadServer.RELATIVE_DOWNLOAD_REQUEST_TARGET),
+                server.awaitRequestTargets()
+            )
+        }
     }
 
     /** Verifies that files in the cache directory left by older versions are neither read nor touched. */

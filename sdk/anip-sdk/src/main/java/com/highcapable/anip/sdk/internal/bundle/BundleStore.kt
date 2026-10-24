@@ -22,8 +22,11 @@
 package com.highcapable.anip.sdk.internal.bundle
 
 import android.os.ParcelFileDescriptor
+import android.util.Log
+import com.highcapable.anip.sdk.generated.SdkProperties
 import com.highcapable.anip.sdk.internal.bundle.dto.BundleHeader
 import com.highcapable.anip.sdk.internal.exception.BundleException
+import com.highcapable.anip.sdk.internal.exception.CallbackException
 import com.highcapable.anip.sdk.internal.icon.IconCatalog
 import com.highcapable.anip.sdk.internal.manifest.ResourceManifestParser
 import com.highcapable.anip.sdk.internal.utils.readLimited
@@ -34,6 +37,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.io.DataInputStream
 import java.io.DataOutputStream
+import java.io.FileNotFoundException
 
 /**
  * Owns the single ANIP cache file: `MAGIC`, format version, header size, JSON [BundleHeader], then the original
@@ -98,7 +102,8 @@ internal class BundleStore(
     /**
      * Returns a validated catalog for [bundleRelease], downloading and replacing the cache file when required.
      *
-     * A downloaded bundle is parsed before it is written, so an invalid release never replaces the cache.
+     * A downloaded bundle is parsed before it is written, so an invalid release never replaces the cache. A cache that
+     * cannot be used is downloaded again, while a [CallbackException] is rethrown.
      * @param bundleRelease the validated release metadata.
      * @param systemVariant system resources to include during validation and parsing, or null to exclude them.
      * @param forceRefresh whether the cached bundle must be replaced even if it matches [bundleRelease].
@@ -118,7 +123,13 @@ internal class BundleStore(
                 readCache()?.takeIf { it.header.sha256.equals(bundleRelease.sha256, ignoreCase = true) }?.let {
                     parse(it.archive, systemVariant)
                 }
-            }.getOrNull()
+            }.getOrElse {
+                if (it is CallbackException) throw it
+                if (it !is FileNotFoundException) Log.w(
+                    SdkProperties.PROJECT_NAME, "The cached ANIP bundle is unusable and will be downloaded again.", it
+                )
+                null
+            }
             if (cachedCatalog != null) return@withContext cachedCatalog
         }
 
