@@ -126,7 +126,7 @@ class NotificationIcon private constructor(
         "color=$color, " +
         "iconFormat=$iconFormat, " +
         "iconPath=$iconPath, " +
-        "ruleSource=$ruleSource" +
+        "ruleSource=$ruleSource, " +
         "overlay=$overlay, " +
         "contributors=$contributors" +
         ")"

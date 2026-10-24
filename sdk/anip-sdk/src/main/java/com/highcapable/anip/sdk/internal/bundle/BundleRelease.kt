@@ -23,7 +23,7 @@ package com.highcapable.anip.sdk.internal.bundle
 
 /**
  * Validated metadata for one downloadable ANIP resource bundle release.
- * @param tag release tag used as the local cache directory name.
+ * @param tag release tag, stored in the cache header.
  * @param timestamp source commit time in epoch milliseconds.
  * @param assetName expected bundle attachment name.
  * @param downloadUrl direct URL of the bundle attachment.

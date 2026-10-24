@@ -181,7 +181,7 @@ internal class ResourceReleaseClient(private val source: RemoteSource, private v
             throw BundleException("Release asset exceeds the size limit: $assetSize bytes.")
 
         val sha256 = releaseManifest.sha256.required("sha256")
-        if (!SHA256_PATTERN.matches(sha256)) throw BundleException("Invalid release SHA-256: $tag")
+        if (!SHA256_PATTERN.matches(sha256)) throw BundleException("Invalid release SHA-256: $sha256")
 
         val downloadUrl = releaseManifest.downloadUrl.required("downloadUrl")
         val parsedDownloadUrl = releaseManifestSourceUrl.resolve(downloadUrl)

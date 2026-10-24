@@ -560,6 +560,44 @@ class AnipInstrumentedTest {
         }
     }
 
+    /** Verifies that a damaged cache with an unchanged timestamp is downloaded again and reported as updated. */
+    @Test
+    fun reportsUpdateWhenDamagedCacheIsDownloadedAgain() = runBlocking {
+        val bundleArchive = fixture.createBundleArchive()
+        val releaseManifest = createReleaseManifest(bundleArchive, TestDownloadServer.ASSET_NAME)
+
+        TestDownloadServer(bundleArchive, releaseManifest).use { server ->
+            val source = RemoteSource.Custom(server.manifestUrl)
+            fixture.installValidRelease(source)
+            fixture.truncateCache()
+            val anip = createAnip(config = AnipConfig(cacheDirectory = cacheDirectory, source = source))
+
+            Assert.assertEquals(TestBundleFixture.TIMESTAMP, anip.timestamp)
+            Assert.assertEquals(Anip.FetchResult.Status.SUCCESS, anip.fetch().status)
+            Assert.assertEquals(
+                listOf(TestDownloadServer.MANIFEST_REQUEST_TARGET, TestDownloadServer.RELATIVE_DOWNLOAD_REQUEST_TARGET),
+                server.awaitRequestTargets()
+            )
+            Assert.assertTrue(anip.reload())
+        }
+    }
+
+    /** Verifies that a failed fetch keeps the loaded catalog when the cache has disappeared. */
+    @Test
+    fun keepsLoadedCatalogWhenFetchFailsWithoutCache() = runBlocking {
+        // Nothing listens on port 1, so the manifest request fails without a server.
+        val source = RemoteSource.Custom("http://127.0.0.1:1/anip-release.json")
+        fixture.installValidRelease(source)
+        val anip = createAnip(config = AnipConfig(cacheDirectory = cacheDirectory, source = source))
+
+        Assert.assertTrue(anip.reload())
+        Assert.assertTrue(fixture.cacheFile.delete())
+
+        Assert.assertEquals(Anip.FetchResult.Status.FAILED, anip.fetch().status)
+        Assert.assertNotNull(anip.getIcon(TestBundleFixture.APP_PACKAGE))
+        Assert.assertNotNull(anip.getIcon(TestBundleFixture.APP_PACKAGE)?.loadBitmap())
+    }
+
     /** Verifies that files in the cache directory left by older versions are neither read nor touched. */
     @Test
     fun ignoresLegacyCacheLayout() = runBlocking {

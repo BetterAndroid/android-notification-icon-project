@@ -84,7 +84,8 @@ internal class IconResourceRepository(context: Context, private val config: Anip
      * Synchronizes the latest resource release and replaces the in-memory catalog after validation.
      *
      * An unchanged release reuses its cached bundle. A failed refresh, including one on a read-only cache, restores the
-     * cached catalog while preserving the failure in the returned result.
+     * cached catalog while preserving the failure in the returned result. The current catalog is kept when the cache
+     * cannot be loaded.
      * @return [Anip.FetchResult]
      */
     suspend fun fetch() = withContext(Dispatchers.IO) {
@@ -101,26 +102,27 @@ internal class IconResourceRepository(context: Context, private val config: Anip
                 bundleStore.requireWritable()
 
                 val bundleRelease = releaseClient.fetchLatest()
+                var isDownloaded = false
                 val iconCatalog = bundleStore.obtain(
                     bundleRelease = bundleRelease,
                     systemVariant = systemVariant,
                     forceRefresh = bundleRelease.timestamp != previousTimestamp
                 ) {
+                    isDownloaded = true
                     releaseClient.download(bundleRelease)
                 }
                 updateCatalog(source, iconCatalog)
 
-                val isUpToDate = bundleRelease.timestamp == previousTimestamp
-                val message = if (isUpToDate)
-                    "ANIP resources are up to date."
-                else "ANIP resources were updated."
-                val status = if (isUpToDate) Anip.FetchResult.Status.UP_TO_DATE else Anip.FetchResult.Status.SUCCESS
+                val message = if (isDownloaded)
+                    "ANIP resources were updated."
+                else "ANIP resources are up to date."
+                val status = if (isDownloaded) Anip.FetchResult.Status.SUCCESS else Anip.FetchResult.Status.UP_TO_DATE
                 Anip.FetchResult(message, status)
             }.getOrElse {
                 when (it) {
                     is CancellationException -> throw it
                     else -> {
-                        updateCatalog(source, loadCachedCatalog(bundleStore, systemVariant))
+                        loadCachedCatalog(bundleStore, systemVariant)?.let { updateCatalog(source, it) }
                         Anip.FetchResult(
                             it.message ?: "Failed to fetch ANIP resources.",
                             Anip.FetchResult.Status.FAILED
@@ -151,7 +153,7 @@ internal class IconResourceRepository(context: Context, private val config: Anip
     }
 
     /**
-     * Builds a complete snapshot from one catalog while preventing concurrent bundle replacement or cleanup.
+     * Builds a complete snapshot from one catalog while preventing concurrent bundle replacement.
      *
      * Icons are decoded sequentially on [Dispatchers.IO]. Icons sharing one resource file also share one bitmap even
      * if the instance cache evicts that bitmap before a later alias is visited.
@@ -217,9 +219,9 @@ internal class IconResourceRepository(context: Context, private val config: Anip
     }?.catalog
 
     /** Atomically replaces the loaded catalog and drops LRU references when its logical source changes. */
-    private fun updateCatalog(source: RemoteSource, catalog: IconCatalog?) {
+    private fun updateCatalog(source: RemoteSource, catalog: IconCatalog) {
         if (catalogState?.manifestUrl != source.manifestUrl) bitmapCache.clear()
-        catalogState = catalog?.let { CatalogState(source.manifestUrl, it) }
+        catalogState = CatalogState(source.manifestUrl, catalog)
     }
 
     /** Builds a snapshot by loading each distinct resource file at most once. */
