@@ -45,7 +45,13 @@ class NotificationIcon private constructor(
     val packageName: String,
     @ColorInt val color: Int?,
     val overlay: Boolean,
-    val contributors: List<String>
+    val contributors: List<String>,
+    private val localizedLabel: LocalizedLabel,
+    private val iconFormat: IconFormat,
+    private val iconPath: BundlePath,
+    private val bundle: InMemoryBundle,
+    private val bitmapCache: BitmapCache,
+    internal val ruleSource: RuleSource
 ) {
 
     internal companion object {
@@ -71,30 +77,18 @@ class NotificationIcon private constructor(
             packageName = packageName,
             color = resolvedRule.color,
             overlay = resolvedRule.overlay,
-            contributors = resolvedRule.contributors
-        ).apply {
-            localizedLabel = resolvedRule.label
-            iconFormat = resolvedRule.format
-            this.iconPath = iconPath
-            this.bundle = bundle
-            this.bitmapCache = bitmapCache
-            this.ruleSource = ruleSource
-        }
+            contributors = resolvedRule.contributors,
+            localizedLabel = resolvedRule.label,
+            iconFormat = resolvedRule.format,
+            iconPath = iconPath,
+            bundle = bundle,
+            bitmapCache = bitmapCache,
+            ruleSource = ruleSource
+        )
     }
-
-    private var localizedLabel = LocalizedLabel(packageName, emptyMap())
-
-    private var iconFormat: IconFormat? = null
-    private var iconPath: BundlePath? = null
-    private var bundle: InMemoryBundle? = null
-
-    private lateinit var bitmapCache: BitmapCache
 
     /** Resource path identity used to preserve bitmap sharing while building a snapshot. */
     internal val bitmapResourcePath get() = iconPath
-
-    internal var ruleSource: RuleSource? = null
-        private set
 
     /** App label resolved for the current locale. */
     val label get() = localizedLabel.resolve()
@@ -110,13 +104,7 @@ class NotificationIcon private constructor(
      * @return [Bitmap] or null when it cannot be loaded.
      */
     suspend fun loadBitmap() = withContext(Dispatchers.IO) {
-        iconPath?.let { path ->
-            bundle?.read(path)?.let { content ->
-                iconFormat?.let { format ->
-                    bitmapCache.load(path, content, format)
-                }
-            }
-        }
+        bundle.read(iconPath)?.let { bitmapCache.load(iconPath, it, iconFormat) }
     }
 
     override fun toString() = "NotificationIcon(" +

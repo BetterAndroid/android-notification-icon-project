@@ -82,7 +82,10 @@ internal class IconResourceRepository(context: Context, private val config: Anip
     )
 
     /** Timestamp persisted for the latest release of the currently configured resource repository. */
-    val timestamp get() = createBundleStore(config.source, config.cacheDirectory, config.cacheDescriptor).timestamp
+    val timestamp get() = run {
+        config.validate()
+        createBundleStore(config.source, config.cacheDirectory, config.cacheDescriptor).timestamp
+    }
 
     /**
      * Synchronizes the latest resource release and replaces the in-memory catalog after validation.
@@ -94,7 +97,9 @@ internal class IconResourceRepository(context: Context, private val config: Anip
      */
     suspend fun fetch() = withContext(Dispatchers.IO) {
         operationMutex.withLock {
-            val source = config.source.also(RemoteSource::validate)
+            config.validate()
+
+            val source = config.source
             val systemVariant = config.systemVariant
             val cacheDirectory = config.cacheDirectory
             val cacheDescriptor = config.cacheDescriptor
@@ -153,7 +158,9 @@ internal class IconResourceRepository(context: Context, private val config: Anip
      */
     suspend fun reload() = withContext(Dispatchers.IO) {
         operationMutex.withLock {
-            val source = config.source.also(RemoteSource::validate)
+            config.validate()
+
+            val source = config.source
             val cacheDirectory = config.cacheDirectory
             val cacheDescriptor = config.cacheDescriptor
             val cachedCatalog = runCatching {
@@ -196,12 +203,6 @@ internal class IconResourceRepository(context: Context, private val config: Anip
 
     /** A file cache is only created on its first write, so [reload] never leaves an empty file behind. */
     private fun createBundleStore(source: RemoteSource, cacheDirectory: File?, cacheDescriptor: AnipConfig.CacheDescriptor?) = run {
-        source.validate()
-        require(cacheDirectory?.isFile != true) { "ANIP cache directory must not be a file." }
-        require(cacheDirectory == null || cacheDescriptor == null) {
-            "ANIP cache directory and cache descriptor must not be set at the same time."
-        }
-
         val openForRead: () -> ParcelFileDescriptor
         val openForWrite: (() -> ParcelFileDescriptor)?
         if (cacheDescriptor != null) {
@@ -251,9 +252,9 @@ internal class IconResourceRepository(context: Context, private val config: Anip
 
         catalogIcons.forEach { icon ->
             val resourcePath = icon.bitmapResourcePath
-            val bitmap = resourcePath?.let(bitmapsByResource::get) ?: icon.loadBitmap()?.also { loadedBitmap ->
-                resourcePath?.let { bitmapsByResource[it] = loadedBitmap }
-            } ?: return@forEach
+            val bitmap = bitmapsByResource[resourcePath]
+                ?: icon.loadBitmap()?.also { bitmapsByResource[resourcePath] = it }
+                ?: return@forEach
 
             loadedIcons += icon
             iconsByPackage[icon.packageName] = icon

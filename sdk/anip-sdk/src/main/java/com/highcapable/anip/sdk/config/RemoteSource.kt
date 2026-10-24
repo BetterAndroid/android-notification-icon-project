@@ -23,9 +23,9 @@
 
 package com.highcapable.anip.sdk.config
 
+import com.highcapable.anip.sdk.internal.utils.sha256
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import java.security.MessageDigest
 
 /**
  * Remote source of an ANIP resource manifest.
@@ -45,7 +45,9 @@ data class RemoteSource internal constructor(
         /** Official GitHub repository that publishes ANIP resources. */
         const val GITHUB_OFFICIAL_REPO_SLUG = "BetterAndroid/android-notification-icon-project"
 
-        private const val RELEASE_MANIFEST_FILE_NAME = "anip-release.json"
+        /** File name of the release manifest published with each resource release. */
+        internal const val RELEASE_MANIFEST_FILE_NAME = "anip-release.json"
+
         private const val GITHUB_HOST = "https://github.com"
         private const val GITLAB_HOST = "https://gitlab.com"
 
@@ -187,9 +189,5 @@ data class RemoteSource internal constructor(
      * Creates a stable cache identity from the canonical manifest URL before URL resolution.
      * @return [String]
      */
-    internal fun createIdentity() = MessageDigest.getInstance("SHA-256")
-        .digest(manifestUrl.toByteArray())
-        .joinToString(separator = "") { byte ->
-            (byte.toInt() and 0xFF).toString(16).padStart(2, '0')
-        }
+    internal fun createIdentity() = manifestUrl.toByteArray().sha256()
 }

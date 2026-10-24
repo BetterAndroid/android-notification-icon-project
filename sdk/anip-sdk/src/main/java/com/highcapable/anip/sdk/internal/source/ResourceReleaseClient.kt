@@ -25,7 +25,6 @@ import com.highcapable.anip.sdk.config.RemoteSource
 import com.highcapable.anip.sdk.internal.bundle.BundleRelease
 import com.highcapable.anip.sdk.internal.exception.BundleException
 import com.highcapable.anip.sdk.internal.source.dto.ReleaseManifest
-import com.highcapable.anip.sdk.internal.utils.asHexString
 import com.highcapable.anip.sdk.internal.utils.readLimited
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +56,6 @@ internal class ResourceReleaseClient(private val source: RemoteSource, private v
     private companion object {
 
         const val USER_AGENT = "ANIP-SDK"
-        const val RELEASE_MANIFEST_FILE_NAME = "anip-release.json"
 
         const val RELEASE_MANIFEST_SCHEMA_VERSION = 1
         const val MAX_RELEASE_MANIFEST_SIZE_BYTES = 64L * 1024
@@ -80,7 +78,7 @@ internal class ResourceReleaseClient(private val source: RemoteSource, private v
     suspend fun fetchLatest() = withContext(Dispatchers.IO) {
         runCatching {
             val request = Request.Builder()
-                .url(releaseManifestSourceUrl.toString().resolveUrl(tag = null, assetName = RELEASE_MANIFEST_FILE_NAME))
+                .url(releaseManifestSourceUrl.toString().resolveUrl(tag = null, assetName = RemoteSource.RELEASE_MANIFEST_FILE_NAME))
                 .header("Accept", MANIFEST_MEDIA_TYPE)
                 .header("User-Agent", USER_AGENT)
                 .get()
@@ -119,9 +117,6 @@ internal class ResourceReleaseClient(private val source: RemoteSource, private v
     suspend fun download(bundleRelease: BundleRelease): ByteArray = withContext(Dispatchers.IO) {
         runCatching {
             val expectedSize = bundleRelease.assetSize
-            if (expectedSize !in 1..maxBundleSizeBytes)
-                throw BundleException("Release asset exceeds the size limit: $expectedSize bytes.")
-
             val downloadUrl = bundleRelease.downloadUrl.resolveUrl(
                 tag = bundleRelease.tag,
                 assetName = bundleRelease.assetName
@@ -148,7 +143,7 @@ internal class ResourceReleaseClient(private val source: RemoteSource, private v
                 val downloadedBytes = archive.size.toLong()
                 if (downloadedBytes != expectedSize) throw BundleException("Release size verification failed: $downloadedBytes/$expectedSize")
 
-                val actual = digest.digest().asHexString()
+                val actual = digest.digest().toHexString()
                 if (!actual.equals(bundleRelease.sha256, ignoreCase = true)) throw BundleException("Release SHA-256 verification failed.")
 
                 archive

@@ -41,10 +41,10 @@ internal class IconCatalog(icons: List<NotificationIcon>) {
 
     /** Returns icons belonging to [category] while preserving manifest insertion order. */
     fun find(category: IconCategory) = when (category) {
-        IconCategory.ALL -> this@IconCatalog.icons
-        IconCategory.APP -> this@IconCatalog.icons.filter { it.ruleSource == RuleSource.APP }
-        IconCategory.GAME -> this@IconCatalog.icons.filter { it.ruleSource == RuleSource.GAME }
-        IconCategory.SYSTEM -> this@IconCatalog.icons.filter {
+        IconCategory.ALL -> icons
+        IconCategory.APP -> icons.filter { it.ruleSource == RuleSource.APP }
+        IconCategory.GAME -> icons.filter { it.ruleSource == RuleSource.GAME }
+        IconCategory.SYSTEM -> icons.filter {
             it.ruleSource != RuleSource.APP && it.ruleSource != RuleSource.GAME
         }
     }

@@ -24,15 +24,7 @@ package com.highcapable.anip.sdk.internal.utils
 import java.security.MessageDigest
 
 /**
- * Encodes digest bytes as a lowercase hexadecimal string.
- * @return [String]
- */
-internal fun ByteArray.asHexString() = joinToString(separator = "") { byte ->
-    (byte.toInt() and 0xFF).toString(16).padStart(2, '0')
-}
-
-/**
  * Calculates the lowercase hexadecimal SHA-256 digest of this content.
  * @return [String]
  */
-internal fun ByteArray.sha256() = MessageDigest.getInstance("SHA-256").digest(this).asHexString()
+internal fun ByteArray.sha256() = MessageDigest.getInstance("SHA-256").digest(this).toHexString()
