@@ -5226,5 +5226,12 @@
     "color": "#FE4135",
     "overlay": false,
     "contributors": "fankes, KIITTID"
+  },
+  "com.firebear.androil": {
+    "label": "小熊油耗",
+    "format": "png",
+    "color": "#00C157",
+    "overlay": false,
+    "contributors": "fankes, keyanemo"
   }
 }
