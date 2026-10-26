@@ -5212,5 +5212,11 @@
   "com.xayah.databackup.premium": {
     "target": "com.xayah.databackup",
     "contributors": "leoli, fankes, X5426X"
+  },
+  "com.jzyd.coupon": {
+    "label": "省钱快报",
+    "format": "png",
+    "overlay": false,
+    "contributors": "KIITTID"
   }
 }
