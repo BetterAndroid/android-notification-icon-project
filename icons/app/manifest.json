@@ -5212,5 +5212,19 @@
   "com.xayah.databackup.premium": {
     "target": "com.xayah.databackup",
     "contributors": "leoli, fankes, X5426X"
+  },
+  "com.fanli.android.apps": {
+    "label": "返利",
+    "format": "png",
+    "color": "#3AA904",
+    "overlay": false,
+    "contributors": "fankes, KIITTID"
+  },
+  "com.jzyd.coupon": {
+    "label": "省钱快报",
+    "format": "png",
+    "color": "#FE4135",
+    "overlay": false,
+    "contributors": "fankes, KIITTID"
   }
 }
