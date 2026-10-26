@@ -2059,7 +2059,10 @@
     "contributors": "HeMing505"
   },
   "com.xayah.databackup": {
-    "label": "数据备份",
+    "label": {
+      "en": "DataBackup",
+      "zh-CN": "数据备份"
+    },
     "format": "png",
     "color": "#FFA24A",
     "overlay": false,
@@ -5170,5 +5173,44 @@
     "color": "#002991",
     "overlay": false,
     "contributors": "rskdenkai"
+  },
+  "com.huawei.smartaudio": {
+    "label": {
+      "en": "HUAWEI Audio Connect",
+      "zh-CN": "华为智慧音频"
+    },
+    "format": "png",
+    "color": "#009FFF",
+    "overlay": false,
+    "contributors": "fankes, keyanemo"
+  },
+  "cn.com.hbnxmbank.Android": {
+    "label": "湖北农信",
+    "format": "png",
+    "color": "#2F52A6",
+    "overlay": false,
+    "contributors": "fankes, keyanemo"
+  },
+  "hello.litiaotiao.app": {
+    "label": "李跳跳",
+    "format": "png",
+    "color": "#217257",
+    "overlay": false,
+    "contributors": "fankes, zxygood"
+  },
+  "com.trainnote.rn": {
+    "label": "训记",
+    "format": "png",
+    "color": "#232323",
+    "overlay": false,
+    "contributors": "fankes, IsaacWangTT"
+  },
+  "com.xayah.databackup.foss": {
+    "target": "com.xayah.databackup",
+    "contributors": "leoli, fankes, X5426X"
+  },
+  "com.xayah.databackup.premium": {
+    "target": "com.xayah.databackup",
+    "contributors": "leoli, fankes, X5426X"
   }
 }
