@@ -4,6 +4,7 @@
 
 | 项目                                                                | 类型        | 性质     | 作者                                |
 | ------------------------------------------------------------------- | ----------- | -------- | ----------------------------------- |
+| [Sumi](https://github.com/fankes/Sumi)                              | Xposed 模块 | 官方项目 | [fankes](https://github.com/fankes) |
 | [MIUI 原生通知图标](https://github.com/fankes/MIUINativeNotifyIcon) | Xposed 模块 | 官方项目 | [fankes](https://github.com/fankes) |
 | [ColorOS 通知图标增强](https://github.com/fankes/ColorOSNotifyIcon) | Xposed 模块 | 官方项目 | [fankes](https://github.com/fankes) |
 | [HMS Push](https://github.com/fei-ke/HMSPush)                       | Xposed 模块 | 第三方   | [fei-ke](https://github.com/fei-ke) |

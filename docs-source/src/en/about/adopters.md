@@ -4,6 +4,7 @@
 
 | Project                                                                | Type          | Nature           | Author                              |
 | ---------------------------------------------------------------------- | ------------- | ---------------- | ----------------------------------- |
+| [Sumi](https://github.com/fankes/Sumi)                                 | Xposed Module | Official Project | [fankes](https://github.com/fankes) |
 | [MIUINativeNotifyIcon](https://github.com/fankes/MIUINativeNotifyIcon) | Xposed Module | Official Project | [fankes](https://github.com/fankes) |
 | [ColorOSNotifyIcon](https://github.com/fankes/ColorOSNotifyIcon)       | Xposed Module | Official Project | [fankes](https://github.com/fankes) |
 | [HMS Push](https://github.com/fei-ke/HMSPush)                          | Xposed Module | Third-party      | [fei-ke](https://github.com/fei-ke) |

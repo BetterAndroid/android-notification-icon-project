@@ -22,16 +22,14 @@ ANIP provides community-maintained monochrome notification icon resources and ru
 
 ANIP recommends pairing with community-provided Xposed module solutions to adapt the System UI.
 
-1. Recommended Xposed modules
+1.  Maintained Xposed modules
 
 - For HyperOS/MIUI, see [MIUINativeNotifyIcon](https://github.com/fankes/MIUINativeNotifyIcon)
 - For ColorOS, Realme UI, or OxygenOS (>= 12), see [ColorOSNotifyIcon](https://github.com/fankes/ColorOSNotifyIcon)
 
-2. Adaptation requests proposed by the community
+2. Upcoming Xposed modules
 
-- For AOSP-based and Pixel devices, see [this issue](repo://issues/102)
-- For Flyme, see [this issue](repo://issues/201)
-- For OneUI, see [this issue](repo://issues/475)
+- [Sumi](https://github.com/fankes/Sumi)
 
 You can download and try the [ANIP Demo](branch://sdk/samples/demo/release) app we provide.
 

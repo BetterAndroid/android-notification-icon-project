@@ -22,16 +22,14 @@ ANIP 提供了依赖社区维护的第三方应用、游戏、系统应用的单
 
 ANIP 推荐搭配使用社区配套对系统界面 (System UI) 进行适配的 Xposed 模块修改方案。
 
-1. 推荐使用的 Xposed 模块
+1. 正在维护的 Xposed 模块
 
 - HyperOS/MIUI 系统请参阅 [MIUI 原生通知图标](https://github.com/fankes/MIUINativeNotifyIcon)
 - ColorOS、Realme UI、OxygenOS (≥12) 系统请参阅 [ColorOS 通知图标增强](https://github.com/fankes/ColorOSNotifyIcon)
 
-2. 社区提出的适配需求
+2. 新 Xposed 模块前瞻
 
-- 类原生、Pixel 用户请参阅 [此 Issue](repo://issues/102)
-- Flyme 用户请参阅 [此 Issue](repo://issues/201)
-- OneUI 用户请参阅 [此 Issue](repo://issues/475)
+- [Sumi](https://github.com/fankes/Sumi)
 
 你可以下载体验我们提供的 [ANIP 演示](branch://sdk/samples/demo/release) 应用。
 
