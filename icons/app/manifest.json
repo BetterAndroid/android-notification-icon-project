@@ -2536,9 +2536,9 @@
     "contributors": "fankes"
   },
   "com.sankuai.meituan.dispatch.crowdsource": {
-    "target": "com.sankuai.meituan",
+    "target": "com.sankuai.meituan.takeoutnew",
     "label": "美团众包",
-    "contributors": "fankes, Gregorywx, NekoMua"
+    "contributors": "fankes, Gregorywx, NekoMua, Yan546"
   },
   "com.koudai.weidian.buyer": {
     "label": "微店",
