@@ -5233,5 +5233,11 @@
     "color": "#00C157",
     "overlay": false,
     "contributors": "fankes, keyanemo"
+  },
+  "com.tencent.wetype": {
+    "label": "微信输入法",
+    "format": "png",
+    "overlay": false,
+    "contributors": "hongyf233"
   }
 }
