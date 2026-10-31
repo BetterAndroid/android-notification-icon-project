@@ -5235,10 +5235,14 @@
     "contributors": "fankes, keyanemo"
   },
   "com.tencent.wetype": {
-    "label": "微信输入法",
+    "label": {
+      "en": "WeType",
+      "zh-CN": "微信输入法"
+    },
     "format": "png",
+    "color": "#1AC785",
     "overlay": false,
-    "contributors": "hongyf233"
+    "contributors": "hongyf233, fankes"
   },
   "mark.via.gp": {
     "label": "Via",
