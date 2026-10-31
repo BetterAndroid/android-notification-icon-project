@@ -5239,5 +5239,11 @@
     "format": "png",
     "overlay": false,
     "contributors": "hongyf233"
+  },
+  "com.ruoqing.freqcap": {
+    "label": "若晴管调限频",
+    "format": "png",
+    "overlay": false,
+    "contributors": "北海雪"
   }
 }
