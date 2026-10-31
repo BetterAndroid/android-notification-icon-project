@@ -4430,8 +4430,8 @@
       "zh-CN": "多闪"
     },
     "format": "png",
-    "overlay": false,
-    "contributors": "Nyx-233"
+    "overlay": true,
+    "contributors": "Nyx-233, fankes, HecKai"
   },
   "com.avatar.buyer.client": {
     "label": {
@@ -5239,5 +5239,11 @@
     "format": "png",
     "overlay": false,
     "contributors": "hongyf233"
+  },
+  "mark.via.gp": {
+    "label": "Via",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes, aa-ai-tech"
   }
 }
