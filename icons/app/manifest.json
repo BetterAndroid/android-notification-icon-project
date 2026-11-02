@@ -5249,5 +5249,10 @@
     "format": "png",
     "overlay": false,
     "contributors": "fankes, aa-ai-tech"
+  },
+  "com.netease.cloudmusic.iot": {
+    "target": "com.netease.cloudmusic",
+    "label": "网易云音乐 (车机版)",
+    "contributors": "lishengshang"
   }
 }
