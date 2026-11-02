@@ -5254,5 +5254,10 @@
     "target": "com.netease.cloudmusic",
     "label": "网易云音乐 (车机版)",
     "contributors": "lishengshang"
+  },
+  "com.bilibili.bilithings": {
+    "target": "tv.danmaku.bili",
+    "label": "哔哩哔哩 (车机版)",
+    "contributors": "lishengshang"
   }
 }
