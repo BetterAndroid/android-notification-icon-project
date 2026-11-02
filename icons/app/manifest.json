@@ -5259,5 +5259,15 @@
     "target": "tv.danmaku.bili",
     "label": "哔哩哔哩 (车机版)",
     "contributors": "lishengshang"
+  },
+  "com.tencent.workbuddy.app": {
+    "label": {
+      "en": "WorkBuddy",
+      "zh-CN": "WorkBuddy"
+    },
+    "format": "png",
+    "color": "#00C29A",
+    "overlay": false,
+    "contributors": "wangershu"
   }
 }
