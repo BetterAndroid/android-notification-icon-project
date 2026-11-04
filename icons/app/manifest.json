@@ -5275,5 +5275,22 @@
     "format": "svg",
     "overlay": false,
     "contributors": "SOULBEAT174751"
+  },
+  "com.yealink.vc.mobile": {
+    "label": {
+      "en": "Yealink Meeting",
+      "zh-CN": "亿联会议"
+    },
+    "format": "png",
+    "color": "#10C29B",
+    "overlay": false,
+    "contributors": "fankes, haijiaoduimian"
+  },
+  "com.inspur.playwork.internet": {
+    "label": "云上协同",
+    "format": "png",
+    "color": "#2AC4FF",
+    "overlay": false,
+    "contributors": "fankes, haijiaoduimian"
   }
 }
