@@ -421,5 +421,14 @@
     },
     "overlay": false,
     "contributors": "fankes"
+  },
+  "com.xiaomi.misettings": {
+    "target": "com.android.settings",
+    "label": {
+      "en": "Xiaomi Settings",
+      "zh-CN": "小米设置"
+    },
+    "overlay": false,
+    "contributors": "fankes"
   }
 }
