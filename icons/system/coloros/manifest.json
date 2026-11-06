@@ -569,5 +569,14 @@
     "color": "#EB564F",
     "overlay": false,
     "contributors": "plplpmmmmh"
+  },
+  "com.oplus.aicall": {
+    "label": {
+      "en": "AI Call Assistant",
+      "zh-CN": "AI 通话助手"
+    },
+    "format": "svg",
+    "overlay": false,
+    "contributors": "Entr0pyN1"
   }
 }
