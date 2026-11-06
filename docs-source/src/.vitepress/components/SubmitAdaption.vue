@@ -676,7 +676,7 @@ const createIssueUrl = () => {
         'anip-color': color.value,
         'anip-format': format.value.toLocaleUpperCase(),
         'anip-overlay': String(overlay.value),
-        'anip-compression': String(format.value === 'png' && compression.value),
+        'anip-compression': String(format.value === 'png' && !selectedTarget.value && compression.value),
         'anip-contributors': serializedContributors.value,
         'anip-remark': remark.value.trim()
     });

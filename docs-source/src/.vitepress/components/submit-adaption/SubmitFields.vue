@@ -242,7 +242,7 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
                     <Checkbox v-model:checked="overlay"><strong>{{ text.overlay }}</strong></Checkbox>
                 </FormItem>
 
-                <FormItem v-if="format === 'png'" class="full-width compression-field"
+                <FormItem v-if="format === 'png' && !selectedTarget" class="full-width compression-field"
                     :extra="text.compressionDescription">
                     <Checkbox v-model:checked="compression"><strong>{{ text.compression }}</strong></Checkbox>
                 </FormItem>

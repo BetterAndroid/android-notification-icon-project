@@ -457,9 +457,9 @@ const validateAndApply = (event, applyChanges) => {
     if (!['true', 'false'].includes(overlayText)) fail('Overlay must be true or false.');
     const overlay = overlayText === 'true';
     const compressionText = normalizeOptional(fields[fieldNames.compression]).toLocaleLowerCase();
-    if (format === 'png' && !['true', 'false'].includes(compressionText))
+    if (format === 'png' && !target && !['true', 'false'].includes(compressionText))
         fail('Compression must be true or false.');
-    const compression = format === 'png' && compressionText === 'true';
+    const compression = format === 'png' && !target && compressionText === 'true';
     const contributorsText = normalizeOptional(fields[fieldNames.contributors]);
     const contributors = contributorsText.split(',').map((value) => value.trim());
     if (!contributorsText || contributors.some((value) => !value) || contributorsText !== contributors.join(', '))
