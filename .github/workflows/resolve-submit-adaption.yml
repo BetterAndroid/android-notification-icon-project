@@ -112,6 +112,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: ./.github/actions/setup-oxipng
 
       - name: Validate Current Submission and Prepare Files
         id: submission
@@ -148,6 +149,12 @@ jobs:
           fi
           jq -n --slurpfile issue "$issue_path" '{ issue: $issue[0] }' > "$event_path"
           node .github/scripts/submit-adaption.mjs --apply "$event_path"
+
+      - name: Report PNG Optimization Warning
+        if: steps.submission.outputs.optimization_warning != ''
+        env:
+          OPTIMIZATION_WARNING: ${{ steps.submission.outputs.optimization_warning }}
+        run: echo "::warning::$OPTIMIZATION_WARNING"
 
       - name: Mark Invalid Submission
         if: steps.submission.outputs.valid == 'false'

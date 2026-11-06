@@ -1,0 +1,22 @@
+name: Setup oxipng
+description: Install a pinned oxipng release used to compress submitted PNG icon resources.
+
+runs:
+  using: composite
+  steps:
+    - name: Install oxipng
+      shell: bash
+      env:
+        OXIPNG_VERSION: 10.2.1
+        OXIPNG_SHA256: 46e3c4beb9aae57290ad809dd3374b07153579d3322a3778c53900633618b7c6
+        OXIPNG_TARGET: x86_64-unknown-linux-gnu
+      run: |
+        set -euo pipefail
+        archive="$RUNNER_TEMP/oxipng-${OXIPNG_VERSION}-${OXIPNG_TARGET}.tar.gz"
+        curl -fsSL --retry 3 -o "$archive" \
+          "https://github.com/oxipng/oxipng/releases/download/v${OXIPNG_VERSION}/oxipng-${OXIPNG_VERSION}-${OXIPNG_TARGET}.tar.gz"
+        echo "${OXIPNG_SHA256}  ${archive}" | sha256sum --check --strict -
+        mkdir -p "$RUNNER_TEMP/oxipng"
+        tar -xzf "$archive" -C "$RUNNER_TEMP/oxipng" --strip-components=1
+        sudo install -m 0755 "$RUNNER_TEMP/oxipng/oxipng" /usr/local/bin/oxipng
+        oxipng --version

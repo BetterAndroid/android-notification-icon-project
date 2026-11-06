@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,6 +15,9 @@ const colorPattern = /^#[0-9A-F]{6}$/;
 const resourcePrefix = 'ANIP_RESOURCE:';
 const maxIconDimension = 150;
 const maxResourceSize = 24 * 1024;
+// Keep the color type and bit depth unchanged so the compressed output still passes validatePng.
+const oxipngArgs = ['-o', 'max', '-a', '--strip', 'all', '--nc', '--nb', '-z', '--stdout', '-'];
+const oxipngTimeout = 300 * 1000;
 const categoryPaths = ['app', 'game', 'system/common', 'system/mios', 'system/coloros'];
 const fieldNames = {
     type: 'Type / 类型',
@@ -360,6 +364,64 @@ const validateSvg = (bytes) => {
     }
 };
 
+const formatKiB = (bytes) => `${(bytes / 1024).toFixed(1)} KiB`;
+const singleLine = (value) => value.replace(/\s+/g, ' ').trim();
+
+/**
+ * Runs oxipng over a validated PNG resource.
+ *
+ * Compression is best-effort: a missing or failing oxipng falls back to the original bytes so
+ * submissions are not blocked by infrastructure problems. The returned bytes are always valid.
+ */
+const optimizePng = (bytes) => {
+    const skipped = (reason) => ({
+        bytes,
+        originalSize: bytes.length,
+        optimizedSize: bytes.length,
+        note: `PNG optimization skipped: ${singleLine(reason)} (kept ${formatKiB(bytes.length)} original).`,
+        warning: `PNG optimization skipped: ${singleLine(reason)}`
+    });
+    const executable = process.env.OXIPNG || 'oxipng';
+    let result;
+    try {
+        result = spawnSync(executable, oxipngArgs, {
+            input: bytes,
+            maxBuffer: maxResourceSize * 8,
+            timeout: oxipngTimeout,
+            windowsHide: true
+        });
+    } catch (error) {
+        return skipped(`cannot run ${executable}: ${error.message}`);
+    }
+    if (result.error)
+        return skipped(`cannot run ${executable}: ${result.error.message}`);
+    if (result.status !== 0)
+        return skipped(result.stderr?.toString().trim() || `${executable} exited with code ${result.status}`);
+    const optimized = result.stdout;
+    if (!optimized?.length)
+        return skipped(`${executable} produced no output`);
+    if (optimized.length >= bytes.length)
+        return {
+            bytes,
+            originalSize: bytes.length,
+            optimizedSize: bytes.length,
+            note: `PNG is already optimally compressed (${formatKiB(bytes.length)}).`
+        };
+    try {
+        validatePng(optimized);
+    } catch (error) {
+        const reason = error instanceof SubmissionError ? error.errors.join(' ') : error.message;
+        return skipped(`compressed output failed validation: ${reason}`);
+    }
+    const saved = bytes.length - optimized.length;
+    return {
+        bytes: optimized,
+        originalSize: bytes.length,
+        optimizedSize: optimized.length,
+        note: `PNG optimized: ${formatKiB(bytes.length)} → ${formatKiB(optimized.length)} (-${(saved / bytes.length * 100).toFixed(1)}%).`
+    };
+};
+
 const resolveTarget = (manifest, target) => {
     const rule = manifest[target];
     if (!rule || rule.target) fail(`Target does not exist in the selected category: ${target}`);
@@ -415,6 +477,7 @@ const validateAndApply = (event, applyChanges) => {
             fail('App Package Name already has an icon resource in the selected category.');
     }
     let resourceBytes;
+    let optimization;
     let targetRule;
     if (target) {
         targetRule = resolveTarget(manifest, target);
@@ -432,8 +495,12 @@ const validateAndApply = (event, applyChanges) => {
             if (!hasExactKeys(payload, ['data', 'format', 'mimeType', 'schemaVersion', 'sha256', 'size']))
                 fail('Icon Resource payload fields do not match the direct resource schema.');
             resourceBytes = decodeResourceData(payload, format);
-            if (format === 'png') validatePng(resourceBytes);
-            else validateSvg(resourceBytes);
+            if (format === 'png') {
+                validatePng(resourceBytes);
+                optimization = optimizePng(resourceBytes);
+            } else {
+                validateSvg(resourceBytes);
+            }
         }
     }
     if (existingRule) {
@@ -453,30 +520,39 @@ const validateAndApply = (event, applyChanges) => {
     const existingResourcePath = existingRule?.format
         ? join(resourceDirectory, `${packageName}.${existingRule.format.toLocaleLowerCase()}`)
         : undefined;
+    const outputResourceBytes = optimization?.bytes ?? resourceBytes;
     // Appending contributors or editing remarks alone is not a modification of the resource.
     const withoutContributors = ({ contributors: _, ...value }) => value;
-    if (existingRule && isDeepStrictEqual(withoutContributors(rule), withoutContributors(existingRule)) &&
-        (!resourceBytes || (existsSync(existingResourcePath) && resourceBytes.equals(readFileSync(existingResourcePath)))))
-        fail('The modification does not change the icon resource, changes to contributors or remarks alone are not accepted.');
+    if (existingRule && isDeepStrictEqual(withoutContributors(rule), withoutContributors(existingRule))) {
+        const existingResourceBytes = existingResourcePath && existsSync(existingResourcePath)
+            ? readFileSync(existingResourcePath)
+            : undefined;
+        if (!resourceBytes ||
+            (existingResourceBytes && resourceBytes.equals(existingResourceBytes)) ||
+            (existingResourceBytes && outputResourceBytes !== resourceBytes && outputResourceBytes.equals(existingResourceBytes)))
+            fail('The modification does not change the icon resource, changes to contributors or remarks alone are not accepted.');
+    }
     if (applyChanges) {
         manifest[packageName] = rule;
         writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-        if (resourceBytes) {
+        if (outputResourceBytes) {
             const resourcePath = join(resourceDirectory, `${packageName}.${format}`);
             // A modification may switch the icon type, so the resource with the old extension is removed.
             if (existingResourcePath && existingResourcePath !== resourcePath) rmSync(existingResourcePath, { force: true });
-            writeFileSync(resourcePath, resourceBytes);
+            writeFileSync(resourcePath, outputResourceBytes);
         }
     }
     const actionName = modification ? 'Update' : 'Add';
+    const summary = target
+        ? `${actionName} \`${packageName}\` targeting \`${target}\` in ${categoryPath}.`
+        : `${actionName} \`${packageName}\` in ${categoryPath}.`;
     return {
         action: actionName.toLocaleLowerCase(),
         appLabel: typeof label === 'string' ? label : Object.values(label)[0],
         branch: `anip/submit-${issue.number}`,
         packageName,
-        summary: target
-            ? `${actionName} \`${packageName}\` targeting \`${target}\` in ${categoryPath}.`
-            : `${actionName} \`${packageName}\` in ${categoryPath}.`
+        optimizationWarning: optimization?.warning,
+        summary: optimization?.note ? `${summary}\n${optimization.note}` : summary
     };
 };
 
@@ -498,6 +574,7 @@ const main = () => {
         writeOutput('branch', result.branch);
         writeOutput('package_name', result.packageName);
         writeOutput('summary', result.summary);
+        if (result.optimizationWarning) writeOutput('optimization_warning', result.optimizationWarning);
     } catch (error) {
         if (!(error instanceof SubmissionError)) throw error;
         writeOutput('valid', 'false');
