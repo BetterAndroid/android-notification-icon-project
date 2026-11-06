@@ -56,12 +56,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: ./.github/actions/setup-oxipng
 
       - name: Validate Submission and Prepare Files
         id: submission
         env:
           ANIP_FORMATTED_ISSUE_BODY_PATH: ${{ runner.temp }}/submit-adaption-issue.md
         run: node .github/scripts/submit-adaption.mjs --apply "$GITHUB_EVENT_PATH"
+
+      - name: Report PNG Optimization Warning
+        if: steps.submission.outputs.optimization_warning != ''
+        env:
+          OPTIMIZATION_WARNING: ${{ steps.submission.outputs.optimization_warning }}
+        run: echo "::warning::$OPTIMIZATION_WARNING"
 
       - name: Mark Invalid Submission
         if: steps.submission.outputs.valid == 'false'

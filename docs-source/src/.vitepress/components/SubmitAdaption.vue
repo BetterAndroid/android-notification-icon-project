@@ -47,6 +47,7 @@ const resourcesLoading = ref(true);
 const resourcesError = ref('');
 const {
     category,
+    compression,
     color,
     contributors,
     editingKey,
@@ -535,6 +536,7 @@ const fillFromEntry = async (entry: ResolvedIconEntry, key: string) => {
         label.value = rule.label ?? '';
     }
     color.value = rule.color?.toLocaleUpperCase() ?? '';
+    compression.value = true;
     overlay.value = rule.overlay ?? false;
     contributors.value = rule.contributors?.split(', ') ?? [''];
     remark.value = '';
@@ -557,6 +559,7 @@ const resetEditedFields = () => {
     editingKey.value = '';
     originalIcon.value = undefined;
     color.value = '';
+    compression.value = true;
     contributors.value = [''];
     format.value = 'png';
     label.value = '';
@@ -673,6 +676,7 @@ const createIssueUrl = () => {
         'anip-color': color.value,
         'anip-format': format.value.toLocaleUpperCase(),
         'anip-overlay': String(overlay.value),
+        'anip-compression': String(format.value === 'png' && compression.value),
         'anip-contributors': serializedContributors.value,
         'anip-remark': remark.value.trim()
     });
@@ -737,6 +741,7 @@ provide(submitAdaptionContextKey, {
     changeTarget,
     color,
     colorControl,
+    compression,
     colorMenuOpen,
     confirmSubmission,
     continueOverlaySubmission,
