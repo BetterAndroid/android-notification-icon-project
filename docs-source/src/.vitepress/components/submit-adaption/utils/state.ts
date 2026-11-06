@@ -28,6 +28,7 @@ export interface IconValidation {
 /** Keeps editable submission values while VitePress swaps a localized page. */
 export const submitAdaptionState = {
     category: ref<CategoryId>('app'),
+    compression: ref(true),
     color: ref(''),
     contributors: ref(['']),
     editingKey: ref(''),
@@ -53,6 +54,7 @@ export const submitAdaptionState = {
 /** Clears the draft when the visitor leaves the submission page. */
 export const resetSubmitAdaptionState = () => {
     submitAdaptionState.category.value = 'app';
+    submitAdaptionState.compression.value = true;
     submitAdaptionState.color.value = '';
     submitAdaptionState.contributors.value = [''];
     submitAdaptionState.editingKey.value = '';

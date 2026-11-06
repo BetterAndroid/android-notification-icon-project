@@ -65,6 +65,13 @@ body:
     validations:
       required: true
   - type: input
+    id: anip-compression
+    attributes:
+      label: "Compression / 压缩"
+      description: "`true` is the recommended default / 推荐保持默认为 `true`"
+    validations:
+      required: true
+  - type: input
     id: anip-contributors
     attributes:
       label: "Contributors / 贡献者"

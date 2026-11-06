@@ -15,9 +15,9 @@ const colorPattern = /^#[0-9A-F]{6}$/;
 const resourcePrefix = 'ANIP_RESOURCE:';
 const maxIconDimension = 150;
 const maxResourceSize = 24 * 1024;
-// Keep the color type and bit depth unchanged so the compressed output still passes validatePng.
-const oxipngArgs = ['-o', 'max', '-a', '--strip', 'all', '--nc', '--nb', '-z', '--stdout', '-'];
-const oxipngTimeout = 300 * 1000;
+// Keep display metadata and transparent RGB values; preserve the color type and bit depth for validatePng.
+const oxipngArgs = ['-o', '2', '--strip', 'safe', '--nc', '--nb', '--stdout', '-'];
+const oxipngTimeout = 30 * 1000;
 const categoryPaths = ['app', 'game', 'system/common', 'system/mios', 'system/coloros'];
 const fieldNames = {
     type: 'Type / 类型',
@@ -28,6 +28,7 @@ const fieldNames = {
     color: 'Color / 颜色',
     format: 'Icon Type / 图标类型',
     overlay: 'Overlay / 覆盖',
+    compression: 'Compression / 压缩',
     contributors: 'Contributors / 贡献者',
     iconResource: 'Icon Resource / 图标资源',
     remark: 'Remarks / 备注'
@@ -80,8 +81,13 @@ const parseIssueFields = (body) => {
         fields.set(match[1], match[2].trim());
     }
     const names = [...fields.keys()];
-    if (names.length !== expectedFields.length || expectedFields.some((name, index) => names[index] !== name))
+    const legacyExpectedFields = expectedFields.filter((name) => name !== fieldNames.compression);
+    const isCurrentForm = names.length === expectedFields.length && expectedFields.every((name, index) => names[index] === name);
+    const isLegacyForm = names.length === legacyExpectedFields.length &&
+        legacyExpectedFields.every((name, index) => names[index] === name);
+    if (!isCurrentForm && !isLegacyForm)
         fail('The issue body does not match the submit_adaption.yml Issue Form.');
+    if (isLegacyForm) fields.set(fieldNames.compression, 'true');
     return Object.fromEntries(fields);
 };
 
@@ -376,8 +382,6 @@ const singleLine = (value) => value.replace(/\s+/g, ' ').trim();
 const optimizePng = (bytes) => {
     const skipped = (reason) => ({
         bytes,
-        originalSize: bytes.length,
-        optimizedSize: bytes.length,
         note: `PNG optimization skipped: ${singleLine(reason)} (kept ${formatKiB(bytes.length)} original).`,
         warning: `PNG optimization skipped: ${singleLine(reason)}`
     });
@@ -403,9 +407,7 @@ const optimizePng = (bytes) => {
     if (optimized.length >= bytes.length)
         return {
             bytes,
-            originalSize: bytes.length,
-            optimizedSize: bytes.length,
-            note: `PNG is already optimally compressed (${formatKiB(bytes.length)}).`
+            note: `PNG optimization did not reduce size (kept ${formatKiB(bytes.length)} original).`
         };
     try {
         validatePng(optimized);
@@ -416,8 +418,6 @@ const optimizePng = (bytes) => {
     const saved = bytes.length - optimized.length;
     return {
         bytes: optimized,
-        originalSize: bytes.length,
-        optimizedSize: optimized.length,
         note: `PNG optimized: ${formatKiB(bytes.length)} → ${formatKiB(optimized.length)} (-${(saved / bytes.length * 100).toFixed(1)}%).`
     };
 };
@@ -456,6 +456,10 @@ const validateAndApply = (event, applyChanges) => {
     const overlayText = normalizeOptional(fields[fieldNames.overlay]).toLocaleLowerCase();
     if (!['true', 'false'].includes(overlayText)) fail('Overlay must be true or false.');
     const overlay = overlayText === 'true';
+    const compressionText = normalizeOptional(fields[fieldNames.compression]).toLocaleLowerCase();
+    if (format === 'png' && !['true', 'false'].includes(compressionText))
+        fail('Compression must be true or false.');
+    const compression = format === 'png' && compressionText === 'true';
     const contributorsText = normalizeOptional(fields[fieldNames.contributors]);
     const contributors = contributorsText.split(',').map((value) => value.trim());
     if (!contributorsText || contributors.some((value) => !value) || contributorsText !== contributors.join(', '))
@@ -497,7 +501,7 @@ const validateAndApply = (event, applyChanges) => {
             resourceBytes = decodeResourceData(payload, format);
             if (format === 'png') {
                 validatePng(resourceBytes);
-                optimization = optimizePng(resourceBytes);
+                if (compression) optimization = optimizePng(resourceBytes);
             } else {
                 validateSvg(resourceBytes);
             }

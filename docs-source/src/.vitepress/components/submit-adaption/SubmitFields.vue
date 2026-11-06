@@ -35,7 +35,7 @@ const {
     category,
     changeTarget,
     color,
-    colorControl,
+    compression,
     colorMenuOpen,
     contributorSuggestions,
     contributors,
@@ -242,6 +242,11 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
                     <Checkbox v-model:checked="overlay"><strong>{{ text.overlay }}</strong></Checkbox>
                 </FormItem>
 
+                <FormItem v-if="format === 'png'" class="full-width compression-field"
+                    :extra="text.compressionDescription">
+                    <Checkbox v-model:checked="compression"><strong>{{ text.compression }}</strong></Checkbox>
+                </FormItem>
+
                 <FormItem class="full-width" :label="text.contributors" html-for="submit-contributor-0" required>
                     <div class="repeatable-list">
                         <!-- The shared context is untyped, so the list type is given here to keep the index a number. -->
@@ -379,8 +384,15 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
     width: calc(200% + 28px);
 }
 
-// The checkbox row only needs its own height, not the height reserved for text fields.
-.overlay-field :deep(.ant-form-item-control-input) {
+// Checkbox rows use the same grid spacing as the other full-width fields.
+.overlay-field :deep(.ant-form-item-control-input),
+.compression-field :deep(.ant-form-item-control-input) {
+    min-height: 0;
+}
+
+// Ant Design's checkbox extra has a reserved minimum height for one-line help text.
+.overlay-field :deep(.ant-form-item-extra),
+.compression-field :deep(.ant-form-item-extra) {
     min-height: 0;
 }
 
