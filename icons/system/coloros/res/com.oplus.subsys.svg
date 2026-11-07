@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+  <!-- 大屏：精准对齐手机上边缘，实现无缝连接 -->
+  <path d="M 36 55.5 V 28 A 8 8 0 0 1 44 20 H 104 A 8 8 0 0 1 112 28 V 64 A 8 8 0 0 1 104 72 H 52" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- 小屏 / 手机 (左下叠加) -->
+  <rect x="16" y="56" width="36" height="52" rx="6" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- 上下双向传输箭头 -->
+  <path d="M62 62 L62 38 M54 46 L62 38 L70 46" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M86 42 L86 66 M78 58 L86 66 L94 58" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- 手机小屏幕指示点 -->
+  <circle cx="34" cy="98" r="2.5" fill="currentColor"/>
+</svg>

@@ -578,5 +578,11 @@
     "format": "svg",
     "overlay": false,
     "contributors": "Entr0pyN1"
+  },
+  "com.oplus.subsys": {
+    "label": "子系统服务框架",
+    "format": "svg",
+    "overlay": false,
+    "contributors": "Entr0pyN1"
   }
 }
