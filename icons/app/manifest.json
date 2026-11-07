@@ -5292,5 +5292,11 @@
     "color": "#2AC4FF",
     "overlay": false,
     "contributors": "fankes, haijiaoduimian"
+  },
+  "com.gaotu100.superclass": {
+    "label": "高途",
+    "format": "svg",
+    "overlay": false,
+    "contributors": "Entr0pyN1"
   }
 }
