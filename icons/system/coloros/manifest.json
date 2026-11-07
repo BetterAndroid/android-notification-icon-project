@@ -578,5 +578,14 @@
     "format": "svg",
     "overlay": false,
     "contributors": "Entr0pyN1"
+  },
+  "com.oplus.subsys": {
+    "label": {
+      "en": "Subsystem Service",
+      "zh-CN": "子系统服务框架"
+    },
+    "format": "svg",
+    "overlay": false,
+    "contributors": "Entr0pyN1"
   }
 }
