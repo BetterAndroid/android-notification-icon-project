@@ -5298,5 +5298,12 @@
     "format": "svg",
     "overlay": false,
     "contributors": "Entr0pyN1"
+  },
+  "cn.com.chsi.chsiapp": {
+    "label": "学信网",
+    "format": "svg",
+    "color": "#E10C18",
+    "overlay": false,
+    "contributors": "SOULBEAT174751"
   }
 }
