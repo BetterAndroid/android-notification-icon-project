@@ -333,10 +333,10 @@
   },
   "cmb.pb": {
     "label": "招商银行",
-    "format": "png",
+    "format": "svg",
     "color": "#AB1B31",
     "overlay": false,
-    "contributors": "fankes"
+    "contributors": "fankes, tenkahana"
   },
   "com.peopledailychina.activity": {
     "label": "人民日报",
