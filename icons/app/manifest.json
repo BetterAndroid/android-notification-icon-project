@@ -5312,5 +5312,11 @@
     "color": "#2079F2",
     "overlay": false,
     "contributors": "SOULBEAT174751"
+  },
+  "com.jczy.voge": {
+    "label": "无极机车",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes, jially-creator"
   }
 }
