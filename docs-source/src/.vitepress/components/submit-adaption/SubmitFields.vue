@@ -34,6 +34,7 @@ const {
     addLabelRow,
     category,
     changeTarget,
+    changeCompression,
     color,
     compression,
     colorMenuOpen,
@@ -244,7 +245,7 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
 
                 <FormItem v-if="format === 'png' && !selectedTarget" class="full-width compression-field"
                     :extra="text.compressionDescription">
-                    <Checkbox v-model:checked="compression"><strong>{{ text.compression }}</strong></Checkbox>
+                    <Checkbox :checked="compression" @update:checked="changeCompression"><strong>{{ text.compression }}</strong></Checkbox>
                 </FormItem>
 
                 <FormItem class="full-width" :label="text.contributors" html-for="submit-contributor-0" required>

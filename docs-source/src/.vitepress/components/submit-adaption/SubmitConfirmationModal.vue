@@ -6,6 +6,8 @@ const context = inject(submitAdaptionContextKey);
 if (!context) throw new Error('SubmitAdaption context is unavailable');
 
 const {
+    compressionConfirmationOpen,
+    confirmDisableCompression,
     confirmSubmission,
     dependentEntries,
     locale,
@@ -16,6 +18,24 @@ const {
 </script>
 <template>
     <Teleport to="body">
+        <Transition name="submit-modal" appear>
+            <div v-if="compressionConfirmationOpen" class="submit-modal-backdrop" role="presentation"
+                @mousedown.self="compressionConfirmationOpen = false">
+                <section class="submit-modal" role="dialog" aria-modal="true"
+                    :aria-labelledby="`submit-compression-title-${locale}`">
+                    <h2 :id="`submit-compression-title-${locale}`">{{ text.compressionConfirmTitle }}</h2>
+                    <p>{{ text.compressionConfirmDescription }}</p>
+                    <div class="modal-actions">
+                        <button type="button" class="secondary" @click="compressionConfirmationOpen = false">
+                            {{ text.compressionKeep }}
+                        </button>
+                        <button type="button" class="primary" @click="confirmDisableCompression">
+                            {{ text.compressionDisable }}
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </Transition>
         <Transition name="submit-modal" appear>
             <div v-if="modalOpen" class="submit-modal-backdrop" role="presentation" @mousedown.self="modalOpen = false">
                 <section class="submit-modal" role="dialog" aria-modal="true"

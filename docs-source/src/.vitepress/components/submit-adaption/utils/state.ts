@@ -29,6 +29,7 @@ export interface IconValidation {
 export const submitAdaptionState = {
     category: ref<CategoryId>('app'),
     compression: ref(true),
+    compressionDisableConfirmed: ref(false),
     color: ref(''),
     contributors: ref(['']),
     editingKey: ref(''),
@@ -55,6 +56,7 @@ export const submitAdaptionState = {
 export const resetSubmitAdaptionState = () => {
     submitAdaptionState.category.value = 'app';
     submitAdaptionState.compression.value = true;
+    submitAdaptionState.compressionDisableConfirmed.value = false;
     submitAdaptionState.color.value = '';
     submitAdaptionState.contributors.value = [''];
     submitAdaptionState.editingKey.value = '';

@@ -48,6 +48,7 @@ const resourcesError = ref('');
 const {
     category,
     compression,
+    compressionDisableConfirmed,
     color,
     contributors,
     editingKey,
@@ -76,6 +77,19 @@ const fileInput = ref<HTMLInputElement>();
 const iconDragActive = ref(false);
 const iconValidating = ref(false);
 const modalOpen = ref(false);
+const compressionConfirmationOpen = ref(false);
+const changeCompression = (checked: boolean) => {
+    if (!checked && !compressionDisableConfirmed.value) {
+        compressionConfirmationOpen.value = true;
+        return;
+    }
+    compression.value = checked;
+};
+const confirmDisableCompression = () => {
+    compressionDisableConfirmed.value = true;
+    compression.value = false;
+    compressionConfirmationOpen.value = false;
+};
 const iconChanged = ref(true);
 const pendingPayload = ref('');
 const pendingIssueUrl = ref('');
@@ -275,6 +289,7 @@ const closeOnEscape = (event: KeyboardEvent) => {
     if (event.key !== 'Escape') return;
     colorMenuOpen.value = false;
     modalOpen.value = false;
+    compressionConfirmationOpen.value = false;
 };
 
 watch(color, (value) => {
@@ -728,6 +743,9 @@ provide(submitAdaptionContextKey, {
     addLabelRow,
     category,
     changeTarget,
+    changeCompression,
+    compressionConfirmationOpen,
+    confirmDisableCompression,
     color,
     colorControl,
     compression,
