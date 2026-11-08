@@ -284,10 +284,9 @@ const contributorOptions = (index: number) => contributorSuggestions(index).map(
                     </div>
                 </FormItem>
 
-                <FormItem class="full-width" :label="text.remark" html-for="submit-remark"
-                    :required="Boolean(editingEntry)">
+                <FormItem class="full-width" :label="text.remark" html-for="submit-remark" required>
                     <Textarea id="submit-remark" v-model:value="remark" :rows="5" :maxlength="maxRemarkLength"
-                        :placeholder="editingEntry ? text.remarkRequiredPlaceholder : text.remarkPlaceholder" />
+                        :placeholder="text.remarkPlaceholder" />
                 </FormItem>
             </div>
 

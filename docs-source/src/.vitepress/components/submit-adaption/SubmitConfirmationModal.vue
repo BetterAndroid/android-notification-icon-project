@@ -7,35 +7,15 @@ if (!context) throw new Error('SubmitAdaption context is unavailable');
 
 const {
     confirmSubmission,
-    continueOverlaySubmission,
     dependentEntries,
     locale,
     modalOpen,
-    overlayWarningOpen,
     pendingPayload,
     text
 } = context;
 </script>
 <template>
     <Teleport to="body">
-        <Transition name="submit-modal" appear>
-            <div v-if="overlayWarningOpen" class="submit-modal-backdrop" role="presentation"
-                @mousedown.self="overlayWarningOpen = false">
-                <section class="submit-modal" role="dialog" aria-modal="true"
-                    :aria-labelledby="`submit-overlay-warning-title-${locale}`">
-                    <h2 :id="`submit-overlay-warning-title-${locale}`">{{ text.overlayWarningTitle }}</h2>
-                    <p>{{ text.overlayWarningDescription }}</p>
-                    <div class="modal-actions">
-                        <button type="button" class="secondary" @click="overlayWarningOpen = false">
-                            {{ text.overlayWarningReturn }}
-                        </button>
-                        <button type="button" class="primary" @click="continueOverlaySubmission">
-                            {{ text.overlayWarningContinue }}
-                        </button>
-                    </div>
-                </section>
-            </div>
-        </Transition>
         <Transition name="submit-modal" appear>
             <div v-if="modalOpen" class="submit-modal-backdrop" role="presentation" @mousedown.self="modalOpen = false">
                 <section class="submit-modal" role="dialog" aria-modal="true"

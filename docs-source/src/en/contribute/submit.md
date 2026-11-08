@@ -6,9 +6,10 @@
 
 ## Review Criteria
 
+- You need to explain why the app needs adaptation or why the resource needs modification in the remarks. Submissions without remarks will be rejected
 - Icon resources should be monochrome, have a transparent channel, and are recommended to be square with a size of no less than 50 px, no more than 150 px, and a size of no more than 24 KiB
 - If "Overlay" is checked, please be sure to explain the reason in the remarks. Otherwise, it may be rejected
-- When modifying an adapted resource, you are not allowed to adjust the target app and can only append new contributors. You must explain the reason for the modification in the remarks, otherwise it may be rejected. Changes to contributors or remarks alone will not be considered valid modifications
+- When modifying an adapted resource, you are not allowed to adjust the target app and can only append new contributors. Changes to contributors or remarks alone will not be considered valid modifications
 
 ## Precautions
 

@@ -76,7 +76,6 @@ const fileInput = ref<HTMLInputElement>();
 const iconDragActive = ref(false);
 const iconValidating = ref(false);
 const modalOpen = ref(false);
-const overlayWarningOpen = ref(false);
 const iconChanged = ref(true);
 const pendingPayload = ref('');
 const pendingIssueUrl = ref('');
@@ -276,7 +275,6 @@ const closeOnEscape = (event: KeyboardEvent) => {
     if (event.key !== 'Escape') return;
     colorMenuOpen.value = false;
     modalOpen.value = false;
-    overlayWarningOpen.value = false;
 };
 
 watch(color, (value) => {
@@ -616,7 +614,7 @@ const validateForm = () => {
         : !label.value.trim()) return false;
     if (!format.value) return false;
     if (!contributors.value.length || contributors.value.some((value) => !value.trim())) return false;
-    if (editingEntry.value && !remark.value.trim()) return false;
+    if (!remark.value.trim()) return false;
     return true;
 };
 
@@ -692,15 +690,6 @@ const prepareSubmission = async () => {
         pendingPayload.value = `ANIP_RESOURCE:${textToBase64Url(JSON.stringify(iconPayload))}`;
     }
     pendingIssueUrl.value = createIssueUrl();
-    if (overlay.value && !remark.value.trim()) {
-        overlayWarningOpen.value = true;
-        return;
-    }
-    rememberContributors();
-    modalOpen.value = true;
-};
-const continueOverlaySubmission = () => {
-    overlayWarningOpen.value = false;
     rememberContributors();
     modalOpen.value = true;
 };
@@ -744,7 +733,6 @@ provide(submitAdaptionContextKey, {
     compression,
     colorMenuOpen,
     confirmSubmission,
-    continueOverlaySubmission,
     contributorSuggestions,
     contributors,
     dependentEntries,
@@ -778,7 +766,6 @@ provide(submitAdaptionContextKey, {
     openFilePicker,
     originalIcon,
     overlay,
-    overlayWarningOpen,
     packageName,
     pendingPayload,
     pickerColor,

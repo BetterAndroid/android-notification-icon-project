@@ -90,6 +90,6 @@ body:
     id: anip-remark
     attributes:
       label: "Remarks / 备注"
-      description: "Additional information, maximum 300 characters, required for a modification (Optional) / 补充信息，最多 300 字，修改时必填 (可选)"
+      description: "Explain why the app needs adaptation or why the resource needs modification, maximum 300 characters (Required) / 请说明应用需要适配或资源需要修改的原因，最多 300 字 (必填)"
     validations:
-      required: false
+      required: true

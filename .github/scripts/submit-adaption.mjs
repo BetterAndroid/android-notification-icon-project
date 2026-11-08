@@ -467,7 +467,7 @@ const validateAndApply = (event, applyChanges) => {
     // GitHub user names are case-insensitive.
     if (new Set(contributors.map((value) => value.toLocaleLowerCase())).size !== contributors.length)
         fail('Contributors must not be duplicated.');
-    if (modification && !normalizeOptional(fields[fieldNames.remark])) fail('Remarks are required in a modification.');
+    if (!normalizeOptional(fields[fieldNames.remark])) fail('Remarks are required. Explain why the app needs adaptation or why the resource needs modification.');
     const manifestPath = join(repositoryRoot, 'icons', categoryPath, 'manifest.json');
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
     const resourceDirectory = join(repositoryRoot, 'icons', categoryPath, 'res');
