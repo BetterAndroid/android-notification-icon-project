@@ -114,6 +114,23 @@ const refreshImageViewer = () => nextTick(() => {
         margin: 32,
         scrollOffset: 40
     });
+    imageZoom.on('open', () => {
+        const width = document.documentElement.clientWidth;
+        const height = document.documentElement.clientHeight;
+        // medium-zoom expands SVGs to the viewport, so keep resource previews within the 150 px icon limit.
+        const horizontalInset = Math.max(0, (width - 150 - 64) / 2);
+        const verticalInset = Math.max(0, (height - 150 - 64) / 2);
+        imageZoom?.update({
+            container: {
+                width,
+                height,
+                left: horizontalInset,
+                right: horizontalInset,
+                top: verticalInset,
+                bottom: verticalInset
+            }
+        });
+    });
 });
 
 watch([sortedEntries, loading], refreshImageViewer, { flush: 'post' });
