@@ -5305,5 +5305,12 @@
     "color": "#E10C18",
     "overlay": false,
     "contributors": "SOULBEAT174751"
+  },
+  "alook.browser": {
+    "label": "Alook",
+    "format": "svg",
+    "color": "#2079F2",
+    "overlay": false,
+    "contributors": "SOULBEAT174751"
   }
 }
