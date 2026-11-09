@@ -20,7 +20,7 @@
     },
     "format": "png",
     "color": "#2AAE67",
-    "overlay": true,
+    "overlay": false,
     "contributors": "fankes"
   },
   "com.coolapk.market": {
@@ -5093,7 +5093,6 @@
       "en": "QQ Lite",
       "zh-CN": "QQ轻聊版"
     },
-    "overlay": true,
     "contributors": "fankes, NekoMua"
   },
   "com.tencent.wechatkids": {
@@ -5128,7 +5127,6 @@
   "moye.wearqq.ce": {
     "target": "com.tencent.mobileqq",
     "label": "WearQQ",
-    "overlay": true,
     "contributors": "fankes, NekoMua"
   },
   "org.zywx.wbpalmstar.widgetone.uex11296876": {
