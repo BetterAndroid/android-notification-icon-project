@@ -4,8 +4,7 @@
       "en": "Android System",
       "zh-CN": "Android 系统"
     },
-    "format": "png",
-    "color": "#72C476",
+    "format": "svg",
     "overlay": false,
     "contributors": "fankes"
   },
