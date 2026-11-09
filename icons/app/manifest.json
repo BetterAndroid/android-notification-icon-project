@@ -5325,5 +5325,12 @@
     "color": "#0066FE",
     "overlay": false,
     "contributors": "weinaoa"
+  },
+  "com.wemomo.tietie": {
+    "label": "贴贴TieTie",
+    "format": "png",
+    "color": "#F2449F",
+    "overlay": false,
+    "contributors": "weinaoa"
   }
 }
