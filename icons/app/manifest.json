@@ -5318,5 +5318,12 @@
     "format": "png",
     "overlay": false,
     "contributors": "fankes, jially-creator"
+  },
+  "com.netease.uuremote": {
+    "label": "UU远程",
+    "format": "svg",
+    "color": "#0066FE",
+    "overlay": false,
+    "contributors": "weinaoa"
   }
 }
