@@ -65,9 +65,9 @@ body:
     validations:
       required: true
   - type: input
-    id: anip-compression
+    id: anip-optimization
     attributes:
-      label: "Compression / 压缩"
+      label: "Optimization / 优化"
       description: "`true` is the recommended default / 推荐保持默认为 `true`"
     validations:
       required: true

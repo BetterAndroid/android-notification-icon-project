@@ -1,10 +1,9 @@
-import { spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual } from 'node:util';
-import { inflateSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
+import { maxIconDimension, maxResourceSize, optimizePng, validatePng } from './optimize-png.mjs';
 
 const repositoryRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const packageNamePattern = /^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+$/;
@@ -13,11 +12,6 @@ const legacyPackageNames = new Set(['android']);
 const localeCodePattern = /^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$/;
 const colorPattern = /^#[0-9A-F]{6}$/;
 const resourcePrefix = 'ANIP_RESOURCE:';
-const maxIconDimension = 150;
-const maxResourceSize = 24 * 1024;
-// Keep display metadata and transparent RGB values; preserve the color type and bit depth for validatePng.
-const oxipngArgs = ['-o', '2', '--strip', 'safe', '--nc', '--nb', '--stdout', '-'];
-const oxipngTimeout = 30 * 1000;
 const categoryPaths = ['app', 'game', 'system/common', 'system/mios', 'system/coloros'];
 const fieldNames = {
     type: 'Type / 类型',
@@ -28,17 +22,12 @@ const fieldNames = {
     color: 'Color / 颜色',
     format: 'Icon Type / 图标类型',
     overlay: 'Overlay / 覆盖',
-    compression: 'Compression / 压缩',
+    optimization: 'Optimization / 优化',
     contributors: 'Contributors / 贡献者',
     iconResource: 'Icon Resource / 图标资源',
     remark: 'Remarks / 备注'
 };
 const expectedFields = Object.values(fieldNames);
-const crcTable = Array.from({ length: 256 }, (_, value) => {
-    let result = value;
-    for (let bit = 0; bit < 8; bit++) result = result & 1 ? 0xEDB88320 ^ (result >>> 1) : result >>> 1;
-    return result >>> 0;
-});
 
 class SubmissionError extends Error {
     constructor(errors) {
@@ -56,20 +45,6 @@ const writeOutput = (name, value) => {
     const delimiter = `ANIP_${name.toLocaleUpperCase()}_EOF`;
     appendFileSync(process.env.GITHUB_OUTPUT, `${name}<<${delimiter}\n${value}\n${delimiter}\n`);
 };
-const crc32 = (bytes) => {
-    let crc = 0xFFFFFFFF;
-    for (const byte of bytes) crc = crcTable[(crc ^ byte) & 0xFF] ^ (crc >>> 8);
-    return (crc ^ 0xFFFFFFFF) >>> 0;
-};
-const readUint32 = (bytes, offset) => bytes.readUInt32BE(offset);
-const paeth = (left, above, upperLeft) => {
-    const prediction = left + above - upperLeft;
-    const leftDistance = Math.abs(prediction - left);
-    const aboveDistance = Math.abs(prediction - above);
-    const upperLeftDistance = Math.abs(prediction - upperLeft);
-    if (leftDistance <= aboveDistance && leftDistance <= upperLeftDistance) return left;
-    return aboveDistance <= upperLeftDistance ? above : upperLeft;
-};
 
 const parseIssueFields = (body) => {
     if (!body.startsWith(`### ${expectedFields[0]}\n\n`))
@@ -81,13 +56,8 @@ const parseIssueFields = (body) => {
         fields.set(match[1], match[2].trim());
     }
     const names = [...fields.keys()];
-    const legacyExpectedFields = expectedFields.filter((name) => name !== fieldNames.compression);
-    const isCurrentForm = names.length === expectedFields.length && expectedFields.every((name, index) => names[index] === name);
-    const isLegacyForm = names.length === legacyExpectedFields.length &&
-        legacyExpectedFields.every((name, index) => names[index] === name);
-    if (!isCurrentForm && !isLegacyForm)
+    if (names.length !== expectedFields.length || !expectedFields.every((name, index) => names[index] === name))
         fail('The issue body does not match the submit_adaption.yml Issue Form.');
-    if (isLegacyForm) fields.set(fieldNames.compression, 'true');
     return Object.fromEntries(fields);
 };
 
@@ -179,116 +149,6 @@ const decodeResourceData = (payload, format) => {
     return bytes;
 };
 
-// PNG scanlines are decoded here so CI validates grayscale pixels independently of browser metadata.
-const validatePng = (bytes) => {
-    const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
-    if (bytes.length < 33 || !bytes.subarray(0, 8).equals(signature)) fail('PNG signature is invalid.');
-    const chunks = [];
-    let offset = 8;
-    let reachedEnd = false;
-    while (offset + 12 <= bytes.length) {
-        const length = readUint32(bytes, offset);
-        const typeOffset = offset + 4;
-        const dataOffset = typeOffset + 4;
-        const crcOffset = dataOffset + length;
-        if (crcOffset + 4 > bytes.length) fail('PNG chunk length is invalid.');
-        const typeBytes = bytes.subarray(typeOffset, dataOffset);
-        const type = typeBytes.toString('ascii');
-        const data = bytes.subarray(dataOffset, crcOffset);
-        const expectedCrc = readUint32(bytes, crcOffset);
-        if (crc32(Buffer.concat([typeBytes, data])) !== expectedCrc) fail(`PNG ${type} chunk CRC is invalid.`);
-        chunks.push({ data, type });
-        offset = crcOffset + 4;
-        if (type === 'IEND') {
-            reachedEnd = true;
-            break;
-        }
-    }
-    if (!reachedEnd || offset !== bytes.length || chunks[0]?.type !== 'IHDR' || chunks[0].data.length !== 13)
-        fail('PNG chunk structure is invalid.');
-    const header = chunks[0].data;
-    const width = readUint32(header, 0);
-    const height = readUint32(header, 4);
-    const bitDepth = header[8];
-    const colorType = header[9];
-    if (!width || !height) fail('PNG dimensions are invalid.');
-    if (width > maxIconDimension || height > maxIconDimension)
-        fail(`Icon size exceeds ${maxIconDimension} px.`);
-    if (bitDepth !== 8) fail('Only 8-bit PNG resources are supported.');
-    if (![0, 2, 3, 4, 6].includes(colorType)) fail('PNG color type is unsupported.');
-    if (header[10] !== 0 || header[11] !== 0 || header[12] !== 0) fail('PNG compression, filtering, or interlace mode is unsupported.');
-    const channelCounts = { 0: 1, 2: 3, 3: 1, 4: 2, 6: 4 };
-    const channels = channelCounts[colorType];
-    const rowBytes = width * channels;
-    const compressed = Buffer.concat(chunks.filter(({ type }) => type === 'IDAT').map(({ data }) => data));
-    if (!compressed.length) fail('PNG has no image data.');
-    let inflated;
-    try {
-        inflated = inflateSync(compressed, { maxOutputLength: (rowBytes + 1) * height });
-    } catch {
-        fail('PNG image data cannot be decompressed.');
-    }
-    if (inflated.length !== (rowBytes + 1) * height) fail('PNG decompressed data length is invalid.');
-    const pixels = Buffer.alloc(rowBytes * height);
-    for (let row = 0; row < height; row++) {
-        const sourceOffset = row * (rowBytes + 1);
-        const destinationOffset = row * rowBytes;
-        const filter = inflated[sourceOffset];
-        if (filter > 4) fail('PNG uses an invalid scanline filter.');
-        for (let column = 0; column < rowBytes; column++) {
-            const raw = inflated[sourceOffset + 1 + column];
-            const left = column >= channels ? pixels[destinationOffset + column - channels] : 0;
-            const above = row ? pixels[destinationOffset - rowBytes + column] : 0;
-            const upperLeft = row && column >= channels ? pixels[destinationOffset - rowBytes + column - channels] : 0;
-            const reconstructed = filter === 0 ? raw
-                : filter === 1 ? raw + left
-                    : filter === 2 ? raw + above
-                        : filter === 3 ? raw + Math.floor((left + above) / 2)
-                            : raw + paeth(left, above, upperLeft);
-            pixels[destinationOffset + column] = reconstructed & 0xFF;
-        }
-    }
-    const palette = chunks.find(({ type }) => type === 'PLTE')?.data;
-    const transparency = chunks.find(({ type }) => type === 'tRNS')?.data;
-    if (colorType === 3 && (!palette || palette.length % 3 || palette.length > 768))
-        fail('PNG palette is invalid.');
-    let visible = false;
-    let transparent = false;
-    for (let pixel = 0; pixel < width * height; pixel++) {
-        const index = pixel * channels;
-        let red;
-        let green;
-        let blue;
-        let alpha = 255;
-        if (colorType === 0) {
-            red = green = blue = pixels[index];
-            if (transparency?.length === 2 && transparency.readUInt16BE(0) === pixels[index]) alpha = 0;
-        } else if (colorType === 2) {
-            [red, green, blue] = pixels.subarray(index, index + 3);
-            if (transparency?.length === 6 && transparency.readUInt16BE(0) === red &&
-                transparency.readUInt16BE(2) === green && transparency.readUInt16BE(4) === blue) alpha = 0;
-        } else if (colorType === 3) {
-            const paletteIndex = pixels[index];
-            if (paletteIndex * 3 + 2 >= palette.length) fail('PNG palette index is invalid.');
-            red = palette[paletteIndex * 3];
-            green = palette[paletteIndex * 3 + 1];
-            blue = palette[paletteIndex * 3 + 2];
-            alpha = transparency?.[paletteIndex] ?? 255;
-        } else if (colorType === 4) {
-            red = green = blue = pixels[index];
-            alpha = pixels[index + 1];
-        } else {
-            [red, green, blue, alpha] = pixels.subarray(index, index + 4);
-        }
-        if (alpha < 255) transparent = true;
-        if (!alpha) continue;
-        visible = true;
-        if (red !== green || green !== blue) fail('PNG visible pixels must be grayscale.');
-    }
-    if (!visible) fail('PNG has no visible pixels.');
-    if (!transparent) fail('PNG must contain transparency.');
-};
-
 const validateSvgColor = (value) => {
     const normalized = value.trim().toLocaleLowerCase();
     if (!normalized || ['none', 'transparent', 'currentcolor', 'inherit'].includes(normalized) || /^url\(\s*#[^)]+\)$/.test(normalized)) return;
@@ -370,58 +230,6 @@ const validateSvg = (bytes) => {
     }
 };
 
-const formatKiB = (bytes) => `${(bytes / 1024).toFixed(1)} KiB`;
-const singleLine = (value) => value.replace(/\s+/g, ' ').trim();
-
-/**
- * Runs oxipng over a validated PNG resource.
- *
- * Compression is best-effort: a missing or failing oxipng falls back to the original bytes so
- * submissions are not blocked by infrastructure problems. The returned bytes are always valid.
- */
-const optimizePng = (bytes) => {
-    const skipped = (reason) => ({
-        bytes,
-        note: `PNG optimization skipped: ${singleLine(reason)} (kept ${formatKiB(bytes.length)} original).`,
-        warning: `PNG optimization skipped: ${singleLine(reason)}`
-    });
-    const executable = process.env.OXIPNG || 'oxipng';
-    let result;
-    try {
-        result = spawnSync(executable, oxipngArgs, {
-            input: bytes,
-            maxBuffer: maxResourceSize * 8,
-            timeout: oxipngTimeout,
-            windowsHide: true
-        });
-    } catch (error) {
-        return skipped(`cannot run ${executable}: ${error.message}`);
-    }
-    if (result.error)
-        return skipped(`cannot run ${executable}: ${result.error.message}`);
-    if (result.status !== 0)
-        return skipped(result.stderr?.toString().trim() || `${executable} exited with code ${result.status}`);
-    const optimized = result.stdout;
-    if (!optimized?.length)
-        return skipped(`${executable} produced no output`);
-    if (optimized.length >= bytes.length)
-        return {
-            bytes,
-            note: `PNG optimization did not reduce size (kept ${formatKiB(bytes.length)} original).`
-        };
-    try {
-        validatePng(optimized);
-    } catch (error) {
-        const reason = error instanceof SubmissionError ? error.errors.join(' ') : error.message;
-        return skipped(`compressed output failed validation: ${reason}`);
-    }
-    const saved = bytes.length - optimized.length;
-    return {
-        bytes: optimized,
-        note: `PNG optimized: ${formatKiB(bytes.length)} → ${formatKiB(optimized.length)} (-${(saved / bytes.length * 100).toFixed(1)}%).`
-    };
-};
-
 const resolveTarget = (manifest, target) => {
     const rule = manifest[target];
     if (!rule || rule.target) fail(`Target does not exist in the selected category: ${target}`);
@@ -430,7 +238,7 @@ const resolveTarget = (manifest, target) => {
     return rule;
 };
 
-const validateAndApply = (event, applyChanges) => {
+const validateAndApply = async (event, applyChanges) => {
     const issue = event.issue;
     if (!issue || typeof issue.body !== 'string') fail('GitHub issue event data is missing.');
     const fields = parseIssueFields(issue.body);
@@ -456,10 +264,10 @@ const validateAndApply = (event, applyChanges) => {
     const overlayText = normalizeOptional(fields[fieldNames.overlay]).toLocaleLowerCase();
     if (!['true', 'false'].includes(overlayText)) fail('Overlay must be true or false.');
     const overlay = overlayText === 'true';
-    const compressionText = normalizeOptional(fields[fieldNames.compression]).toLocaleLowerCase();
-    if (format === 'png' && !target && !['true', 'false'].includes(compressionText))
-        fail('Compression must be true or false.');
-    const compression = format === 'png' && !target && compressionText === 'true';
+    const optimizationText = normalizeOptional(fields[fieldNames.optimization]).toLocaleLowerCase();
+    if (format === 'png' && !target && !['true', 'false'].includes(optimizationText))
+        fail('Optimization must be true or false.');
+    const optimizationEnabled = format === 'png' && !target && optimizationText === 'true';
     const contributorsText = normalizeOptional(fields[fieldNames.contributors]);
     const contributors = contributorsText.split(',').map((value) => value.trim());
     if (!contributorsText || contributors.some((value) => !value) || contributorsText !== contributors.join(', '))
@@ -500,8 +308,12 @@ const validateAndApply = (event, applyChanges) => {
                 fail('Icon Resource payload fields do not match the direct resource schema.');
             resourceBytes = decodeResourceData(payload, format);
             if (format === 'png') {
-                validatePng(resourceBytes);
-                if (compression) optimization = optimizePng(resourceBytes);
+                try {
+                    if (optimizationEnabled) optimization = await optimizePng(resourceBytes);
+                    else validatePng(resourceBytes);
+                } catch (error) {
+                    fail(error.message);
+                }
             } else {
                 validateSvg(resourceBytes);
             }
@@ -531,9 +343,7 @@ const validateAndApply = (event, applyChanges) => {
         const existingResourceBytes = existingResourcePath && existsSync(existingResourcePath)
             ? readFileSync(existingResourcePath)
             : undefined;
-        if (!resourceBytes ||
-            (existingResourceBytes && resourceBytes.equals(existingResourceBytes)) ||
-            (existingResourceBytes && outputResourceBytes !== resourceBytes && outputResourceBytes.equals(existingResourceBytes)))
+        if (!outputResourceBytes || (existingResourceBytes && outputResourceBytes.equals(existingResourceBytes)))
             fail('The modification does not change the icon resource, changes to contributors or remarks alone are not accepted.');
     }
     if (applyChanges) {
@@ -560,13 +370,13 @@ const validateAndApply = (event, applyChanges) => {
     };
 };
 
-const main = () => {
+const main = async () => {
     const applyChanges = process.argv.includes('--apply');
     const eventPath = process.argv.find((argument) => argument.endsWith('.json')) ?? process.env.GITHUB_EVENT_PATH;
     if (!eventPath) throw new Error('GitHub event JSON path is required.');
     const event = JSON.parse(readFileSync(eventPath, 'utf8'));
     try {
-        const result = validateAndApply(event, applyChanges);
+        const result = await validateAndApply(event, applyChanges);
         const formattedBody = formatIconResourceBody(event.issue.body);
         const bodyFormatted = formattedBody !== event.issue.body;
         if (bodyFormatted && process.env.ANIP_FORMATTED_ISSUE_BODY_PATH)
@@ -586,4 +396,4 @@ const main = () => {
     }
 };
 
-main();
+await main();

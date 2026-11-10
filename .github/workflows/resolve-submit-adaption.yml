@@ -112,6 +112,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install Icon Optimization Dependencies
+        run: npm ci --prefix .github/scripts --no-fund --no-audit
       - uses: ./.github/actions/setup-oxipng
 
       - name: Validate Current Submission and Prepare Files

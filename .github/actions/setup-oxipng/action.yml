@@ -26,4 +26,4 @@ runs:
     - name: Report Installation Failure
       if: steps.install.outcome == 'failure'
       shell: bash
-      run: echo '::warning::oxipng installation failed; submissions will keep their original PNG bytes.'
+      run: echo '::warning::oxipng installation failed; glyph margins will still be normalized, but PNG compression will be skipped.'

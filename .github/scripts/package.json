@@ -1,0 +1,14 @@
+{
+  "name": "anip-icon-scripts",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "optimize": "node optimize-png.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "sharp": "0.35.5"
+  }
+}

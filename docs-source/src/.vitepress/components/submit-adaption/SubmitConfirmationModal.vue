@@ -6,8 +6,8 @@ const context = inject(submitAdaptionContextKey);
 if (!context) throw new Error('SubmitAdaption context is unavailable');
 
 const {
-    compressionConfirmationOpen,
-    confirmDisableCompression,
+    optimizationConfirmationOpen,
+    confirmDisableOptimization,
     confirmSubmission,
     dependentEntries,
     locale,
@@ -19,18 +19,18 @@ const {
 <template>
     <Teleport to="body">
         <Transition name="submit-modal" appear>
-            <div v-if="compressionConfirmationOpen" class="submit-modal-backdrop" role="presentation"
-                @mousedown.self="compressionConfirmationOpen = false">
+            <div v-if="optimizationConfirmationOpen" class="submit-modal-backdrop" role="presentation"
+                @mousedown.self="optimizationConfirmationOpen = false">
                 <section class="submit-modal" role="dialog" aria-modal="true"
-                    :aria-labelledby="`submit-compression-title-${locale}`">
-                    <h2 :id="`submit-compression-title-${locale}`">{{ text.compressionConfirmTitle }}</h2>
-                    <p>{{ text.compressionConfirmDescription }}</p>
+                    :aria-labelledby="`submit-optimization-title-${locale}`">
+                    <h2 :id="`submit-optimization-title-${locale}`">{{ text.optimizationConfirmTitle }}</h2>
+                    <p>{{ text.optimizationConfirmDescription }}</p>
                     <div class="modal-actions">
-                        <button type="button" class="secondary" @click="compressionConfirmationOpen = false">
-                            {{ text.compressionKeep }}
+                        <button type="button" class="secondary" @click="optimizationConfirmationOpen = false">
+                            {{ text.optimizationKeep }}
                         </button>
-                        <button type="button" class="primary" @click="confirmDisableCompression">
-                            {{ text.compressionDisable }}
+                        <button type="button" class="primary" @click="confirmDisableOptimization">
+                            {{ text.optimizationDisable }}
                         </button>
                     </div>
                 </section>

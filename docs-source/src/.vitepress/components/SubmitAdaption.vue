@@ -47,8 +47,8 @@ const resourcesLoading = ref(true);
 const resourcesError = ref('');
 const {
     category,
-    compression,
-    compressionDisableConfirmed,
+    optimization,
+    optimizationDisableConfirmed,
     color,
     contributors,
     editingKey,
@@ -77,18 +77,18 @@ const fileInput = ref<HTMLInputElement>();
 const iconDragActive = ref(false);
 const iconValidating = ref(false);
 const modalOpen = ref(false);
-const compressionConfirmationOpen = ref(false);
-const changeCompression = (checked: boolean) => {
-    if (!checked && !compressionDisableConfirmed.value) {
-        compressionConfirmationOpen.value = true;
+const optimizationConfirmationOpen = ref(false);
+const changeOptimization = (checked: boolean) => {
+    if (!checked && !optimizationDisableConfirmed.value) {
+        optimizationConfirmationOpen.value = true;
         return;
     }
-    compression.value = checked;
+    optimization.value = checked;
 };
-const confirmDisableCompression = () => {
-    compressionDisableConfirmed.value = true;
-    compression.value = false;
-    compressionConfirmationOpen.value = false;
+const confirmDisableOptimization = () => {
+    optimizationDisableConfirmed.value = true;
+    optimization.value = false;
+    optimizationConfirmationOpen.value = false;
 };
 const iconChanged = ref(true);
 const pendingPayload = ref('');
@@ -289,7 +289,7 @@ const closeOnEscape = (event: KeyboardEvent) => {
     if (event.key !== 'Escape') return;
     colorMenuOpen.value = false;
     modalOpen.value = false;
-    compressionConfirmationOpen.value = false;
+    optimizationConfirmationOpen.value = false;
 };
 
 watch(color, (value) => {
@@ -549,7 +549,7 @@ const fillFromEntry = async (entry: ResolvedIconEntry, key: string) => {
         label.value = rule.label ?? '';
     }
     color.value = rule.color?.toLocaleUpperCase() ?? '';
-    compression.value = true;
+    optimization.value = true;
     overlay.value = rule.overlay ?? false;
     contributors.value = rule.contributors?.split(', ') ?? [''];
     remark.value = '';
@@ -572,7 +572,7 @@ const resetEditedFields = () => {
     editingKey.value = '';
     originalIcon.value = undefined;
     color.value = '';
-    compression.value = true;
+    optimization.value = true;
     contributors.value = [''];
     format.value = 'png';
     label.value = '';
@@ -689,7 +689,7 @@ const createIssueUrl = () => {
         'anip-color': color.value,
         'anip-format': format.value.toLocaleUpperCase(),
         'anip-overlay': String(overlay.value),
-        'anip-compression': String(format.value === 'png' && !selectedTarget.value && compression.value),
+        'anip-optimization': String(format.value === 'png' && !selectedTarget.value && optimization.value),
         'anip-contributors': serializedContributors.value,
         'anip-remark': remark.value.trim()
     });
@@ -743,12 +743,12 @@ provide(submitAdaptionContextKey, {
     addLabelRow,
     category,
     changeTarget,
-    changeCompression,
-    compressionConfirmationOpen,
-    confirmDisableCompression,
+    changeOptimization,
+    optimizationConfirmationOpen,
+    confirmDisableOptimization,
     color,
     colorControl,
-    compression,
+    optimization,
     colorMenuOpen,
     confirmSubmission,
     contributorSuggestions,
