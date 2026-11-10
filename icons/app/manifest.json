@@ -5330,5 +5330,12 @@
     "color": "#F2449F",
     "overlay": false,
     "contributors": "weinaoa"
+  },
+  "com.sw.oa": {
+    "label": "湘办通",
+    "format": "png",
+    "color": "#FF8357",
+    "overlay": false,
+    "contributors": "巫友"
   }
 }
