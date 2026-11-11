@@ -5344,5 +5344,12 @@
     "color": "#4285F4",
     "overlay": false,
     "contributors": "KANGKKKKKKK"
+  },
+  "com.anthropic.claude": {
+    "label": "Claude",
+    "format": "png",
+    "color": "#D97757",
+    "overlay": false,
+    "contributors": "KANGKKKKKKK"
   }
 }
