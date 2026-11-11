@@ -5337,5 +5337,12 @@
     "color": "#FF8357",
     "overlay": false,
     "contributors": "巫友"
+  },
+  "com.android.chrome": {
+    "label": "Chrome",
+    "format": "png",
+    "color": "#4285F4",
+    "overlay": false,
+    "contributors": "KANGKKKKKKK"
   }
 }
