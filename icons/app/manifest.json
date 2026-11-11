@@ -5351,5 +5351,12 @@
     "color": "#D97757",
     "overlay": false,
     "contributors": "KANGKKKKKKK"
+  },
+  "com.openai.chatgpt": {
+    "label": "ChatGPT",
+    "format": "png",
+    "color": "#10A37F",
+    "overlay": false,
+    "contributors": "KANGKKKKKKK"
   }
 }
