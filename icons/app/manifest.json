@@ -5351,5 +5351,12 @@
     "color": "#D97757",
     "overlay": false,
     "contributors": "KANGKKKKKKK"
+  },
+  "com.exteraless.app": {
+    "label": "exteraless",
+    "format": "png",
+    "color": "#28A3E0",
+    "overlay": false,
+    "contributors": "KANGKKKKKKK"
   }
 }
