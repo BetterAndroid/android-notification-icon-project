@@ -10,7 +10,7 @@ export interface LabelRow {
 
 /** Encoded icon data kept in the submission draft. */
 export interface IconPayload {
-    data: string;
+    icon: string;
     format: 'png' | 'svg';
     mimeType: 'image/png' | 'image/svg+xml';
     schemaVersion: 1;

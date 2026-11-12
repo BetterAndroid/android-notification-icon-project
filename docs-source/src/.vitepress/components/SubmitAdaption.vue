@@ -309,10 +309,6 @@ const bytesToBase64 = (bytes: Uint8Array) => {
         binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
     return btoa(binary);
 };
-const textToBase64Url = (value: string) => bytesToBase64(new TextEncoder().encode(value))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
 const sha256 = async (bytes: Uint8Array<ArrayBuffer>) => Array.from(
     new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))
 ).map((value) => value.toString(16).padStart(2, '0')).join('');
@@ -664,7 +660,7 @@ const submitDisabled = computed(() => !validateForm() ||
 const createIconPayload = async () => {
     const bytes = new Uint8Array(await selectedFile.value!.arrayBuffer());
     return {
-        data: selectedData.value,
+        icon: selectedData.value,
         format: format.value,
         mimeType: format.value === 'png' ? 'image/png' : 'image/svg+xml',
         schemaVersion: 1,
@@ -702,39 +698,24 @@ const prepareSubmission = async () => {
     // A modification that keeps the current icon does not need to carry the icon resource.
     if (await hasIconChanges()) {
         const iconPayload = await createIconPayload();
-        pendingPayload.value = `ANIP_RESOURCE:${textToBase64Url(JSON.stringify(iconPayload))}`;
+        pendingPayload.value = JSON.stringify(iconPayload, null, 2);
     }
     pendingIssueUrl.value = createIssueUrl();
     rememberContributors();
     modalOpen.value = true;
 };
-const copyText = async (value: string) => {
-    try {
-        await navigator.clipboard.writeText(value);
-        return;
-    } catch {
-        const textarea = document.createElement('textarea');
-        textarea.value = value;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.append(textarea);
-        textarea.select();
-        const copied = document.execCommand('copy');
-        textarea.remove();
-        if (!copied) throw new Error('clipboard write failed');
-    }
+const downloadSubmission = () => {
+    const url = URL.createObjectURL(new Blob([pendingPayload.value], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `anip-submission-${Date.now()}.json`;
+    link.click();
+    // Keep the URL alive while the browser starts the download.
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
 };
-const confirmSubmission = async () => {
-    if (!pendingPayload.value) {
-        window.location.assign(pendingIssueUrl.value);
-        return;
-    }
-    try {
-        await copyText(pendingPayload.value);
-        window.location.assign(pendingIssueUrl.value);
-    } catch {
-        showToast(text.value.errors.clipboard);
-    }
+const confirmSubmission = () => {
+    if (pendingPayload.value) downloadSubmission();
+    window.location.assign(pendingIssueUrl.value);
 };
 
 provide(submitAdaptionContextKey, {

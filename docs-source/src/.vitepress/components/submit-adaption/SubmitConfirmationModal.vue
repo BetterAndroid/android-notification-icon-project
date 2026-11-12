@@ -48,8 +48,6 @@ const {
                             <li v-for="entry in dependentEntries" :key="entry.key"><code>{{ entry.key }}</code></li>
                         </ul>
                     </template>
-                    <textarea v-if="pendingPayload" :value="pendingPayload" readonly aria-label="ANIP_RESOURCE"
-                        @focus="($event.target as HTMLTextAreaElement).select()" />
                     <div class="modal-actions">
                         <button type="button" class="secondary" @click="modalOpen = false">{{ text.cancel }}</button>
                         <button type="button" class="primary" @click="confirmSubmission">
@@ -122,18 +120,6 @@ const {
         line-height: 1.7;
     }
 
-    textarea {
-        width: 100%;
-        height: 112px;
-        resize: vertical;
-        padding: 10px;
-        border: 1px solid var(--vp-c-divider);
-        border-radius: 6px;
-        background: var(--vp-c-bg-soft);
-        color: var(--vp-c-text-2);
-        font: 12px/1.5 var(--vp-font-family-mono);
-        word-break: break-all;
-    }
 }
 
 .modal-actions {

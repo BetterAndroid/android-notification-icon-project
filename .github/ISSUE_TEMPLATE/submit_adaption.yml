@@ -6,9 +6,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please do not fill out this form manually. Make sure to create this issue through [here](https://betterandroid.github.io/android-notification-icon-project/en/contribute/submit) and paste the complete content with the prefix "ANIP_RESOURCE" in the "Icon Resource" field below (if any). Leave it empty when a modification keeps the current icon.
+        Please do not fill out this form manually. Make sure to create this issue through [here](https://betterandroid.github.io/android-notification-icon-project/en/contribute/submit) and upload the downloaded `anip-submission-<timestamp>.json` file to the "Icon Resource" field below (if any). Wait for the upload to finish before submitting. Leave it empty when a modification keeps the current icon.
 
-        请不要手动填写这份表单，确保通过 [这里](https://betterandroid.github.io/android-notification-icon-project/zh-cn/contribute/submit) 创建此 Issue，并在下方的 “图标资源” 字段中粘贴前缀为 “ANIP_RESOURCE” 的完整内容 (如果有)，修改模式下未更换图标时请留空。
+        请不要手动填写这份表单，确保通过 [这里](https://betterandroid.github.io/android-notification-icon-project/zh-cn/contribute/submit) 创建此 Issue，并在下方的 “图标资源” 字段中上传下载的 `anip-submission-<时间戳>.json` 文件 (如果有)，等待上传完成后再提交。修改模式下未更换图标时请留空。
   - type: input
     id: anip-type
     attributes:
@@ -82,8 +82,8 @@ body:
     id: anip-icon-resource
     attributes:
       label: "Icon Resource / 图标资源"
-      description: 'Please paste the complete content with the prefix "ANIP_RESOURCE" copied from the document, leave it empty when a modification keeps the current icon (Optional) / 请粘贴从文档中复制的前缀为 “ANIP_RESOURCE” 的完整内容，修改模式下未更换图标时留空 (可选)'
-      placeholder: "ANIP_RESOURCE:..."
+      description: "Upload the `anip-submission-<timestamp>.json` file downloaded from the submission page (Optional) / 上传提交页面下载的 `anip-submission-<时间戳>.json` 文件 (可选)"
+      placeholder: "Upload the JSON file here / 在此上传 JSON 文件"
     validations:
       required: false
   - type: textarea

@@ -11,7 +11,7 @@ const packageNamePattern = /^[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z][A-Za-z0-9_]*)+$/
 const legacyPackageNames = new Set(['android']);
 const localeCodePattern = /^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$/;
 const colorPattern = /^#[0-9A-F]{6}$/;
-const resourcePrefix = 'ANIP_RESOURCE:';
+const maxSubmissionSize = 40 * 1024;
 const categoryPaths = ['app', 'game', 'system/common', 'system/mios', 'system/coloros'];
 const fieldNames = {
     type: 'Type / 类型',
@@ -61,49 +61,40 @@ const parseIssueFields = (body) => {
     return Object.fromEntries(fields);
 };
 
-const normalizeIconResource = (value) => {
-    const normalized = normalizeOptional(value);
-    const codeBlockPatterns = [
-        /^<code(?:\s[^>]*)?>([\s\S]*?)<\/code>$/i,
-        /^<pre>\s*<code(?:\s[^>]*)?>([\s\S]*?)<\/code>\s*<\/pre>$/i,
-        /^<details>\s*<summary>[^<]*<\/summary>\s*<pre>\s*<code(?:\s[^>]*)?>([\s\S]*?)<\/code>\s*<\/pre>\s*<\/details>$/i
-    ];
-    for (const pattern of codeBlockPatterns) {
-        const match = normalized.match(pattern);
-        if (match) return match[1].trim();
-    }
-    return normalized;
-};
-
-const formatIconResourceBody = (body) => {
-    const heading = `### ${fieldNames.iconResource}\n\n`;
-    const headingStart = body.indexOf(heading);
-    if (headingStart < 0) return body;
-    const contentStart = headingStart + heading.length;
-    const nextHeading = body.indexOf('\n\n### ', contentStart);
-    const contentEnd = nextHeading < 0 ? body.length : nextHeading;
-    const iconResource = normalizeIconResource(body.slice(contentStart, contentEnd));
-    if (!iconResource.startsWith(resourcePrefix)) return body;
-    const collapsed = `<details><summary>Expand to view</summary><pre><code>${iconResource}</code></pre></details>`;
-    return `${body.slice(0, contentStart)}${collapsed}${body.slice(contentEnd)}`;
-};
-
-const decodeIconPayload = (value) => {
-    if (!value.startsWith(resourcePrefix) || value.includes('\n'))
-        fail('Icon Resource must contain one complete ANIP_RESOURCE payload.');
-    const encoded = value.slice(resourcePrefix.length);
-    if (!/^[A-Za-z0-9_-]+$/.test(encoded)) fail('Icon Resource is not valid Base64URL data.');
+// Only fetch public GitHub attachments; redirects must not escape this address space.
+const downloadIconPayload = async (value) => {
+    const match = value.match(/^\[[^\]\n]+\]\((https:\/\/github\.com\/user-attachments\/files\/\d+\/anip-submission-\d+\.json)\)$/);
+    if (!match) fail('Icon Resource must contain one uploaded anip-submission-<timestamp>.json attachment. Please submit again using the submission page.');
     let parsed;
     try {
-        const decoded = Buffer.from(encoded, 'base64url');
-        if (decoded.toString('base64url') !== encoded) fail('Icon Resource uses a non-canonical Base64URL encoding.');
-        parsed = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(decoded));
+        const signal = AbortSignal.timeout(15000);
+        let response = await fetch(match[1], { redirect: 'manual', signal });
+        // GitHub redirects public attachments to its signed object-storage URL.
+        if (response.status === 302) {
+            const location = new URL(response.headers.get('location'));
+            if (location.protocol !== 'https:' || location.hostname !== 'objects.githubusercontent.com' ||
+                location.port || location.username || location.password ||
+                !location.pathname.startsWith('/github-production-repository-file-'))
+                fail('Icon Resource attachment redirects to an unsupported location.');
+            response = await fetch(location, { redirect: 'error', signal });
+        }
+        if (!response.ok) fail(`Icon Resource attachment download failed: HTTP ${response.status}.`);
+        if (Number(response.headers.get('content-length')) > maxSubmissionSize)
+            fail('Icon Resource attachment exceeds 40 KiB.');
+        const chunks = [];
+        let size = 0;
+        for await (const chunk of response.body) {
+            size += chunk.length;
+            if (size > maxSubmissionSize) fail('Icon Resource attachment exceeds 40 KiB.');
+            chunks.push(chunk);
+        }
+        parsed = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)));
     } catch (error) {
         if (error instanceof SubmissionError) throw error;
-        fail('Icon Resource payload cannot be decoded.');
+        fail('Icon Resource attachment could not be downloaded or is not valid UTF-8 JSON.');
     }
     if (!parsed || Array.isArray(parsed) || typeof parsed !== 'object' || parsed.schemaVersion !== 1)
-        fail('Icon Resource payload has an unsupported schema.');
+        fail('Icon Resource attachment has an unsupported schema.');
     return parsed;
 };
 
@@ -139,10 +130,10 @@ const decodeResourceData = (payload, format) => {
     if (payload.format !== format || payload.mimeType !== expectedMimeType ||
         !Number.isInteger(payload.size) || payload.size < 1 || payload.size > maxResourceSize ||
         typeof payload.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(payload.sha256) ||
-        typeof payload.data !== 'string' || !/^[A-Za-z0-9+/]+={0,2}$/.test(payload.data))
+        typeof payload.icon !== 'string' || !/^[A-Za-z0-9+/]+={0,2}$/.test(payload.icon))
         fail('Icon Resource metadata is invalid or does not match the Issue Form.');
-    const bytes = Buffer.from(payload.data, 'base64');
-    if (bytes.toString('base64') !== payload.data || bytes.length !== payload.size)
+    const bytes = Buffer.from(payload.icon, 'base64');
+    if (bytes.toString('base64') !== payload.icon || bytes.length !== payload.size)
         fail('Icon Resource size or Base64 data is invalid.');
     const digest = createHash('sha256').update(bytes).digest('hex');
     if (digest !== payload.sha256) fail('Icon Resource SHA-256 verification failed.');
@@ -296,15 +287,15 @@ const validateAndApply = async (event, applyChanges) => {
         const targetFormat = targetRule.format.toLocaleLowerCase();
         if (targetFormat !== format) fail('Icon Type does not match the target resource format.');
     } else {
-        const iconResource = normalizeIconResource(fields[fieldNames.iconResource]);
+        const iconResource = normalizeOptional(fields[fieldNames.iconResource]);
         // A modification without Icon Resource keeps the current icon resource.
         if (!iconResource && existingRule) {
             if (format !== existingRule.format?.toLocaleLowerCase())
                 fail('Icon Type does not match the current icon resource, provide Icon Resource to change it.');
         } else {
             if (!iconResource) fail('Icon Resource is required when Target App Package Name is empty.');
-            const payload = decodeIconPayload(iconResource);
-            if (!hasExactKeys(payload, ['data', 'format', 'mimeType', 'schemaVersion', 'sha256', 'size']))
+            const payload = await downloadIconPayload(iconResource);
+            if (!hasExactKeys(payload, ['icon', 'format', 'mimeType', 'schemaVersion', 'sha256', 'size']))
                 fail('Icon Resource payload fields do not match the direct resource schema.');
             resourceBytes = decodeResourceData(payload, format);
             if (format === 'png') {
@@ -377,14 +368,9 @@ const main = async () => {
     const event = JSON.parse(readFileSync(eventPath, 'utf8'));
     try {
         const result = await validateAndApply(event, applyChanges);
-        const formattedBody = formatIconResourceBody(event.issue.body);
-        const bodyFormatted = formattedBody !== event.issue.body;
-        if (bodyFormatted && process.env.ANIP_FORMATTED_ISSUE_BODY_PATH)
-            writeFileSync(process.env.ANIP_FORMATTED_ISSUE_BODY_PATH, formattedBody);
         writeOutput('valid', 'true');
         writeOutput('action', result.action);
         writeOutput('app_label', result.appLabel);
-        writeOutput('body_formatted', String(bodyFormatted));
         writeOutput('branch', result.branch);
         writeOutput('package_name', result.packageName);
         writeOutput('summary', result.summary);
