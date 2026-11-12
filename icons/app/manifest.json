@@ -5337,5 +5337,22 @@
     "color": "#FF8357",
     "overlay": false,
     "contributors": "巫友"
+  },
+  "com.UCMobile": {
+    "label": {
+      "en": "UC Browser",
+      "zh-CN": "UC浏览器"
+    },
+    "format": "png",
+    "color": "#FA6425",
+    "overlay": false,
+    "contributors": "fankes, Ikmjun"
+  },
+  "com.suda.yzune.wakeupschedule": {
+    "label": "WakeUp课程表",
+    "format": "png",
+    "color": "#F97272",
+    "overlay": false,
+    "contributors": "fankes, Ikmjun"
   }
 }
