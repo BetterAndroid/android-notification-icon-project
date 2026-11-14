@@ -5357,5 +5357,11 @@
     "color": "#F97272",
     "overlay": false,
     "contributors": "fankes, Ikmjun"
+  },
+  "com.dreame.movahome": {
+    "label": "MOVAhome",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes, pstop"
   }
 }
