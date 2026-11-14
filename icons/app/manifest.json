@@ -676,11 +676,14 @@
     "contributors": "sddpljx, naicfeng"
   },
   "com.ruanmei.ithome": {
-    "label": "IT之家",
+    "label": {
+      "en": "IThome",
+      "zh-CN": "IT之家"
+    },
     "format": "png",
     "color": "#D22222",
     "overlay": false,
-    "contributors": "sddpljx, naicfeng"
+    "contributors": "sddpljx, naicfeng, MarkZ"
   },
   "com.netease.mail": {
     "label": {
