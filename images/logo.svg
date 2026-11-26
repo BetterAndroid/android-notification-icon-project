@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+	<title>
+		Android Notification Icon Project
+	</title>
+	<rect width="800" height="800" rx="176" fill="#596A8D" />
+	<path d="M376 176H424A168 168 0 0 1 592 344V488A96 96 0 0 1 496 584H304A96 96 0 0 1 208 488V344A168 168 0 0 1 376 176ZM376 224A120 120 0 0 0 256 344V488A48 48 0 0 0 304 536H496A48 48 0 0 0 544 488V344A120 120 0 0 0 424 224Z" fill="#FFF" fill-rule="evenodd" />
+	<rect x="304" y="560" width="120" height="48" rx="24" fill="#FFF" />
+</svg>
