@@ -5371,5 +5371,34 @@
     "format": "svg",
     "overlay": false,
     "contributors": "KIITTID"
+  },
+  "com.yunx.app": {
+    "label": {
+      "zh-CN": "云析",
+      "en": "YunX"
+    },
+    "format": "png",
+    "color": "#2C5DD8",
+    "overlay": false,
+    "contributors": "fankes, bczfszb"
+  },
+  "com.antgroup.aijk.android": {
+    "label": "蚂蚁阿福",
+    "format": "png",
+    "color": "#7662F4",
+    "overlay": false,
+    "contributors": "fankes, bczfszb"
+  },
+  "com.tencent.ima": {
+    "label": "ima",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes, bczfszb"
+  },
+  "com.tencent.android.marvis": {
+    "label": "Marvis",
+    "format": "png",
+    "overlay": false,
+    "contributors": "fankes, bczfszb"
   }
 }
